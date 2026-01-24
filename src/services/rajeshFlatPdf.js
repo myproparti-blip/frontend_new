@@ -905,15 +905,15 @@ export function generateValuationReportHTML(data = {}) {
             src="${getImageSource(imgUrl)}"
             alt="Bank Logo"
             style="
-              width: 600px;
-              height: 350px;
+              width: 700px;
+              height: 440px;
               max-width: 100%;
               object-fit: contain;
               display: block;
               margin: 0 auto;
-              border: none;
-              background: #f5f5f5;
-              padding: 5px;
+               border: 2px solid #000 !important;
+               padding: 5px !important;
+              box-sizing: border-box !important;
             "
             class="pdf-image"
             crossorigin="anonymous"
@@ -1090,9 +1090,8 @@ ${safeGet(pdfData, 'pdfDetails.propertyOwnerDetails.nameOfOwner', 'NA')}        
          )}
          </td>
        </tr>
-      </table>
-      <tr>
-         <td colspan="3" style="border: none !important; border-bottom: none !important; padding: 15px 6px;">
+       <tr>
+         <td colspan="3" style="border: 1px solid #000; padding: 5px 6px;">
            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
              <div style="text-align: left;">
                <p style="margin: 4px 0; font-size: 12pt; padding: 4px; border: none; text-decoration: none;"><strong>Date:</strong> ${formatDate(safeGet(pdfData, 'pdfDetails.dateOfValuationReport', 'NA'))}</p>
@@ -1105,12 +1104,13 @@ ${safeGet(pdfData, 'pdfDetails.propertyOwnerDetails.nameOfOwner', 'NA')}        
            </div>
          </td>
        </tr>
+      </table>
       </div>
       </div>
 <!-- END: valued-property-section -->
 
 <!-- START: letterhead-section (PAGE 2) -->
-<div style="page-break-before: always; margin-top: 40px;">
+<div style="page-break-before: always; margin-top: 10px;">
 
   <div style="font-weight: bold; line-height: 1.6; margin-bottom: 20px; margin-top: 30px;">
     <p style="margin: 0;">To,</p>
@@ -1397,7 +1397,7 @@ ${safeGet(pdfData, 'pdfDetails.propertyOwnerDetails.nameOfOwner', 'NA')}        
       <!-- END: boundaries-dimensions-section -->
 
       <!-- START: site-extent-section -->
-      <div style="margin-top: 10px;">
+      <div style="margin-top: 5px;">
         <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 12pt; table-layout: fixed;">
           <tr>
             <td style="border: 1px solid #000; padding: 8px; width: 5%; font-weight: bold; vertical-align: top;">14.</td>
@@ -1808,7 +1808,7 @@ ${safeGet(pdfData, 'pdfDetails.propertyOwnerDetails.nameOfOwner', 'NA')}        
         <tr>
            <td style="border: 1px solid #000; padding: 8px; width: 5%;"></td>
            <td style="border: 1px solid #000; padding: 8px; width: 47.5%; font-weight: bold;"></td>
-           <td style="border: 1px solid #000; padding: 8px; width: 47.5%;"> e. In real estate market, it has been observed that many type of values present in market like forced sale value, sentimental value, monopoly value etc. so it cannot be generalized, while guideline value (Jantri rate) considered them all with one value per zone.</td>
+           <td style="border: 1px solid #000; padding: 3px; width: 47.5%;">e. In real estate market, it has been observed that many type of values present in market like forced sale value, sentimental value, monopoly value etc. so it cannot be generalized, while guideline value (Jantri rate) considered them all with one value per zone.</td>
         </tr>
         <tr>
            <td style="border: 1px solid #000; padding: 8px; width: 5%;"></td>
@@ -1898,7 +1898,7 @@ ${safeGet(pdfData, 'pdfDetails.propertyOwnerDetails.nameOfOwner', 'NA')}        
           <!-- END: composite-rate-depreciation-section -->
 
           <!-- START: details-of-valuation-section -->
-          <div style="margin-top: 25px;">
+          <div style="margin-top: 15px;">
             <p style="margin: 10px 0; text-align: center; font-weight: bold; font-size: 14pt; color: #2864b9;">Details of Valuation</p>
             <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 11pt; table-layout: fixed;">
               <tr style="background-color: #ffffff;">
@@ -2102,7 +2102,7 @@ the better and more accurate your estimate will be using this approach.</span>
 
         
                  
-                 <div style="margin-top: 20px;  page-break-before: always;">
+                 <div style="margin-top: 40px;  page-break-before: always;">
 
             <p style="margin-bottom: 10px; text-align: center; font-weight: bold; ">CHECKLIST OF DOCUMENT</p>
             <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 11pt;">

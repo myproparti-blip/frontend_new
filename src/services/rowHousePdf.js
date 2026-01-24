@@ -1795,15 +1795,15 @@ export function generateValuationReportHTML(data = {}) {
             src="${getImageSource(imgUrl)}"
             alt="Bank Logo"
             style="
-              width: 600px;
+              width: 700px;
               height: 450px;
               max-width: 100%;
               object-fit: contain;
               display: block;
               margin: 0 auto;
-              border: none;
-              background: #f5f5f5;
-              padding: 5px;
+              border: 2px solid #000 !important;
+              padding: 5px !important;
+              box-sizing: border-box !important;
             "
             class="pdf-image"
             crossorigin="anonymous"
@@ -2013,7 +2013,7 @@ export function generateValuationReportHTML(data = {}) {
       </tr>
       </table>
       <tr>
-         <td colspan="3" style="border: none !important; border-bottom: none !important; padding: 15px 6px;">
+         <td colspan="3" style="border: none !important; border-bottom: none !important; padding: 5px 6px;">
            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
              <div style="text-align: left;">
                <p style="margin: 4px 0; font-size: 12pt; padding: 4px; border: none; text-decoration: none;"><strong>Date:</strong> ${safeGet(pdfData, 'dateOfValuation')}</p>
@@ -2035,14 +2035,14 @@ export function generateValuationReportHTML(data = {}) {
        <!-- ANNEXURE-XIV SECTION -->
 
       <!-- ANNEXURE-XIV: FORMAT OF VALUATION REPORT -->
-      <div style="padding: 0 12mm; margin-top: 40px; page-break-before: always; box-sizing: border-box; width: 100%;">
+      <div style="padding: 0 12mm; margin-top: 30px; page-break-before: always; box-sizing: border-box; width: 100%;">
       <div style="text-align: center; margin-bottom: 5px;">
       <p style="margin: 0; font-weight: bold; font-size: 12pt;">ANNEXURE-XIV</p>
       <p style="margin: 0; font-weight: bold; font-size: 12pt;">FORMAT OF VALUATION REPORT</p>
       <p style="margin: 0; font-weight: bold; font-size: 11pt; padding: 4px;">(to be used for all properties of value upto Rs.5 Crore)</p>
       </div>
 
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-top: 15px; font-size: 12pt;">
+      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-top: 15px; font-size: 12pt; border-spacing: 0;">
       <tr>
         <td style="border: 1px solid #000; padding: 8px; width: 50%; font-weight: bold;">Name & Address of Branch</td>
         <td style="border: 1px solid #000; padding: 8px; width: 50%; font-weight: bold;">Name of Customer (s)/ Borrower:<br/><em>(for which valuation report is sought)</em></td>
@@ -2059,107 +2059,87 @@ export function generateValuationReportHTML(data = {}) {
       </table>
 
       <div style="margin-top: 5px;">
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 12pt; table-layout: fixed;">
+      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 12pt; table-layout: fixed; empty-cells: show; border-spacing: 0;">
         <colgroup>
           <col style="width: 5%;">
           <col style="width: 47.5%;">
           <col style="width: 47.5%;">
         </colgroup>
         <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">1</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-style: italic;"> Customer Details:</td>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">1</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold; font-style: italic;"> Customer Details:</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
         </tr>
         <tr>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Name of the Property Owner</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'nameOfOwnerOrOwners', safeGet(pdfData, 'ownerNameAddress', 'NA'))}</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Name of the Property Owner</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'nameOfOwnerOrOwners', safeGet(pdfData, 'ownerNameAddress', 'NA'))}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Contact Number of Representative</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'contactNumberOfRepresentative', safeGet(pdfData, 'mobileNumber', 'NA'))}</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Contact Number of Representative</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'contactNumberOfRepresentative', safeGet(pdfData, 'mobileNumber', 'NA'))}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Date of Inspection of Property</td>
-          <td style="border: 1px solid #000; padding: 8px;">${formatDate(safeGet(pdfData, 'dateOfInspectionOfProperty', safeGet(pdfData, 'inspectionDate', safeGet(pdfData, 'dateOfInspection', 'NA'))))}</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Date of Inspection of Property</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${formatDate(safeGet(pdfData, 'dateOfInspectionOfProperty', safeGet(pdfData, 'inspectionDate', safeGet(pdfData, 'dateOfInspection', 'NA'))))}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Date of Valuation Report</td>
-          <td style="border: 1px solid #000; padding: 8px;">${formatDate(safeGet(pdfData, 'dateOfValuationReport', safeGet(pdfData, 'valuationMadeDate', safeGet(pdfData, 'dateOfValuation', 'NA'))))}</td>
-        </tr>
-      </table>
-      </div>
-
-      <div style="margin-top: 5px;">
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 12pt; table-layout: fixed;">
-        <colgroup>
-          <col style="width: 5%;">
-          <col style="width: 47.5%;">
-          <col style="width: 47.5%;">
-        </colgroup>
-        <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">2</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-style: italic;"> Property Details</td>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Date of Valuation Report</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${formatDate(safeGet(pdfData, 'dateOfValuationReport', safeGet(pdfData, 'valuationMadeDate', safeGet(pdfData, 'dateOfValuation', 'NA'))))}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Address</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'addressOfPropertyUnderValuation')}</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">2</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold; font-style: italic;"> Property Details</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
         </tr>
         <tr>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Nearby Landmark/Google Map<br/>Independent access to the property</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'latitudeLongitude', safeGet(pdfData, 'nearbyLandmarkGoogleMap', 'NA'))}</td>
-        </tr>
-      </table>
-      </div>
-
-      <div style="margin-top: 5px;">
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 12pt; table-layout: fixed;">
-        <colgroup>
-          <col style="width: 5%;">
-          <col style="width: 47.5%;">
-          <col style="width: 47.5%;">
-        </colgroup>
-        <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">3</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold; font-style: italic;"> Document Details</td>
-          <td style="border: 1px solid #000; padding: 8px;"></td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">i.</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Sale Deed</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'saleDeed', 'NA')}</td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">ii.</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">GRUDA Impact Plan</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'grudaImpactPlan', 'NA')}</td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">iii.</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Layout Plan</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'layoutPlan', 'NA')}</td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">iv.</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Construction Permission</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'constructionPermission', 'NA')}</td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">v.</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">Light Bill</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'lightBill', 'NA')}</td>
-        </tr>
-        <tr>
-          <td style="border: 1px solid #000; padding: 8px;font-weight: bold;">vi.</td>
-          <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">TAX Bill</td>
-          <td style="border: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'taxBill', 'NA')}</td>
-        </tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Address</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'addressOfPropertyUnderValuation')}</td>
+          </tr>
+          <tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Nearby Landmark/Google Map<br/>Independent access to the property</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'latitudeLongitude', safeGet(pdfData, 'nearbyLandmarkGoogleMap', 'NA'))}</td>
+          </tr>
+          <tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">3</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold; font-style: italic;"> Document Details</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;"></td>
+          </tr>
+          <tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">i.</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Sale Deed</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'saleDeed', 'NA')}</td>
+          </tr>
+          <tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">ii.</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">GRUDA Impact Plan</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'grudaImpactPlan', 'NA')}</td>
+          </tr>
+          <tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">iii.</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Layout Plan</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'layoutPlan', 'NA')}</td>
+          </tr>
+          <tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">iv.</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Construction Permission</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'constructionPermission', 'NA')}</td>
+          </tr>
+          <tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">v.</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">Light Bill</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'lightBill', 'NA')}</td>
+          </tr>
+          <tr>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;font-weight: bold;">vi.</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px; font-weight: bold;">TAX Bill</td>
+          <td style="border-left: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 8px;">${safeGet(pdfData, 'taxBill', 'NA')}</td>
+          </tr>
       </table>
       </div>
                             
@@ -3143,10 +3123,8 @@ Income Tax Notification</td>
       <li style="margin: 6px 0;">I have not been levied a penalty under section 271J of Income-tax Act, 1961 (43 of 1961) and time limit for filing appeal before Commissioner of Income- tax (Appeals) or Income-tax Appellate Tribunal, as the case may be his expired, or such penalty has been confirmed by Income-tax Appellate Tribunal, and five years have not elapsed after levy of such penalty</li>
       <li style="margin: 6px 0;">I have not been convicted of an offence connected with any proceeding under the Income Tax Act 1961, Wealth Tax Act 1957 or Gift Tax Act 1958 and</li>
       <li style="margin: 6px 0;">My PAN Card number/Service Tax number as applicable is AELPG1208B</li>
-   </br>
-   </br>
       <li style="margin: 6px 0;">I undertake to keep you informed of any events or happenings which would make me ineligible for empanelment as a valuer</li>
-     
+      </br>
       <li style="margin: 6px 0;">I have not concealed or suppressed any material information, facts and records and I have made a complete and full disclosure</li>
     
       <li style="margin: 6px 0;">I have read the Handbook on Policy, Standards and procedure for Real Estate Valuation, 2011 of the IBA and this report is in conformity to the "Standards" enshrined for valuation in the Part-B of the above handbook to the best of my ability</li>

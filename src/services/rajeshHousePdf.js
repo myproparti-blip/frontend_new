@@ -1468,31 +1468,7 @@ export function generateValuationReportHTML(data = {}) {
     // Normalize data structure first - flatten nested MongoDB objects
     const normalizedData = normalizeDataForPDF(data);
 
-    // Debug logging to verify data is being received
-    console.log('🔍 PDF Data Received:', {
-        hasData: !!data,
-        hasRootFields: {
-            uniqueId: !!data?.uniqueId,
-            bankName: !!data?.bankName,
-            clientName: !!data?.clientName,
-            city: !!data?.city
-        },
-        hasPdfDetails: !!data?.pdfDetails,
-        pdfDetailsKeys: Object.keys(data?.pdfDetails || {}).length,
-        pdfDetailsSample: {
-            postalAddress: data?.pdfDetails?.postalAddress,
-            residentialArea: data?.pdfDetails?.residentialArea,
-            areaClassification: data?.pdfDetails?.areaClassification,
-            inspectionDate: data?.pdfDetails?.inspectionDate,
-            agreementForSale: data?.pdfDetails?.agreementForSale,
-            classificationPosh: data?.pdfDetails?.classificationPosh,
-            classificationUsage: data?.pdfDetails?.classificationUsage,
-            ownerOccupancyStatus: data?.pdfDetails?.ownerOccupancyStatus
-        },
-        hasPropertyImages: data?.propertyImages?.length || 0,
-        hasLocationImages: data?.locationImages?.length || 0,
-        normalizedKeys: Object.keys(normalizedData).length
-    });
+
 
     // Start with normalized data, then merge with root level data and pdfDetails
     let pdfData = normalizedData;
@@ -1579,23 +1555,7 @@ export function generateValuationReportHTML(data = {}) {
             pdfData.unitMaintenance = pdfData.unitMaintenance.unitMaintenanceStatus;
         }
 
-        // DEBUG: Log field mapping
-        console.log('🔧 Field Mapping Debug:', {
-            allPdfDetailsKeys: Object.keys(data.pdfDetails),
-            classificationPosh: data.pdfDetails.classificationPosh,
-            unitMaintenance: data.pdfDetails.unitMaintenance,
-            pdfDataUnitClassification: pdfData.unitClassification,
-            pdfDataUnitMaintenance: pdfData.unitMaintenance,
-            pdfDetailsUnitMaintenance: data.pdfDetails.unitMaintenance,
-            pdfDetailsClassificationPosh: data.pdfDetails.classificationPosh,
-            // Debug land valuation
-            landValuation: data.pdfDetails.landValuation,
-            landAreaPlot: data.pdfDetails.landValuation?.plotDescription,
-            landAreaSqYd: data.pdfDetails.landValuation?.areaSqYd,
-            landRate: data.pdfDetails.landValuation?.rate,
-            landTotal: data.pdfDetails.landValuation?.totalValue,
-            landTotalSayRO: data.pdfDetails.landValuation?.sayRO
-        });
+
     }
 
     // Flatten facilities object if it exists
@@ -1774,14 +1734,7 @@ export function generateValuationReportHTML(data = {}) {
                 pdfData.pdfDetails?.classificationOwnership ||
                 data?.pdfDetails?.ownerOccupancyStatus ||
                 data?.unitClassification?.ownerOccupiedOrLetOut;
-            console.log('⚠️ ownerOccupiedOrLetOut mapping:', {
-                'pdfData.ownerOccupiedOrLetOut': pdfData.ownerOccupiedOrLetOut,
-                'pdfData.ownerOccupancyStatus': pdfData.ownerOccupancyStatus,
-                'data.ownerOccupancyStatus': data?.ownerOccupancyStatus,
-                'pdfData.pdfDetails?.ownerOccupancyStatus': pdfData.pdfDetails?.ownerOccupancyStatus,
-                'data.pdfDetails?.ownerOccupancyStatus': data?.pdfDetails?.ownerOccupancyStatus,
-                finalResult: result
-            });
+
             return result;
         })(),
         facilityLift: pdfData.facilityLift || pdfData.liftAvailable || pdfData.pdfDetails?.liftAvailable,
@@ -2207,35 +2160,7 @@ export function generateValuationReportHTML(data = {}) {
         customFields: pdfData.customFields || []
     };
 
-    // Debug: Log critical fields for troubleshooting
-    console.log('🔍 PDF Field Extraction Debug:', {
-        areaClassification: pdfData.areaClassification,
-        postalAddress: pdfData.postalAddress,
-        postalAddressRaw: data?.postalAddress,
-        pdfDetailsPostalAddress: data?.pdfDetails?.postalAddress,
-        cityTown: pdfData.cityTown,
-        urbanType: pdfData.urbanType,
-        // Document fields debug
-        conveyanceDeed: pdfData.conveyanceDeed,
-        saleCertificate: pdfData.saleCertificate,
-        healthSafetyPlan: pdfData.healthSafetyPlan,
-        pdfDetailsDocuments: data?.pdfDetails?.documents,
-        pdfDetailsOwnershipDocuments: data?.pdfDetails?.documents?.ownershipDocuments,
-        pdfDetailsPermissions: data?.pdfDetails?.documents?.permissions
-    });
 
-    // DEBUG: Log final pdfData before rendering
-    console.log('📋 Final pdfData before HTML rendering:', {
-        unitMaintenance: pdfData.unitMaintenance,
-        unitClassification: pdfData.unitClassification,
-        classificationPosh: pdfData.classificationPosh,
-        safeGetTest_unitMaintenance: safeGet(pdfData, 'unitMaintenance'),
-        safeGetTest_unitClassification: safeGet(pdfData, 'unitClassification'),
-        // Document fields
-        conveyanceDeed: pdfData.conveyanceDeed,
-        saleCertificate: pdfData.saleCertificate,
-        healthSafetyPlan: pdfData.healthSafetyPlan
-    });
 
     // Calculate total valuation items if not provided
     if (!pdfData.totalValuationItems || pdfData.totalValuationItems === 'NA') {
@@ -2736,16 +2661,15 @@ export function generateValuationReportHTML(data = {}) {
   <!-- CONTINUOUS DATA TABLE -->
   <div class="continuous-wrapper" >
   <div style="padding: 0 12mm; ">
-  <!-- Recipient Address Block -->
   <!-- Title -->
-  <div style="text-align: center; margin-bottom: 12px; border-bottom: 2px solid #0066cc; padding: 8px 0;">
+  <div style="text-align: center; margin-bottom: 5px; padding: 8px 0;">
   <p style="font-size: 14pt; font-weight: bold; margin: 0; color: #0066cc;">VALUATION REPORT</p>
   </div>
   </div>
   
   <div style="padding: 0 12mm;">
       <!-- HEADER TABLE: A/C Name, Owner, Property Details -->
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 12px;">
+      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 10px;">
         <tbody>
           <tr>
             <td style="width: 35%; border: 1px solid #000; padding: 6px 8px; font-weight: bold; font-size: 11pt;">A/C Name/ Borrower Name</td>
@@ -2777,13 +2701,10 @@ export function generateValuationReportHTML(data = {}) {
           </tr>
         </tbody>
       </table>
+      <div>
 <div style="
   text-align: center;
   margin: 10px 0;
-  page-break-inside: avoid;
-  break-inside: avoid;
-  max-height: 680px;       /* page ke andar limit */
-  overflow: hidden;
 ">
   ${pdfData.bankImage ? `
     <img 
@@ -2794,13 +2715,14 @@ export function generateValuationReportHTML(data = {}) {
       )}"
       alt="Bank Image"
       style="
-        max-width: 100%;
-        max-height: 100%;
-        height: auto;
-        object-fit: contain;
-        display: block;
-        margin: 0 auto;
-        page-break-inside: avoid;
+        width: 700px !important;
+        height: 450px !important;
+        object-fit: contain !important;
+        display: block !important;
+        margin: 0 auto 50px auto !important;
+        border: 2px solid #000 !important;
+        padding: 5px !important;
+        box-sizing: border-box !important;
       "
       crossorigin="anonymous"
       loading="eager"
@@ -2809,10 +2731,18 @@ export function generateValuationReportHTML(data = {}) {
 </div>
 
       <!-- VALUED PROPERTY AT A GLANCE TABLE -->
-      <div style="page-break-before: always;">
-      <table class="page-break-section" style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 12px;">
-        <tbody>
-          <p style="font-size: 14pt; font-weight: bold; margin: 0; color: #0066cc;text-align: center;">VALUED PROPERTY AT A GLANCE WITH VALUATION CERTIFICATE</p>
+
+        <div class="no-break"
+             style="
+                text-align: center;
+                margin-top: 0px;
+                box-sizing: border-box;
+             ">
+        <p style="font-size: 15pt;margin-bottom: 10px;font-weight: bold;color: #0066cc;">VALUED PROPERTY AT A GLANCE WITH VALUATION CERTIFICATE</p>
+        </div>
+        <div style="box-sizing: border-box; width: 100%; margin: 0; overflow: hidden;">
+        <table class="page-break-section" style="width: 100%; border-collapse: collapse; border-spacing: 0; margin-bottom: 12px; page-break-inside: avoid;">
+          <tbody>
           <tr>
             <td style="width: 40%; border: 1px solid #000; padding: 6px 8px;  font-size: 11pt;">Applicant</td>
             <td style="width: 60%; border: 1px solid #000; padding: 6px 8px; font-size: 11pt;">${safeGet(pdfData, 'bankName')},${safeGet(pdfData, 'client')},  ${safeGet(pdfData, 'city')}</td>
@@ -2877,31 +2807,27 @@ export function generateValuationReportHTML(data = {}) {
           <td style="width: 40%; background: #ffffff; border: 1px solid #000; padding: 6px 8px; font-weight: bold; font-size: 11pt;">INSURABLE VALUE OF THE PROPERTY</td>
           <td style="width: 60%; ; border: 1px solid #000; padding: 6px 8px; font-weight: bold; font-size: 11pt;">${formatCurrencyWithWords(safeGet(pdfData, 'insurableValue'))}</td>
         </tr>
+        <tr>
+          <td colspan="2" style="border: 1px solid #000; padding: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div style="font-size: 11pt;">
+                <p style="margin: 2px 0; font-weight: bold;">Date: ${formatDate(safeGet(pdfData, 'dateOfReport'))}</p>
+                <p style="margin: 2px 0; font-weight: bold;">Place: ${safeGet(pdfData, 'city')}</p>
+              </div>
+              <div style="font-size: 11pt; text-align: right;">
+                <p style="margin: 2px 0; font-weight: bold;">Rajesh Ganatra</p>
+                <p style="margin: 2px 0; font-weight: bold;">Govt. Registered Valuer</p>
+              </div>
+            </div>
+          </td>
+        </tr>
         </tbody>
         </table>
         </div>
 
-      
-        
-      
-        
-        <!-- DATE AND SIGNATURE SECTION -->
-      <div style="margin-top: 20px; margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div style="font-size: 11pt;">
-            <p style="margin: 2px 0;font-weight: bold;">Date: ${formatDate(safeGet(pdfData, 'dateOfReport'))}</p>
-            <p style="margin: 2px 0; font-weight: bold;">Place: ${safeGet(pdfData, 'city')}</p>
-          </div>
-          <div style="font-size: 11pt; text-align: right;">
-            <p style="margin: 2px 0; font-weight: bold;">Rajesh Ganatra</p>
-            <p style="margin: 2px 0; font-weight: bold;">Govt. Registered Valuer</p>
-          </div>
-        </div>
-      </div>
-
       <!-- VALUATION REPORT TITLE -->
-      <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-        <h2 style="margin: 0; font-size: 16pt; font-weight: bold;text-align: center;color: #0066cc;">VALUATION REPORT</h2>
+      <div style="text-align: center; padding: 2px 0; margin-bottom: 10px;">
+        <h2 style="margin: 0; font-size: 15pt; font-weight: bold;text-align: center;color: #0066cc;">VALUATION REPORT</h2>
       </div>
 
       <!-- I. GENERAL TABLE -->
@@ -3044,8 +2970,7 @@ export function generateValuationReportHTML(data = {}) {
        <tr>
          <td class="row-num" style="border: 1px solid #000; padding: 8px;">12.</td>
          <td class="label" style="border: 1px solid #000; padding: 8px;">In case it is an agricultural land, any conversion to house site plots is contemplated</td>
-         <td class="value" style="border: 1px solid #000; padding: 8px;">It is a ${safeGet(pdfData, 'agriculturalLandConversion')} Land And it is use Only for Industrial Purpose.
-</td>
+         <td class="value" style="border: 1px solid #000; padding: 8px;">It is a ${safeGet(pdfData, 'agriculturalLandConversion')} Land And it is use Only for Industrial Purpose.</td>
        </tr>
       <tr>
         <td class="row-num" style="border: 1px solid #000; padding: 8px;">13.</td>
@@ -3146,126 +3071,127 @@ export function generateValuationReportHTML(data = {}) {
       </table>
 
       <!-- Section II: CHARACTERISTICS OF THE SITE -->
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-top: 20px;">
+      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-top: 20px; page-break-inside: avoid; break-inside: avoid;">
         <tbody>
-          <tr>
-            <td style="width: 5%; border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;  color: #ffffff; font-size: 11pt;"><p style="margin: 0;">II</p></td>
-            <td colspan="2" style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;  color: #4472C4; font-size: 11pt;"><p style="margin: 0;">CHARACTERISTICS OF THE SITE</p></td>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
+            <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: bold; text-align: center; color: #ffffff; font-size: 11pt;"><p style="margin: 0;">II</p></td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: bold; text-align: left; color: #4472C4; font-size: 11pt;"><p style="margin: 0;">CHARACTERISTICS OF THE SITE</p></td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; font-weight: bold; text-align: left; background: #ffffff; font-size: 11pt;"></td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">1</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Classification of locality</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'classificationLocality')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Classification of locality</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'classificationLocality')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">2</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Development of surrounding areas</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'developmentSurroundingAreas')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Development of surrounding areas</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'developmentSurroundingAreas')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">3</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Possibility of frequent flooding / sub-merging</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'floodingPossibility')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Possibility of frequent flooding / sub-merging</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'floodingPossibility')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">4</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Feasibility to the Civic amenities like school, hospital, bus stop, market etc.</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'civicAmenitiesFeasibility')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Feasibility to the Civic amenities like school, hospital, bus stop, market etc.</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'civicAmenitiesFeasibility')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">5</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Level of land with topographical conditions</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'landTopography')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Level of land with topographical conditions</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'landTopography')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">6</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Shape of land</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'shapeOfLand')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Shape of land</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'shapeOfLand')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">7</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Type of use to which it can be put</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'typeOfUse')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Type of use to which it can be put</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'typeOfUse')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">8</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Any usage restriction</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'usageRestriction')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Any usage restriction</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'usageRestriction')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">9</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Is plot in town planning approved layout?</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'townPlanningApproved')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Is plot in town planning approved layout?</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'townPlanningApproved')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">10</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Corner plot or intermittent plot?</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'cornerPlotType')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Corner plot or intermittent plot?</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'cornerPlotType')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">11</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Road facilities</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'roadFacilities')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Road facilities</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'roadFacilities')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">12</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Type of road available at present</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'typeOfRoad')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Type of road available at present</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'typeOfRoad')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">13</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Width of road – is it below 20 ft. or more than 20 ft.</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'roadWidth')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Width of road – is it below 20 ft. or more than 20 ft.</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'roadWidth')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">14</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Is it a land – locked land?</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'lockedLand')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Is it a land – locked land?</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'lockedLand')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">15</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Water potentiality</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'waterPotentiality')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Water potentiality</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'waterPotentiality')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">16</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Underground sewerage system</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'undergroundSewerage')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Underground sewerage system</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'undergroundSewerage')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">17</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Is power supply available at the site?</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'powerSupply')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">Is power supply available at the site?</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; ; font-size: 11pt;">${safeGet(pdfData, 'powerSupply')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;">18</td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; ; font-weight: normal; font-size: 11pt;">Advantage of the site:</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;"></td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; ; font-weight: normal; font-size: 11pt;">Advantage of the site:</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;"></td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;"></td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">1.</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'siteAdvantage1')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">1.</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'siteAdvantage1')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;"></td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">2.</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'siteAdvantage2')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">2.</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'siteAdvantage2')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;"></td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; ; font-weight: normal; font-size: 11pt;">Special remarks:</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;"></td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; ; font-weight: normal; font-size: 11pt;">Special remarks:</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;"></td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;"></td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">1.</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'specialRemarks1')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">1.</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'specialRemarks1')}</td>
           </tr>
-          <tr>
+          <tr style="page-break-inside: avoid; break-inside: avoid;">
             <td style="width: 5%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt; text-align: center;"></td>
-            <td style="width: 40%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">2.</td>
-            <td style="width: 55%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'specialRemarks2')}</td>
+            <td style="width: 45%; border: 1px solid #000; padding: 6px 8px; font-weight: normal; font-size: 11pt;">2.</td>
+            <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; background: #ffffff; font-size: 11pt;">${safeGet(pdfData, 'specialRemarks2')}</td>
           </tr>
         </tbody>
       </table>
@@ -3605,7 +3531,7 @@ export function generateValuationReportHTML(data = {}) {
                    <table class="form-table" style="margin-top: 12px; width: 100%; border-collapse: collapse;">
                    <tbody>
                  
-        <p><b>Part A: Market Value Analysis of Land</b</p>
+        <p style="margin: 0; font-size: 12pt; font-weight: bold;"><b>Part A: Market Value Analysis of Land</b</p>
     
 
                    <tr style="background: #ffffff;">
@@ -3631,9 +3557,9 @@ export function generateValuationReportHTML(data = {}) {
                    </tr>
                    </tbody>
                    </table>
-
+<div></div>
                   <!-- Construction Cost Analysis Table -->
-                  <table class="form-table" style="margin-top: 12px; width: 100%; border-collapse: collapse;">
+                  <table class="form-table" style="margin-top: 15px; width: 100%; border-collapse: collapse;">
                   <tbody>
                         <p><b>Part B: Construction Cost Analysis – as per Actual Measurement --- Details always change according to property</b></p>
                  
@@ -3948,7 +3874,7 @@ export function generateValuationReportHTML(data = {}) {
                   </table>
 
                   <!-- Part F - Services -->
-                  <table class="form-table" style="margin-top: 12px; width: 100%; border-collapse: collapse;">
+                  <table class="form-table" style="margin-top: 15px; width: 100%; border-collapse: collapse;">
                   <tbody>
                   <tr>
                     <td style="width: 5%; border: 1px solid #000; padding: 8px 12px; font-size: 12pt; font-weight: bold; background: #ffffff;color: #4472c4;"></td>
@@ -3987,7 +3913,6 @@ export function generateValuationReportHTML(data = {}) {
                   </tr>
                   </tbody>
                   </table>
-
                   <!-- Total Abstract of the Entire Property -->
                   <table class="form-table" style="margin-top: 12px; width: 100%; border-collapse: collapse;">
                   <tbody>
@@ -4030,9 +3955,9 @@ export function generateValuationReportHTML(data = {}) {
                     <td style="width: 30%; border: 1px solid #000; padding: 6px 8px; font-size: 11pt; text-align: left;"> <span style=";">₹ ${safeGet(pdfData, 'pdfDetails.totalAbstract.totalValue')}</span></td>
                   </tr>
                   <tr>
-                    <td style="width: 50%; border: 1px solid #000; padding: 6px 8px; font-size: 11pt;"></td>
-                    <td style="width: 20%; border: 1px solid #000; padding: 6px 8px; font-size: 11pt; font-weight: bold;">Say</td>
-                    <td style="width: 30%; border: 1px solid #000; padding: 6px 8px; font-size: 11pt; text-align: left;"> <span style=";">₹ ${safeGet(pdfData, 'pdfDetails.totalAbstract.sayValue')}</span></td>
+                    <td style="width: 50%; border: 1px solid #000; border-bottom: 1px solid #000; padding: 6px 8px; font-size: 11pt;"></td>
+                    <td style="width: 20%; border: 1px solid #000; border-bottom: 1px solid #000; padding: 6px 8px; font-size: 11pt; font-weight: bold;">Say</td>
+                    <td style="width: 30%; border: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000; padding: 6px 8px; font-size: 11pt; text-align: left;"> <span style=";">₹ ${safeGet(pdfData, 'pdfDetails.totalAbstract.sayValue')}</span></td>
                   </tr>
                   </tbody>
                   </table>
@@ -4063,13 +3988,13 @@ export function generateValuationReportHTML(data = {}) {
         })()}
 
                   <!-- Market Approach Section -->
-                  <div style="margin-top: 5px; padding: 8px 12px; background: #ffffff;">
+                  <div style="margin-top: 0px; padding: 6px 8px; background: #ffffff; font-weight: normal;">
                     <p style="margin: 0 0 8px 0; font-size: 11pt;"><strong style="color: #0066cc;">Market Approach: (For Land Valuation)</strong></p>
                     <p style="margin: 0; font-size: 11pt; text-align: justify;">Sales Comparison Approach in our valuation report. The Sales Comparison Approach compares recently-sold local similar properties to the subject property. It is a process used to determine the current market value of a property based on recent sales of comparable properties in the area. We have attached the sale instance available online for the similar property herewith.</p>
                   </div>
 
                   <!-- Cost Approach Section -->
-                  <div style="margin-top: 12px; padding: 8px 12px; background: #ffffff;">
+                  <div style="margin-top: 12px; padding: 6px 8px; background: #ffffff; font-weight: normal;">
                     <p style="margin: 0 0 8px 0; font-size: 11pt;"><strong style="color: #0066cc;">Cost Approach (For building valuation):</strong></p>
                     <p style="margin: 0 0 8px 0; font-size: 11pt; text-align: justify;">The cost approach is a real estate valuation method that surmises that the price a buyer should pay for a piece of property should equal the cost to build an equivalent build or replacement cost of the building. In cost approach appraisal, <span style=";">the market price for the property is equal to the cost of land plus cost of construction, less depreciation. Hear we considered depreciated cost of building.</span></p>
                     
@@ -4121,7 +4046,7 @@ export function generateValuationReportHTML(data = {}) {
                     </div>
 
                     <!-- Checklist of Document Table -->
-                    <table class="" style="margin-top: 150px; width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed;">
+                    <table class="" style="margin-top: 20px; width: 100%; border-collapse: collapse; margin-bottom: 20px;font-weight: normal; table-layout: fixed;">
                     <colgroup>
                         <col style="width: 70%;">
                         <col style="width: 15%;">
@@ -4286,9 +4211,8 @@ export function generateValuationReportHTML(data = {}) {
             <td style="width: 15%; border: 1px solid #000; padding: 6px 8px; font-size: 11pt; ;">${getChecklistValue(getFieldValue(data, 'pastValuationRate')).column1}</td>
             <td style="width: 15%; border: 1px solid #000; padding: 6px 8px; font-size: 11pt; ;">${getChecklistValue(getFieldValue(data, 'pastValuationRate')).column2}</td>
         </tr>
-         <!-- SOP Section Added -->
-         <tr>
-             <td colspan="3" style="border-top: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000; border-bottom: none; padding: 8px 12px; font-size: 11pt; font-weight: bold; background: #ffffff;">
+        <tr style="page-break-inside: avoid;">
+             <td colspan="3" style="border: 1px solid #000; padding: 8px 12px; font-size: 11pt; font-weight: bold;">
                  <p style="margin: 0 0 8px 0; font-size: 11pt; font-weight: bold;">STANDARD OPERATING PROCEDURE (SOP)</p>
                  <p style="margin: 0 0 8px 0; font-size: 11pt; font-weight: bold;">1 BANK GUIDELINES FOR VALUER</p>
                  <p style="margin: 0 0 8px 0; font-size: 11pt; font-weight: bold;">2 www.donfinworld.io</p>
@@ -4417,7 +4341,7 @@ export function generateValuationReportHTML(data = {}) {
                   </div>
                    
                   <!-- Declaration - Cum - Undertaking Section -->
-                  <div style="page-break-before: always; margin-top: 70px; padding: 20px; background: #ffffff; font-weight: normal;">
+                  <div style="page-break-before: always; margin-top: 375px; padding: 20px; background: #ffffff; font-weight: normal;">
       <p style="margin: 0 0 12px 0; font-size: 14pt; font-weight: bold; text-align: center;margin-top: 30px;">(Annexure-IV)</p>
     
     <p style="margin: 0 0 20px 0; font-size: 13pt; font-weight: bold; text-align: center; text-decoration: underline;">DECLARATION - CUM - UNDERTAKING</p>
@@ -4441,7 +4365,6 @@ export function generateValuationReportHTML(data = {}) {
         <p style="margin: 8px 0 8px 0; font-size: 11pt; text-align: justify;">
             <strong>e.</strong> Valuation report is submitted in the format as prescribed by the Bank.
         </p>
-       </br>
         <p style="margin: 8px 0 8px 0; font-size: 11pt; text-align: justify;">
             <strong>f.</strong> I have not been de-paneled/delisted by any other bank and in case any such de-panelment by other banks during my empanelment with you, I will inform you within 3 days of such de-panelment.
         </p>
@@ -4504,7 +4427,7 @@ export function generateValuationReportHTML(data = {}) {
         </p>
     </div>
     
-    <table style="width: 100%; border-collapse: collapse; margin: 16px 0 20px 0; font-size: 11pt; background: #ffffff;">
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0 0 0; font-size: 11pt; background: #ffffff;">
         <thead>
             <tr style="background: #f0f0f0;">
                 <td style="border: 1px solid #333; padding: 10px 12px; font-weight: bold; width: 8%; text-align: left; vertical-align: middle;">Sr.No.</td>
@@ -4590,10 +4513,10 @@ export function generateValuationReportHTML(data = {}) {
     <!-- End of Annexure-IV -->
 
                   <!-- Annexure-V: Model Code of Conduct Section - Page Break -->
-                  <div class="page" style="page-break-after: always; margin: 0; padding: 15px; background: #ffffff; min-height: 297mm; font-weight: normal;">
-                    <h2 style="margin: 0 0 8px 0; font-size: 12pt; font-weight: bold; text-align: center; border: none;">(Annexure-V)</h2>
+                  <div class="page" style="page-break-after: always; margin: 0; padding: 5px; background: #ffffff; min-height: 297mm; font-weight: normal;">
+                    <h2 style="margin: 0 0 8px 0; font-size: 13pt; font-weight: bold; text-align: center; border: none;">(Annexure-V)</h2>
                     
-                    <h3 style="margin: 10px 0 8px 0; font-size: 11pt; font-weight: bold; text-align: center;">MODEL CODE OF CONDUCT FOR VALUERS</h3>
+                    <h3 style="margin: 8px 0 8px 0; font-size: 11pt; font-weight: bold; text-align: center;">MODEL CODE OF CONDUCT FOR VALUERS</h3>
                     
                     <h4 style="margin: 8px 0 6px 0; font-size: 11pt; font-weight: bold;">Integrity and Fairness</h4>
                     <ol style="margin: 0 0 10px 25px; padding: 0; font-size: 10.5pt; line-height: 1.4;">
@@ -4613,7 +4536,7 @@ export function generateValuationReportHTML(data = {}) {
                       <li style="margin: 4px 0;">A valuer shall not carry out any instruction of the client insofar as they are incompatible with the requirements of integrity, objectivity and independence.</li>
                       <li style="margin: 4px 0;">A valuer shall clearly state to his client the services that he would be competent to provide and the services for which he would be relying on other valuers or professionals or for which the client can have a separate arrangement with other valuers.</li>
                     </ol>
-                    <h4 style="margin: 8px 0 6px 0; font-size: 11pt; font-weight: bold;">Independence and Disclosure of Interest</h4>     
+                    <h4 style="margin: 3px 0 6px 0; font-size: 11pt; font-weight: bold;">Independence and Disclosure of Interest</h4>     
                     <ol start="12" style="margin: 0 0 10px 25px; padding: 0; font-size: 10.5pt; line-height: 1.4;">
                       <li style="margin: 4px 0;">A valuer shall act with objectivity in his/its professional dealings by ensuring that his/its decisions are made without the presence of any bias, conflict of interest, coercion, or undue influence of any party, whether directly connected to the valuation assignment or not.</li>
                       <li style="margin: 4px 0;">A valuer shall not take up an assignment if he /it or any of his/its relatives or associates is not independent in terms of association to the company.</li>
@@ -4987,37 +4910,7 @@ const convertImagesToBase64 = async (record) => {
 */
 export async function generateRecordPDFOffline(record) {
   try {
-      console.log('📠 Generating PDF (client-side mode)');
-      console.log('📊 Input Record Structure:', {
-          recordKeys: Object.keys(record || {}),
-          rootFields: {
-              uniqueId: record?.uniqueId,
-              bankName: record?.bankName,
-              clientName: record?.clientName,
-              city: record?.city,
-              engineerName: record?.engineerName
-          },
-          pdfDetailsKeys: Object.keys(record?.pdfDetails || {}).slice(0, 20),
-          totalPdfDetailsFields: Object.keys(record?.pdfDetails || {}).length,
-          criticalFields: {
-              postalAddress: record?.pdfDetails?.postalAddress,
-              areaClassification: record?.pdfDetails?.areaClassification,
-              residentialArea: record?.pdfDetails?.residentialArea,
-              commercialArea: record?.pdfDetails?.commercialArea,
-              inspectionDate: record?.pdfDetails?.inspectionDate,
-              agreementForSale: record?.pdfDetails?.agreementForSale
-          },
-          documentsProduced: record?.documentsProduced,
-          agreementForSale_root: record?.agreementForSale,
-          agreementForSale_pdfDetails: record?.pdfDetails?.agreementForSale,
-          // CRITICAL: Log images at start
-          propertyImages_count: Array.isArray(record?.propertyImages) ? record.propertyImages.length : 0,
-          locationImages_count: Array.isArray(record?.locationImages) ? record.locationImages.length : 0,
-          documentPreviews_count: Array.isArray(record?.documentPreviews) ? record.documentPreviews.length : 0,
-          propertyImages_sample: record?.propertyImages?.slice(0, 1),
-          locationImages_sample: record?.locationImages?.slice(0, 1),
-          documentPreviews_sample: record?.documentPreviews?.slice(0, 1)
-      });
+       console.log('📠 Generating PDF (client-side mode)');
 
       // Convert images to base64 for PDF embedding (with timeout limit)
        console.log('🖼️ Converting images to base64...');

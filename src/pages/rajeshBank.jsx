@@ -671,7 +671,73 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
             // Pass user info for authentication
             const dbData = await getRajeshBankById(id, username, role, clientId);
             setValuation(dbData);
-            mapDataToForm(dbData);
+            
+            // Load file's own saved data. Each file is completely independent.
+            // CRITICAL: Always deep copy to prevent shared object references between files
+            let dataToLoad = dbData;
+            const fileSpecificData = localStorage.getItem(`valuation_file_${id}`);
+            
+            if (fileSpecificData) {
+                // File has saved data - use ONLY this file's data (don't look at other files)
+                try {
+                    const parsedFileData = JSON.parse(fileSpecificData);
+                    // Deep copy all nested objects to prevent reference sharing
+                    dataToLoad = {
+                        ...dbData,
+                        ...parsedFileData,
+                        directions: parsedFileData.directions ? JSON.parse(JSON.stringify(parsedFileData.directions)) : (dbData.directions || {}),
+                        coordinates: parsedFileData.coordinates ? JSON.parse(JSON.stringify(parsedFileData.coordinates)) : (dbData.coordinates || {}),
+                        pdfDetails: parsedFileData.pdfDetails ? JSON.parse(JSON.stringify(parsedFileData.pdfDetails)) : (dbData.pdfDetails || {}),
+                        photos: parsedFileData.photos ? JSON.parse(JSON.stringify(parsedFileData.photos)) : (dbData.photos || {}),
+                        areaImages: parsedFileData.areaImages ? JSON.parse(JSON.stringify(parsedFileData.areaImages)) : (dbData.areaImages || {}),
+                        checklist: parsedFileData.checklist ? JSON.parse(JSON.stringify(parsedFileData.checklist)) : (dbData.checklist || {}),
+                        propertyImages: parsedFileData.propertyImages ? JSON.parse(JSON.stringify(parsedFileData.propertyImages)) : (dbData.propertyImages || []),
+                        locationImages: parsedFileData.locationImages ? JSON.parse(JSON.stringify(parsedFileData.locationImages)) : (dbData.locationImages || [])
+                    };
+                    console.log("[rajeshBank.jsx] ✓ Loaded this file's saved data for File ID:", id);
+                } catch (e) {
+                    console.error("Failed to parse file-specific data:", e);
+                }
+            } else {
+                // File has NO saved data yet. Auto-fill from LAST SAVED file (one-time copy at creation)
+                // This data becomes THIS file's independent copy
+                const lastFileId = localStorage.getItem(`last_valuation_file_${username}`);
+                
+                if (lastFileId && lastFileId !== id) {
+                    const previousFileData = localStorage.getItem(`valuation_file_${lastFileId}`);
+                    if (previousFileData) {
+                        try {
+                            const parsedPreviousData = JSON.parse(previousFileData);
+                            // Auto-load previous file data as a ONE-TIME COPY
+                            // Exclude CLIENT ID (must be fresh for each file)
+                            const { clientId: _, clientName: __, ...restPreviousData } = parsedPreviousData;
+                            // Deep copy all nested objects to create independent copies
+                            dataToLoad = {
+                                ...dbData,
+                                ...restPreviousData,
+                                // Keep clientId and clientName from current file (not auto-filled)
+                                clientId: dbData.clientId,
+                                clientName: dbData.clientName,
+                                directions: restPreviousData.directions ? JSON.parse(JSON.stringify(restPreviousData.directions)) : (dbData.directions || {}),
+                                coordinates: restPreviousData.coordinates ? JSON.parse(JSON.stringify(restPreviousData.coordinates)) : (dbData.coordinates || {}),
+                                pdfDetails: restPreviousData.pdfDetails ? JSON.parse(JSON.stringify(restPreviousData.pdfDetails)) : (dbData.pdfDetails || {}),
+                                photos: restPreviousData.photos ? JSON.parse(JSON.stringify(restPreviousData.photos)) : (dbData.photos || {}),
+                                areaImages: restPreviousData.areaImages ? JSON.parse(JSON.stringify(restPreviousData.areaImages)) : (dbData.areaImages || {}),
+                                checklist: restPreviousData.checklist ? JSON.parse(JSON.stringify(restPreviousData.checklist)) : (dbData.checklist || {}),
+                                propertyImages: restPreviousData.propertyImages ? JSON.parse(JSON.stringify(restPreviousData.propertyImages)) : (dbData.propertyImages || []),
+                                locationImages: restPreviousData.locationImages ? JSON.parse(JSON.stringify(restPreviousData.locationImages)) : (dbData.locationImages || [])
+                            };
+                            
+                            console.log("[rajeshBank.jsx] ✓ Auto-filled new file from previous file:", lastFileId, "→", id);
+                            console.log("[rajeshBank.jsx] ✓ This file is now INDEPENDENT - changes won't affect other files");
+                        } catch (e) {
+                            console.error("Failed to auto-fill from previous file:", e);
+                        }
+                    }
+                }
+            }
+            
+            mapDataToForm(dataToLoad);
 
             // Restore property image previews from database
             if (dbData.propertyImages && Array.isArray(dbData.propertyImages)) {
@@ -1425,6 +1491,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
         try {
             dispatch(showLoader("Saving..."));
 
+            // CRITICAL: Deep copy all nested objects to prevent cross-file data sharing
             const payload = {
                 clientId: clientId,
                 uniqueId: formData.uniqueId || id,
@@ -1442,22 +1509,24 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                 engineerName: formData.engineerName || "",
                 notes: formData.notes,
                 elevation: formData.elevation,
-                directions: formData.directions,
-                coordinates: formData.coordinates,
-                propertyImages: formData.propertyImages || [],
-                locationImages: formData.locationImages || [],
+                // Deep copy nested objects to prevent reference sharing
+                directions: formData.directions ? JSON.parse(JSON.stringify(formData.directions)) : {},
+                coordinates: formData.coordinates ? JSON.parse(JSON.stringify(formData.coordinates)) : {},
+                propertyImages: formData.propertyImages ? JSON.parse(JSON.stringify(formData.propertyImages)) : [],
+                locationImages: formData.locationImages ? JSON.parse(JSON.stringify(formData.locationImages)) : [],
                 bankImage: formData.bankImage || null,
-                areaImages: formData.areaImages || {},
+                areaImages: formData.areaImages ? JSON.parse(JSON.stringify(formData.areaImages)) : {},
                 documentPreviews: (formData.documentPreviews || []).map(doc => ({
                     fileName: doc.fileName,
                     size: doc.size,
                     ...(doc.url && { url: doc.url })
                 })),
-                photos: formData.photos || { elevationImages: [], siteImages: [] },
+                photos: formData.photos ? JSON.parse(JSON.stringify(formData.photos)) : { elevationImages: [], siteImages: [] },
                 status: "on-progress",
-                pdfDetails: formData.pdfDetails,
-                checklist: formData.checklist,
-                customFields: customFields,
+                // Deep copy pdfDetails and checklist to prevent cross-file contamination
+                pdfDetails: formData.pdfDetails ? JSON.parse(JSON.stringify(formData.pdfDetails)) : {},
+                checklist: formData.checklist ? JSON.parse(JSON.stringify(formData.checklist)) : {},
+                customFields: customFields ? JSON.parse(JSON.stringify(customFields)) : [],
                 managerFeedback: formData.managerFeedback || "",
                 submittedByManager: formData.submittedByManager || false,
                 lastUpdatedBy: username,
@@ -1542,6 +1611,34 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
 
             // Clear draft before API call
             localStorage.removeItem(`valuation_draft_${username}`);
+            
+            // Save file-specific data to localStorage for future file creation
+            // NOTE: Exclude clientId and clientName - these must be entered fresh for each new file
+            const fileSpecificDataToSave = {
+                bankName: payload.bankName,
+                city: payload.city,
+                mobileNumber: payload.mobileNumber,
+                address: payload.address,
+                payment: payload.payment,
+                collectedBy: payload.collectedBy,
+                dsa: payload.dsa,
+                engineerName: payload.engineerName,
+                notes: payload.notes,
+                elevation: payload.elevation,
+                directions: payload.directions,
+                coordinates: payload.coordinates,
+                pdfDetails: payload.pdfDetails,
+                checklist: payload.checklist,
+                customFields: customFields
+            };
+            localStorage.setItem(`valuation_file_${id}`, JSON.stringify(fileSpecificDataToSave));
+            
+            // Update the last saved file so next NEW file can auto-fill from this one
+            // This is a ONE-TIME copy when next file is created. Files are then independent.
+            localStorage.setItem(`last_valuation_file_${username}`, id);
+            
+            console.log("[rajeshBank.jsx] ✓ Saved file-specific data for ID:", id);
+            console.log("[rajeshBank.jsx] ✓ Next NEW file will auto-fill from this file at creation only");
 
             // Call API to update Rajesh Bank form
             console.log("[rajeshBank.jsx] Payload being sent to API:", {

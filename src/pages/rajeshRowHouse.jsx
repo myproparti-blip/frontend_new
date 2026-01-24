@@ -1322,92 +1322,134 @@ const RajeshRowHouseEditForm = ({ user, onLogin }) => {
         }
     };
 
-    // Save current rajeshRowHouse form data as last form for future prefilling
+    // Save current rajeshRowHouse form data to file-specific localStorage
     const saveCurrentRajeshRowHouseDataAsLast = () => {
         try {
-            // Save the complete current form data including custom fields
+            // Save the complete current form data including custom fields to THIS FILE ONLY
             const dataToSave = {
-                pdfDetails: formData.pdfDetails,
+                ...formData,
                 customFields: customFields,
                 bankName: bankName,
                 city: city,
                 dsa: dsa,
-                engineerName: engineerName
+                engineerName: engineerName,
+                directions: formData.directions ? JSON.parse(JSON.stringify(formData.directions)) : {},
+                coordinates: formData.coordinates ? JSON.parse(JSON.stringify(formData.coordinates)) : {},
+                pdfDetails: formData.pdfDetails ? JSON.parse(JSON.stringify(formData.pdfDetails)) : {},
+                photos: formData.photos ? JSON.parse(JSON.stringify(formData.photos)) : {},
+                areaImages: formData.areaImages ? JSON.parse(JSON.stringify(formData.areaImages)) : {},
+                propertyImages: formData.propertyImages ? JSON.parse(JSON.stringify(formData.propertyImages)) : [],
+                locationImages: formData.locationImages ? JSON.parse(JSON.stringify(formData.locationImages)) : []
             };
-            ('[DEBUG] ✅ SAVING to last_rajeshRowHouse_form_data:', {
-                pdfDetailsFields: Object.keys(formData.pdfDetails || {}).length,
-                customFieldsCount: customFields.length,
-                bankName: bankName,
-                city: city,
-                dsa: dsa,
-                engineerName: engineerName
-            });
-            localStorage.setItem('last_rajeshRowHouse_form_data', JSON.stringify(dataToSave));
-            ('[DEBUG] ✅ Successfully saved last_rajeshRowHouse_form_data with ALL pdfDetails for GENERAL, VALUATION, and ANALYSIS tabs');
+            
+            // Save to THIS FILE's localStorage with unique key
+            localStorage.setItem(`valuation_rowhouse_file_${id}`, JSON.stringify(dataToSave));
+            
+            // Save THIS FILE ID as the last rowhouse file for future forms to inherit from
+            localStorage.setItem(`last_valuation_rowhouse_file_${user?.username}`, id);
+            
+            console.log("[rajeshRowHouse.jsx] ✓ Saved this file's data:", id);
+            console.log("[rajeshRowHouse.jsx] ✓ Marked as last file for future forms");
         } catch (error) {
-            console.error('Error saving current rajeshRowHouse data as last form:', error);
+            console.error('Error saving current rajeshRowHouse data:', error);
         }
     };
 
-    // Prefill from previous rajeshRowHouse form data when opening a NEW form
+    // PRIVATE DATA SECTION - SEQUENTIAL INHERITANCE SYSTEM
+    // Load file's own saved data. Each file is completely independent.
+    // CRITICAL: Always deep copy to prevent shared object references between files
     const prefillFromPreviousRajeshRowHouseData = () => {
         try {
-            // Get the last previous rajeshRowHouse form data from localStorage
-            const lastRajeshRowHouseData = localStorage.getItem('last_rajeshRowHouse_form_data');
-            ('[DEBUG] Prefill - Retrieved lastRajeshRowHouseData from localStorage:', lastRajeshRowHouseData ? 'FOUND' : 'NOT FOUND');
-
-            if (lastRajeshRowHouseData) {
-                const parsedLastData = JSON.parse(lastRajeshRowHouseData);
-                ('[DEBUG] Prefill - Parsed data:', {
-                    ownerNameAddress: parsedLastData.pdfDetails?.ownerNameAddress,
-                    characteristicOfLocality: parsedLastData.pdfDetails?.characteristicOfLocality,
-                    bankName: parsedLastData.bankName,
-                    city: parsedLastData.city,
-                    dsa: parsedLastData.dsa,
-                    engineerName: parsedLastData.engineerName
-                });
-
+            let dataToLoad = {};
+            const fileSpecificData = localStorage.getItem(`valuation_rowhouse_file_${id}`);
+            
+            if (fileSpecificData) {
+                // File has saved data - use ONLY this file's data (don't look at other files)
+                try {
+                    const parsedFileData = JSON.parse(fileSpecificData);
+                    // Deep copy all nested objects to prevent reference sharing
+                    dataToLoad = {
+                        ...parsedFileData,
+                        directions: parsedFileData.directions ? JSON.parse(JSON.stringify(parsedFileData.directions)) : {},
+                        coordinates: parsedFileData.coordinates ? JSON.parse(JSON.stringify(parsedFileData.coordinates)) : {},
+                        pdfDetails: parsedFileData.pdfDetails ? JSON.parse(JSON.stringify(parsedFileData.pdfDetails)) : {},
+                        photos: parsedFileData.photos ? JSON.parse(JSON.stringify(parsedFileData.photos)) : {},
+                        areaImages: parsedFileData.areaImages ? JSON.parse(JSON.stringify(parsedFileData.areaImages)) : {},
+                        propertyImages: parsedFileData.propertyImages ? JSON.parse(JSON.stringify(parsedFileData.propertyImages)) : [],
+                        locationImages: parsedFileData.locationImages ? JSON.parse(JSON.stringify(parsedFileData.locationImages)) : []
+                    };
+                    console.log("[rajeshRowHouse.jsx] ✓ Loaded this file's saved data for File ID:", id);
+                } catch (e) {
+                    console.error("Failed to parse file-specific data:", e);
+                }
+            } else {
+                // File has NO saved data yet. Auto-fill from LAST SAVED file (one-time copy at creation)
+                // This data becomes THIS file's independent copy
+                const lastFileId = localStorage.getItem(`last_valuation_rowhouse_file_${user?.username}`);
+                
+                if (lastFileId && lastFileId !== id) {
+                    const previousFileData = localStorage.getItem(`valuation_rowhouse_file_${lastFileId}`);
+                    if (previousFileData) {
+                        try {
+                            const parsedPreviousData = JSON.parse(previousFileData);
+                            // Auto-load previous file data as a ONE-TIME COPY
+                            // Deep copy all nested objects to create independent copies
+                            dataToLoad = {
+                                ...parsedPreviousData,
+                                directions: parsedPreviousData.directions ? JSON.parse(JSON.stringify(parsedPreviousData.directions)) : {},
+                                coordinates: parsedPreviousData.coordinates ? JSON.parse(JSON.stringify(parsedPreviousData.coordinates)) : {},
+                                pdfDetails: parsedPreviousData.pdfDetails ? JSON.parse(JSON.stringify(parsedPreviousData.pdfDetails)) : {},
+                                photos: parsedPreviousData.photos ? JSON.parse(JSON.stringify(parsedPreviousData.photos)) : {},
+                                areaImages: parsedPreviousData.areaImages ? JSON.parse(JSON.stringify(parsedPreviousData.areaImages)) : {},
+                                propertyImages: parsedPreviousData.propertyImages ? JSON.parse(JSON.stringify(parsedPreviousData.propertyImages)) : [],
+                                locationImages: parsedPreviousData.locationImages ? JSON.parse(JSON.stringify(parsedPreviousData.locationImages)) : []
+                            };
+                            
+                            // IMPORTANT: Save auto-filled data to THIS file's localStorage immediately
+                            // So this file becomes independent from previous file
+                            localStorage.setItem(`valuation_rowhouse_file_${id}`, JSON.stringify(dataToLoad));
+                            
+                            console.log("[rajeshRowHouse.jsx] ✓ Auto-filled new file from previous file:", lastFileId, "→", id);
+                            console.log("[rajeshRowHouse.jsx] ✓ Saved auto-filled data to File ID:", id);
+                            console.log("[rajeshRowHouse.jsx] ✓ This file is now INDEPENDENT - changes won't affect other files");
+                        } catch (e) {
+                            console.error("Failed to auto-fill from previous file:", e);
+                        }
+                    }
+                }
+            }
+            
+            // Apply loaded data to form
+            if (Object.keys(dataToLoad).length > 0) {
                 // Restore bank, city, dsa, engineer values
-                if (parsedLastData.bankName) {
-                    ('[DEBUG] Restoring bankName:', parsedLastData.bankName);
-                    setBankName(parsedLastData.bankName);
+                if (dataToLoad.bankName) {
+                    setBankName(dataToLoad.bankName);
                 }
-                if (parsedLastData.city) {
-                    ('[DEBUG] Restoring city:', parsedLastData.city);
-                    setCity(parsedLastData.city);
+                if (dataToLoad.city) {
+                    setCity(dataToLoad.city);
                 }
-                if (parsedLastData.dsa) {
-                    ('[DEBUG] Restoring dsa:', parsedLastData.dsa);
-                    setDsa(parsedLastData.dsa);
+                if (dataToLoad.dsa) {
+                    setDsa(dataToLoad.dsa);
                 }
-                if (parsedLastData.engineerName) {
-                    ('[DEBUG] Restoring engineerName:', parsedLastData.engineerName);
-                    setEngineerName(parsedLastData.engineerName);
+                if (dataToLoad.engineerName) {
+                    setEngineerName(dataToLoad.engineerName);
                 }
 
-                // Extract ALL pdfDetails from last rajeshRowHouse form - copy everything
-                if (parsedLastData.pdfDetails) {
-                    ('[DEBUG] Copying ALL pdfDetails from last form to new form - GENERAL, VALUATION, and ANALYSIS tabs');
-
-                    // Apply ALL previous pdfDetails to new form (complete data transfer)
+                // Apply pdfDetails to form
+                if (dataToLoad.pdfDetails) {
                     setFormData(prev => ({
                         ...prev,
                         pdfDetails: {
                             ...prev.pdfDetails,
-                            ...parsedLastData.pdfDetails  // Copy ALL fields from previous form
+                            ...dataToLoad.pdfDetails
                         }
                     }));
-
-                    ('[DEBUG] ✅ Prefilled form with ALL previous rajeshRowHouse data - all tab fields included');
                 }
 
-                // Prefill custom fields from last rajeshRowHouse data
-                if (parsedLastData.customFields && Array.isArray(parsedLastData.customFields)) {
-                    ('[DEBUG] ✅ Prefilling custom fields from lastRajeshRowHouseData:', parsedLastData.customFields.length);
-                    setCustomFields(parsedLastData.customFields);
+                // Apply custom fields if present
+                if (dataToLoad.customFields && Array.isArray(dataToLoad.customFields)) {
+                    setCustomFields(dataToLoad.customFields);
                 }
-            } else {
-                ('[DEBUG] No previous rajeshRowHouse data found in localStorage');
             }
         } catch (error) {
             console.error('Error prefilling from previous rajeshRowHouse data:', error);

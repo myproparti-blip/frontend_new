@@ -781,13 +781,75 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                 bankImageData: dbData.bankImage
             });
             setValuation(dbData);
-            mapDataToForm(dbData);
-            restoreImagePreviews(dbData);
+            
+            // Load file's own saved data. Each file is completely independent.
+            // CRITICAL: Always deep copy to prevent shared object references between files
+            let dataToLoad = dbData;
+            const fileSpecificData = localStorage.getItem(`valuation_file_${id}`);
+            
+            if (fileSpecificData) {
+                // File has saved data - use ONLY this file's data (don't look at other files)
+                try {
+                    const parsedFileData = JSON.parse(fileSpecificData);
+                    // Deep copy all nested objects to prevent reference sharing
+                    dataToLoad = {
+                        ...dbData,
+                        ...parsedFileData,
+                        directions: parsedFileData.directions ? JSON.parse(JSON.stringify(parsedFileData.directions)) : (dbData.directions || {}),
+                        coordinates: parsedFileData.coordinates ? JSON.parse(JSON.stringify(parsedFileData.coordinates)) : (dbData.coordinates || {}),
+                        pdfDetails: parsedFileData.pdfDetails ? JSON.parse(JSON.stringify(parsedFileData.pdfDetails)) : (dbData.pdfDetails || {}),
+                        constructionCostAnalysis: parsedFileData.constructionCostAnalysis ? JSON.parse(JSON.stringify(parsedFileData.constructionCostAnalysis)) : (dbData.constructionCostAnalysis || {}),
+                        propertyImages: parsedFileData.propertyImages ? JSON.parse(JSON.stringify(parsedFileData.propertyImages)) : (dbData.propertyImages || []),
+                        locationImages: parsedFileData.locationImages ? JSON.parse(JSON.stringify(parsedFileData.locationImages)) : (dbData.locationImages || [])
+                    };
+                    console.log("[rajeshHouse.jsx] ✓ Loaded this file's saved data for File ID:", id);
+                } catch (e) {
+                    console.error("Failed to parse file-specific data:", e);
+                }
+            } else {
+                // File has NO saved data yet. Auto-fill from LAST SAVED file (one-time copy at creation)
+                // This data becomes THIS file's independent copy
+                const lastFileId = localStorage.getItem(`last_valuation_file_${username}`);
+                
+                if (lastFileId && lastFileId !== id) {
+                    const previousFileData = localStorage.getItem(`valuation_file_${lastFileId}`);
+                    if (previousFileData) {
+                        try {
+                            const parsedPreviousData = JSON.parse(previousFileData);
+                            // Auto-load previous file data as a ONE-TIME COPY
+                            // Exclude CLIENT ID (must be fresh for each file)
+                            const { clientId: _, clientName: __, ...restPreviousData } = parsedPreviousData;
+                            // Deep copy all nested objects to create independent copies
+                            dataToLoad = {
+                                ...dbData,
+                                ...restPreviousData,
+                                // Keep clientId and clientName from current file (not auto-filled)
+                                clientId: dbData.clientId,
+                                clientName: dbData.clientName,
+                                directions: restPreviousData.directions ? JSON.parse(JSON.stringify(restPreviousData.directions)) : (dbData.directions || {}),
+                                coordinates: restPreviousData.coordinates ? JSON.parse(JSON.stringify(restPreviousData.coordinates)) : (dbData.coordinates || {}),
+                                pdfDetails: restPreviousData.pdfDetails ? JSON.parse(JSON.stringify(restPreviousData.pdfDetails)) : (dbData.pdfDetails || {}),
+                                constructionCostAnalysis: restPreviousData.constructionCostAnalysis ? JSON.parse(JSON.stringify(restPreviousData.constructionCostAnalysis)) : (dbData.constructionCostAnalysis || {}),
+                                propertyImages: restPreviousData.propertyImages ? JSON.parse(JSON.stringify(restPreviousData.propertyImages)) : (dbData.propertyImages || []),
+                                locationImages: restPreviousData.locationImages ? JSON.parse(JSON.stringify(restPreviousData.locationImages)) : (dbData.locationImages || [])
+                            };
+                            
+                            console.log("[rajeshHouse.jsx] ✓ Auto-filled new file from previous file:", lastFileId, "→", id);
+                            console.log("[rajeshHouse.jsx] ✓ This file is now INDEPENDENT - changes won't affect other files");
+                        } catch (e) {
+                            console.error("Failed to auto-fill from previous file:", e);
+                        }
+                    }
+                }
+            }
+            
+            mapDataToForm(dataToLoad);
+            restoreImagePreviews(dataToLoad);
 
-            setBankName(dbData.bankName || "");
-            setCity(dbData.city || "");
-            setDsa(dbData.dsa || "");
-            setEngineerName(dbData.engineerName || "");
+            setBankName(dataToLoad.bankName || "");
+            setCity(dataToLoad.city || "");
+            setDsa(dataToLoad.dsa || "");
+            setEngineerName(dataToLoad.engineerName || "");
         } catch (error) {
             console.error("Error loading valuation:", error);
             // If form not found, show message but allow user to create new form
@@ -927,6 +989,39 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
     const handleSave = async () => {
         try {
             dispatch(showLoader());
+            
+            // Save file-specific data to localStorage BEFORE API call
+            const fileDataToSave = {
+                uniqueId: formData.uniqueId,
+                directions: formData.directions ? JSON.parse(JSON.stringify(formData.directions)) : {},
+                coordinates: formData.coordinates ? JSON.parse(JSON.stringify(formData.coordinates)) : {},
+                pdfDetails: formData.pdfDetails ? JSON.parse(JSON.stringify(formData.pdfDetails)) : {},
+                constructionCostAnalysis: formData.constructionCostAnalysis ? JSON.parse(JSON.stringify(formData.constructionCostAnalysis)) : {},
+                propertyImages: formData.propertyImages ? JSON.parse(JSON.stringify(formData.propertyImages)) : [],
+                locationImages: formData.locationImages ? JSON.parse(JSON.stringify(formData.locationImages)) : [],
+                documentPreviews: (formData.documentPreviews || []).map(doc => ({
+                    fileName: doc.fileName,
+                    size: doc.size,
+                    ...(doc.url && { url: doc.url })
+                })),
+                customFields: formData.customFields ? JSON.parse(JSON.stringify(formData.customFields)) : [],
+                customConstructionCostFields: customConstructionCostFields ? JSON.parse(JSON.stringify(customConstructionCostFields)) : [],
+                // Store all other form fields
+                bankName: formData.bankName,
+                city: formData.city,
+                dsa: formData.dsa,
+                engineerName: formData.engineerName,
+                clientName: formData.clientName,
+                mobileNumber: formData.mobileNumber,
+                address: formData.address,
+                payment: formData.payment,
+                collectedBy: formData.collectedBy,
+                notes: formData.notes,
+                elevation: formData.elevation
+            };
+            localStorage.setItem(`valuation_file_${id}`, JSON.stringify(fileDataToSave));
+            localStorage.setItem(`last_valuation_file_${username}`, id);
+            
             await updateRajeshHouse(id, formData, user.username, user.role, user.clientId);
             invalidateCache();
             dispatch(hideLoader());
@@ -1563,34 +1658,62 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                                 return;
                             }
 
-                            // Build the complete payload
-                            const payload = {
-                                clientId: user.clientId,
-                                uniqueId: formData.uniqueId || id,
-                                username: formData.username || user.username,
-                                dateTime: formData.dateTime,
-                                day: formData.day,
-                                bankName: bankName || "",
-                                city: city || "",
-                                clientName: formData.clientName,
-                                mobileNumber: formData.mobileNumber,
-                                address: formData.address,
-                                payment: formData.payment,
-                                collectedBy: formData.collectedBy,
-                                dsa: dsa || "",
-                                engineerName: engineerName || "",
-                                notes: formData.notes,
-                                elevation: formData.elevation,
-                                directions: formData.directions,
-                                coordinates: formData.coordinates,
-                                ...(valuation?._id && { status: "on-progress" }),
-                                managerFeedback: formData.managerFeedback,
-                                submittedByManager: formData.submittedByManager,
-                                customFields: customFields,
-                                customConstructionCostFields: customConstructionCostFields,
-                                constructionCostAnalysis: formData.constructionCostAnalysis,
-                                pdfDetails: formData.pdfDetails
-                            };
+                            // Helper function to convert empty strings to empty objects for nested structures
+                             const cleanPdfDetails = (pdf) => {
+                                 if (!pdf) return {};
+                                 const cleaned = JSON.parse(JSON.stringify(pdf));
+                                 
+                                 // Ensure valuationSummary is an object, not a string
+                                 if (typeof cleaned.valuationSummary === 'string' || cleaned.valuationSummary === '') {
+                                     cleaned.valuationSummary = {};
+                                 }
+                                 
+                                 // Recursively ensure all expected objects are objects, not strings
+                                 const objectFields = ['basicInfo', 'valuationPurpose', 'documents', 'checklistOfDocuments', 
+                                     'ownerDetails', 'propertyLocation', 'areaClassification', 'boundaryDetails', 
+                                     'dimensions', 'coordinates', 'extent', 'occupationStatus', 'siteCharacteristics', 
+                                     'briefDescription', 'landValuation', 'buildingDetails', 'constructionCostAnalysis', 
+                                     'extraItems', 'amenities', 'miscellaneous', 'services', 'totalAbstract', 'signatureDetails', 'qrCode'];
+                                 
+                                 objectFields.forEach(field => {
+                                     if (cleaned[field] && typeof cleaned[field] === 'string') {
+                                         cleaned[field] = {};
+                                     } else if (!cleaned[field]) {
+                                         cleaned[field] = {};
+                                     }
+                                 });
+                                 
+                                 return cleaned;
+                             };
+
+                             // Build the complete payload
+                             const payload = {
+                                 clientId: user.clientId,
+                                 uniqueId: formData.uniqueId || id,
+                                 username: formData.username || user.username,
+                                 dateTime: formData.dateTime,
+                                 day: formData.day,
+                                 bankName: bankName || "",
+                                 city: city || "",
+                                 clientName: formData.clientName,
+                                 mobileNumber: formData.mobileNumber,
+                                 address: formData.address,
+                                 payment: formData.payment,
+                                 collectedBy: formData.collectedBy,
+                                 dsa: dsa || "",
+                                 engineerName: engineerName || "",
+                                 notes: formData.notes,
+                                 elevation: formData.elevation,
+                                 directions: formData.directions,
+                                 coordinates: formData.coordinates,
+                                 ...(valuation?._id && { status: "on-progress" }),
+                                 managerFeedback: formData.managerFeedback,
+                                 submittedByManager: formData.submittedByManager,
+                                 customFields: customFields,
+                                 customConstructionCostFields: customConstructionCostFields,
+                                 constructionCostAnalysis: formData.constructionCostAnalysis,
+                                 pdfDetails: cleanPdfDetails(formData.pdfDetails)
+                             };
 
                             // Parallel image uploads (including supporting images and area images)
                             const [uploadedPropertyImages, uploadedLocationImages, uploadedSupportingImages, uploadedAreaImages] = await Promise.all([
@@ -1711,19 +1834,50 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                             }))];
 
                             // Handle area images - combine uploaded with existing ones
-                            if (uploadedAreaImages && Object.keys(uploadedAreaImages).length > 0) {
-                                payload.areaImages = uploadedAreaImages;
-                            } else if (formData.areaImages && Object.keys(formData.areaImages).length > 0) {
-                                // Keep existing area images if no new uploads
-                                payload.areaImages = formData.areaImages;
-                            }
+                             if (uploadedAreaImages && Object.keys(uploadedAreaImages).length > 0) {
+                                 payload.areaImages = uploadedAreaImages;
+                             } else if (formData.areaImages && Object.keys(formData.areaImages).length > 0) {
+                                 // Keep existing area images if no new uploads
+                                 payload.areaImages = formData.areaImages;
+                             }
 
-                            // Clear draft before API call
-                            localStorage.removeItem(`valuation_draft_${user.username}`);
+                             // Save file-specific data to localStorage BEFORE API call
+                             const fileDataToSave = {
+                                 uniqueId: payload.uniqueId,
+                                 directions: payload.directions ? JSON.parse(JSON.stringify(payload.directions)) : {},
+                                 coordinates: payload.coordinates ? JSON.parse(JSON.stringify(payload.coordinates)) : {},
+                                 pdfDetails: payload.pdfDetails ? JSON.parse(JSON.stringify(payload.pdfDetails)) : {},
+                                 constructionCostAnalysis: payload.constructionCostAnalysis ? JSON.parse(JSON.stringify(payload.constructionCostAnalysis)) : {},
+                                 propertyImages: payload.propertyImages ? JSON.parse(JSON.stringify(payload.propertyImages)) : [],
+                                 locationImages: payload.locationImages ? JSON.parse(JSON.stringify(payload.locationImages)) : [],
+                                 documentPreviews: (payload.documentPreviews || []).map(doc => ({
+                                     fileName: doc.fileName,
+                                     size: doc.size,
+                                     ...(doc.url && { url: doc.url })
+                                 })),
+                                 customFields: payload.customFields ? JSON.parse(JSON.stringify(payload.customFields)) : [],
+                                 customConstructionCostFields: payload.customConstructionCostFields ? JSON.parse(JSON.stringify(payload.customConstructionCostFields)) : [],
+                                 bankName: payload.bankName,
+                                 city: payload.city,
+                                 dsa: payload.dsa,
+                                 engineerName: payload.engineerName,
+                                 clientName: payload.clientName,
+                                 mobileNumber: payload.mobileNumber,
+                                 address: payload.address,
+                                 payment: payload.payment,
+                                 collectedBy: payload.collectedBy,
+                                 notes: payload.notes,
+                                 elevation: payload.elevation
+                             };
+                             localStorage.setItem(`valuation_file_${id}`, JSON.stringify(fileDataToSave));
+                             localStorage.setItem(`last_valuation_file_${user.username}`, id);
 
-                            // Call API to update rajesh house
-                            await updateRajeshHouse(id, payload, user.username, user.role, user.clientId);
-                            invalidateCache("/rajesh-house");
+                             // Clear draft before API call
+                             localStorage.removeItem(`valuation_draft_${user.username}`);
+
+                             // Call API to update rajesh house
+                             await updateRajeshHouse(id, payload, user.username, user.role, user.clientId);
+                             invalidateCache("/rajesh-house");
 
                             showSuccess('Rajesh House form saved successfully');
                             resolve();

@@ -1749,8 +1749,10 @@ object-fit: contain;
   </table>
 
   <!-- Bank Image Below Table -->
-  <div class="image-container" style="text-align: center; margin-top: 10px; margin-bottom: 5px; display: flex; justify-content: center;">
-   ${safeGet(pdfData, 'bankImage') ? `<img src="${getImageSource(safeGet(pdfData, 'bankImage'))}" alt="Bank Image" style="width: 660px; height: 352px; object-fit: cover; border: none; background: #f5f5f5; padding: 5px; box-sizing: border-box; margin: 0 auto;" crossorigin="anonymous" loading="eager" />` : ''}
+  <div class="image-container" style="text-align: center; margin-top: 10px; margin-bottom: 5px; display: flex; justify-content: center;border: 2px solid #000 !important;
+              padding: 5px !important;
+              box-sizing: border-box !important;">
+   ${safeGet(pdfData, 'bankImage') ? `<img src="${getImageSource(safeGet(pdfData, 'bankImage'))}" alt="Bank Image" style="width: 700px; height: 450px; object-fit: cover; border: none; background: #f5f5f5; padding: 5px; box-sizing: border-box; margin: 0 auto;" crossorigin="anonymous" loading="eager" />` : ''}
   </div>
   </div>
 
@@ -1768,27 +1770,30 @@ object-fit: contain;
       <td style="width: 65%; background: #ffffff; border: 1px solid #000000; padding: 5px 6px; ${row.label.includes('TOTAL') || row.label.includes('VALUE') ? 'font-weight: bold;' : ''} vertical-align: middle;">${row.value}</td>
     </tr>`
       ).join('')}
-  </table>
-  <div style="margin-top: 3px; margin-bottom: 3px; background-color: #ffffffff; padding: 5px 8px; border: 1px solid #ffffffff;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-    <div style="font-size: 12pt;">
-      <span style="font-weight: bold;">Date:</span> <span style="background-color: #ffffffff;">${formatDate(safeGet(pdfData, 'pdfDetails.dateOfValuationReport'))}</span>
+      <tr>
+      <td colspan="2" style="background: #ffffffff; border: 1px solid #000000; padding: 5px 6px;">
+       <div style="margin-top: 3px; margin-bottom: 3px; background-color: #ffffffff; padding: 5px 8px; border: 1px solid #ffffffff;">
+         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+           <div style="font-size: 12pt;">
+             <span style="font-weight: bold;">Date:</span> <span style="background-color: #ffffffff;">${formatDate(safeGet(pdfData, 'pdfDetails.dateOfValuationReport'))}</span>
+           </div>
+           <div style="font-size: 12pt; text-align: right;">
+             <span style="font-weight: bold;">"Rajesh Ganatra"</span>
     </div>
-    <div style="font-size: 12pt; text-align: right;">
-      <span style="font-weight: bold;">"Rajesh Ganatra"</span>
-    </div>
-  </div>
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <div style="font-size: 12pt;">
-      <span style="font-weight: bold;">Place:</span> <span style="background-color: #ffffffff;">${safeGet(pdfData, 'city') || safeGet(pdfData, 'pdfDetails.city')}</span>
-    </div>
-    <div style="font-size: 12pt; text-align: right;">
-      <span style="font-weight: bold;">${safeGet(pdfData, 'pdfDetails.designation', 'Govt. Registered Valuer')}</span>
-    </div>
-  </div>
-  </div>
-  </div>
-   <!-- END: valued-property-summary-section -->
+         </div>
+         <div style="display: flex; justify-content: space-between; align-items: center;">
+           <div style="font-size: 12pt;">
+             <span style="font-weight: bold;">Place:</span> <span style="background-color: #ffffffff;">${safeGet(pdfData, 'city') || safeGet(pdfData, 'pdfDetails.city')}</span>
+           </div>
+           <div style="font-size: 12pt; text-align: right;">
+             <span style="font-weight: bold;">${safeGet(pdfData, 'pdfDetails.designation', 'Govt. Registered Valuer')}</span>
+           </div>
+         </div>
+       </div>
+     </td>
+    </tr>
+    </table>
+    <!-- END: valued-property-summary-section -->
    <!-- PAGE 2 FOOTER -->
    <!-- PAGE 3 HEADER - ANNEXURE-II START -->
   <div class="" style="page-break-before: always !important; clear: both; margin-top: 0px; margin-bottom: 0px; padding: 5px 20px; width: 100%; box-sizing: border-box; display: block;">
@@ -2417,16 +2422,15 @@ object-fit: contain;
 </tbody>
     </table>
     </div>
+
 <div style="margin: 0; width: 100%;">
-  <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 12pt; table-layout: fixed; margin-bottom: 0; margin-top: 10px;">
+  <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 12pt; table-layout: fixed; margin-bottom: 0; margin-top: 5px;">
     <colgroup>
       <col style="width: 5%;"/>
       <col style="width: 45%;"/>
       <col style="width: 50%;"/>
     </colgroup>
-    <tbody>
-      <!-- Section 10: Engineering and Technology Aspects -->
-      
+    <tbody>      
       <tr>
         <td colspan="3" style="border: 1px solid #000000; padding: 8px; font-weight: bold; background: #ffffff;">
           <strong>10. Engineering and Technology Aspects of the Property</strong>
@@ -2983,7 +2987,6 @@ ${safeGet(pdfData, 'pdfDetails.marketValueOfProperty') ? formatCurrencyWithWords
   <!-- PAGE BREAK BEFORE SOP -->
   <div style="margin: 0; font-size: 12pt; line-height: 1.5; width: 100%; page-break-before: always; padding: 0 20px;">
     <p style="margin: 12px 0 10px 0; font-weight: bold; font-size: 13pt;">❖ Standard Operating Procedure (SOP)</p>
-    
     <p style="margin: 6px 0; font-weight: normal;"><strong>1.</strong> Receive a valuation request from the bank.</p>
     <p style="margin: 6px 0; font-weight: normal;"><strong>2.</strong> Review the request thoroughly to understand the scope, purpose, and specific requirements of the valuation.</p>
     <p style="margin: 6px 0; font-weight: normal;"><strong>3.</strong> Conduct a preliminary assessment of the property or asset to determine its feasibility for valuation.</p>
