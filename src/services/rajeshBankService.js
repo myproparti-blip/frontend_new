@@ -230,11 +230,11 @@ export const deleteMultipleRajeshBank = async (ids) => {
  */
 export const getLastSubmittedRajeshBank = async () => {
   try {
-    console.log("[getLastSubmittedRajeshBank] Calling API endpoint:", `${API_BASE_URL}/rajesh-bank/last-form/prefill`);
+    ("[getLastSubmittedRajeshBank] Calling API endpoint:", `${API_BASE_URL}/rajesh-bank/last-form/prefill`);
     
     const response = await api.get(`${API_BASE_URL}/rajesh-bank/last-form/prefill`);
 
-    console.log("[getLastSubmittedRajeshBank] API Response:", {
+    ("[getLastSubmittedRajeshBank] API Response:", {
       success: response.data.success,
       message: response.data.message,
       hasData: !!response.data.data,

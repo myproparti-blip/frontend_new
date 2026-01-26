@@ -236,10 +236,10 @@ export const deleteMultipleRajeshRowHouse = async (ids) => {
  */
 export const getLastSubmittedRajeshRowHouse = async () => {
   try {
-    console.log("[getLastSubmittedRajeshRowHouse] Calling API endpoint:", `${API_BASE_URL}/rajesh-row-house/last-form/prefill`);
+    ("[getLastSubmittedRajeshRowHouse] Calling API endpoint:", `${API_BASE_URL}/rajesh-row-house/last-form/prefill`);
     
     const response = await api.get(`${API_BASE_URL}/rajesh-row-house/last-form/prefill`);
-    console.log("[getLastSubmittedRajeshRowHouse] API Response:", {
+    ("[getLastSubmittedRajeshRowHouse] API Response:", {
       success: response.data.success,
       message: response.data.message,
       hasData: !!response.data.data,

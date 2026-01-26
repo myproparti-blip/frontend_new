@@ -544,30 +544,30 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
     // Log when formData loads to verify data binding
     useEffect(() => {
         if (formData?.constructionCostAnalysis && Object.keys(formData.constructionCostAnalysis).length > 0) {
-            console.log('[rajeshHouse.jsx] Construction Cost Analysis data loaded:', formData.constructionCostAnalysis);
+            ('[rajeshHouse.jsx] Construction Cost Analysis data loaded:', formData.constructionCostAnalysis);
         }
     }, [formData?.constructionCostAnalysis]);
 
     // Monitor landValuation data to ensure it's being loaded properly
     useEffect(() => {
         if (formData?.pdfDetails?.landValuation) {
-            console.log('[rajeshHouse.jsx] Land Valuation (Part A) data loaded:', formData.pdfDetails.landValuation);
+            ('[rajeshHouse.jsx] Land Valuation (Part A) data loaded:', formData.pdfDetails.landValuation);
         }
     }, [formData?.pdfDetails?.landValuation]);
 
     // Monitor area images to ensure they're properly loaded on initial page load
     useEffect(() => {
         if (formData?.areaImages && Object.keys(formData.areaImages).length > 0) {
-            console.log('[rajeshHouse.jsx] Area Images data loaded:', Object.keys(formData.areaImages));
+            ('[rajeshHouse.jsx] Area Images data loaded:', Object.keys(formData.areaImages));
         }
     }, [formData?.areaImages]);
 
     // Monitor bank image preview state
     useEffect(() => {
         if (bankImagePreview) {
-            console.log('[rajeshHouse.jsx] Bank image preview state updated:', bankImagePreview);
+            ('[rajeshHouse.jsx] Bank image preview state updated:', bankImagePreview);
         } else {
-            console.log('[rajeshHouse.jsx] Bank image preview is null/empty');
+            ('[rajeshHouse.jsx] Bank image preview is null/empty');
         }
     }, [bankImagePreview]);
 
@@ -693,7 +693,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
 
         // Restore area images from database - NORMALIZE STRUCTURE
         if (data.areaImages && typeof data.areaImages === 'object' && Object.keys(data.areaImages).length > 0) {
-            console.log('[rajeshHouse.jsx] Restoring area images:', Object.keys(data.areaImages));
+            ('[rajeshHouse.jsx] Restoring area images:', Object.keys(data.areaImages));
             // Normalize area images to ensure they have proper structure
             const normalizedAreaImages = {};
             Object.keys(data.areaImages).forEach(area => {
@@ -724,23 +724,23 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                 ...prev,
                 areaImages: normalizedAreaImages
             }));
-            console.log('[rajeshHouse.jsx] Area images restored:', normalizedAreaImages);
+            ('[rajeshHouse.jsx] Area images restored:', normalizedAreaImages);
         }
 
         // Restore bank image from database
         if (data.bankImage && typeof data.bankImage === 'object') {
-            console.log('[rajeshHouse.jsx] Restoring bank image - data:', data.bankImage);
+            ('[rajeshHouse.jsx] Restoring bank image - data:', data.bankImage);
             let previewUrl = '';
             if (data.bankImage.url) {
                 previewUrl = data.bankImage.url;
-                console.log('[rajeshHouse.jsx] Bank image URL from url field:', previewUrl);
+                ('[rajeshHouse.jsx] Bank image URL from url field:', previewUrl);
             } else if (data.bankImage.path) {
                 const fileName = data.bankImage.path.split('\\').pop() || data.bankImage.path.split('/').pop();
                 previewUrl = `/api/uploads/${fileName}`;
-                console.log('[rajeshHouse.jsx] Bank image URL from path:', previewUrl);
+                ('[rajeshHouse.jsx] Bank image URL from path:', previewUrl);
             } else if (data.bankImage.fileName) {
                 previewUrl = `/api/uploads/${data.bankImage.fileName}`;
-                console.log('[rajeshHouse.jsx] Bank image URL from fileName:', previewUrl);
+                ('[rajeshHouse.jsx] Bank image URL from fileName:', previewUrl);
             }
             if (previewUrl) {
                 const bankImageObj = {
@@ -748,14 +748,14 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                     name: data.bankImage.name || 'Bank Image',
                     path: data.bankImage.path || data.bankImage.fileName || ''
                 };
-                console.log('[rajeshHouse.jsx] Bank image preview object:', bankImageObj);
+                ('[rajeshHouse.jsx] Bank image preview object:', bankImageObj);
                 setBankImagePreview(bankImageObj);
-                console.log('[rajeshHouse.jsx] Bank image preview set successfully');
+                ('[rajeshHouse.jsx] Bank image preview set successfully');
             } else {
-                console.log('[rajeshHouse.jsx] No preview URL found for bank image');
+                ('[rajeshHouse.jsx] No preview URL found for bank image');
             }
         } else {
-            console.log('[rajeshHouse.jsx] No bank image data found - data.bankImage:', data.bankImage);
+            ('[rajeshHouse.jsx] No bank image data found - data.bankImage:', data.bankImage);
         }
     };
 
@@ -774,7 +774,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
         try {
             // Pass user info for authentication
             const dbData = await getRajeshHouseById(id, username, role, clientId);
-            console.log('[rajeshHouse.jsx] Loaded data from API:', {
+            ('[rajeshHouse.jsx] Loaded data from API:', {
                 hasAreaImages: !!dbData.areaImages,
                 areaImagesKeys: dbData.areaImages ? Object.keys(dbData.areaImages) : [],
                 hasBankImage: !!dbData.bankImage,
@@ -793,12 +793,12 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
             // If form not found (new form), try to autofill from last submitted form
             if (error.message && error.message.includes("not found")) {
                 try {
-                     console.log("[loadValuation] Form not found, attempting autofill from last form...");
+                     ("[loadValuation] Form not found, attempting autofill from last form...");
                     
                     // Fetch last submitted form for autofilling valuation tab data only
                     const lastForm = await getLastSubmittedRajeshHouse();
                     
-                   console.log("[loadValuation] Last form fetched:", {
+                   ("[loadValuation] Last form fetched:", {
                         exists: !!lastForm,
                         hasPdfDetails: lastForm && !!lastForm.pdfDetails,
                         pdfDetailsKeys: lastForm && lastForm.pdfDetails ? Object.keys(lastForm.pdfDetails).length : 0
@@ -815,7 +815,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                         };
                         setValuation(autofilledFormData);
                         mapDataToForm(autofilledFormData);
-                         console.log("[loadValuation] ✅ Form autofilled with last valuation data");
+                         ("[loadValuation] ✅ Form autofilled with last valuation data");
                         showSuccess("New form created with last valuation data autofilled");
                         return;
                         } else {
@@ -880,7 +880,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                 });
             }
 
-            console.log('[rajeshHouse.jsx] mapDataToForm - constructionCostAnalysis:', mergedConstructionCostAnalysis);
+            ('[rajeshHouse.jsx] mapDataToForm - constructionCostAnalysis:', mergedConstructionCostAnalysis);
 
             return {
                 ...prev,
@@ -1922,7 +1922,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
         try {
             dispatch(showLoader("Saving..."));
 
-            console.log('[rajeshHouse.jsx] onFinish - landValuation data:', formData.pdfDetails?.landValuation);
+            ('[rajeshHouse.jsx] onFinish - landValuation data:', formData.pdfDetails?.landValuation);
 
             const payload = {
                 clientId: clientId,

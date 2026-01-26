@@ -378,18 +378,18 @@ const FormPage = ({ user, onLogin }) => {
             // Route forms based on selectedForm or bank name
             let response;
             if (selectedForm === 'bomFlat' || isBofMaharashtraBank(finalBankName)) {
-                console.log("[onFinish] Creating BOF Maharashtra form:", { finalBankName, selectedForm });
+                ("[onFinish] Creating BOF Maharashtra form:", { finalBankName, selectedForm });
                 response = await createBofMaharashtra(payload);
             } else if (selectedForm === 'ubiApf') {
-                console.log("[onFinish] Creating UBI APF form:", { finalBankName, selectedForm });
+                ("[onFinish] Creating UBI APF form:", { finalBankName, selectedForm });
                 response = await createUbiApfForm(payload);
             } else if (selectedForm === 'rajeshhouse') {
-                console.log("[onFinish] Creating Rajesh House form:", { finalBankName, selectedForm });
+                ("[onFinish] Creating Rajesh House form:", { finalBankName, selectedForm });
                 try {
                     const lastForm = await getLastSubmittedRajeshHouse();
                     if (lastForm && lastForm.pdfDetails) {
                         payload.pdfDetails = lastForm.pdfDetails;
-                        console.log("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
+                        ("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
                     }
                 } catch (autofillError) {
                     console.warn("[onFinish] Could not autofill pdfDetails:", autofillError.message);
@@ -397,14 +397,14 @@ const FormPage = ({ user, onLogin }) => {
                 }
                 response = await createRajeshHouse(payload);
             } else if (selectedForm === 'rajeshbank') {
-                console.log("[onFinish] Creating Rajesh Bank form:", { finalBankName, selectedForm });
+                ("[onFinish] Creating Rajesh Bank form:", { finalBankName, selectedForm });
                 
                 // Fetch last submitted form's pdfDetails for autofilling
                 try {
                     const lastForm = await getLastSubmittedRajeshBank();
                     if (lastForm && lastForm.pdfDetails) {
                         payload.pdfDetails = lastForm.pdfDetails;
-                        console.log("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
+                        ("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
                     }
                 } catch (autofillError) {
                     console.warn("[onFinish] Could not autofill pdfDetails:", autofillError.message);
@@ -413,12 +413,12 @@ const FormPage = ({ user, onLogin }) => {
                 
                 response = await createRajeshBank(payload);
             } else if (selectedForm === 'rajeshrowhouse') {
-                console.log("[onFinish] Creating Rajesh Row House form:", { finalBankName, selectedForm });
+                ("[onFinish] Creating Rajesh Row House form:", { finalBankName, selectedForm });
                 try {
                     const lastForm = await getLastSubmittedRajeshRowHouse();
                     if (lastForm && lastForm.pdfDetails) {
                         payload.pdfDetails = lastForm.pdfDetails;
-                        console.log("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
+                        ("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
                     }
                 } catch (autofillError) {
                     console.warn("[onFinish] Could not autofill pdfDetails:", autofillError.message);
@@ -427,13 +427,13 @@ const FormPage = ({ user, onLogin }) => {
                 response = await createRajeshRowHouse(payload);
             } 
             else if (selectedForm === 'rajeshflat') {
-               console.log("[onFinish] Creating Rajesh Flat form:", { finalBankName, selectedForm });
+               ("[onFinish] Creating Rajesh Flat form:", { finalBankName, selectedForm });
                // Fetch last submitted form's pdfDetails for autofilling
                 try {
                     const lastForm = await getLastSubmittedRajeshFlat();
                     if (lastForm && lastForm.pdfDetails) {
                         payload.pdfDetails = lastForm.pdfDetails;
-                        console.log("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
+                        ("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
                     }
                 } catch (autofillError) {
                     console.warn("[onFinish] Could not autofill pdfDetails:", autofillError.message);
@@ -443,15 +443,15 @@ const FormPage = ({ user, onLogin }) => {
             }
             else 
                 {
-                console.log("[onFinish] Creating standard UBI Shop form:", { finalBankName, selectedForm });
+                ("[onFinish] Creating standard UBI Shop form:", { finalBankName, selectedForm });
                 // Create valuation in database for other banks
-                console.log('[onFinish] Creating standard UBI Shop form with payload:', {
+                ('[onFinish] Creating standard UBI Shop form with payload:', {
                     clientId: payload.clientId,
                     bankName: payload.bankName,
                     city: payload.city
                 });
                 response = await createValuation(payload);
-                console.log('[onFinish] UBI Shop form created successfully, response:', response);
+                ('[onFinish] UBI Shop form created successfully, response:', response);
             }
 
             // Success - form values remain visible during success notification
@@ -462,7 +462,7 @@ const FormPage = ({ user, onLogin }) => {
             loadCustomOptions();
 
             // Navigate to dashboard after form submission
-            console.log('[onFinish] Form submitted successfully, navigating to dashboard');
+            ('[onFinish] Form submitted successfully, navigating to dashboard');
             setTimeout(() => {
                 navigate("/dashboard", { replace: true });
             }, 300);

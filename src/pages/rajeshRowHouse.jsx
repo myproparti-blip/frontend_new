@@ -1348,8 +1348,8 @@ const RajeshRowHouseEditForm = ({ user, onLogin }) => {
             // Save THIS FILE ID as the last rowhouse file for future forms to inherit from
             localStorage.setItem(`last_valuation_rowhouse_file_${user?.username}`, id);
 
-            console.log("[rajeshRowHouse.jsx] ✓ Saved this file's data:", id);
-            console.log("[rajeshRowHouse.jsx] ✓ Marked as last file for future forms");
+            ("[rajeshRowHouse.jsx] ✓ Saved this file's data:", id);
+            ("[rajeshRowHouse.jsx] ✓ Marked as last file for future forms");
         } catch (error) {
             console.error('Error saving current rajeshRowHouse data:', error);
         }
@@ -1378,7 +1378,7 @@ const RajeshRowHouseEditForm = ({ user, onLogin }) => {
                         propertyImages: parsedFileData.propertyImages ? JSON.parse(JSON.stringify(parsedFileData.propertyImages)) : [],
                         locationImages: parsedFileData.locationImages ? JSON.parse(JSON.stringify(parsedFileData.locationImages)) : []
                     };
-                    console.log("[rajeshRowHouse.jsx] ✓ Loaded this file's saved data for File ID:", id);
+                    ("[rajeshRowHouse.jsx] ✓ Loaded this file's saved data for File ID:", id);
                 } catch (e) {
                     console.error("Failed to parse file-specific data:", e);
                 }
@@ -1409,9 +1409,9 @@ const RajeshRowHouseEditForm = ({ user, onLogin }) => {
                             // So this file becomes independent from previous file
                             localStorage.setItem(`valuation_rowhouse_file_${id}`, JSON.stringify(dataToLoad));
 
-                            console.log("[rajeshRowHouse.jsx] ✓ Auto-filled new file from previous file:", lastFileId, "→", id);
-                            console.log("[rajeshRowHouse.jsx] ✓ Saved auto-filled data to File ID:", id);
-                            console.log("[rajeshRowHouse.jsx] ✓ This file is now INDEPENDENT - changes won't affect other files");
+                            ("[rajeshRowHouse.jsx] ✓ Auto-filled new file from previous file:", lastFileId, "→", id);
+                            ("[rajeshRowHouse.jsx] ✓ Saved auto-filled data to File ID:", id);
+                            ("[rajeshRowHouse.jsx] ✓ This file is now INDEPENDENT - changes won't affect other files");
                         } catch (e) {
                             console.error("Failed to auto-fill from previous file:", e);
                         }
@@ -1590,18 +1590,18 @@ const RajeshRowHouseEditForm = ({ user, onLogin }) => {
 
             // Restore bank image from database
             if (dbData.bankImage && typeof dbData.bankImage === 'object') {
-                console.log('[rajeshRowhouse.jsx] Restoring bank image - data:', dbData.bankImage);
+                ('[rajeshRowhouse.jsx] Restoring bank image - data:', dbData.bankImage);
                 let previewUrl = '';
                 if (dbData.bankImage.url) {
                     previewUrl = dbData.bankImage.url;
-                    console.log('[rajeshRowhouse.jsx] Bank image URL from url field:', previewUrl);
+                    ('[rajeshRowhouse.jsx] Bank image URL from url field:', previewUrl);
                 } else if (dbData.bankImage.path) {
                     const fileName = dbData.bankImage.path.split('\\').pop() || dbData.bankImage.path.split('/').pop();
                     previewUrl = `/api/uploads/${fileName}`;
-                    console.log('[rajeshRowhouse.jsx] Bank image URL from path:', previewUrl);
+                    ('[rajeshRowhouse.jsx] Bank image URL from path:', previewUrl);
                 } else if (dbData.bankImage.fileName) {
                     previewUrl = `/api/uploads/${dbData.bankImage.fileName}`;
-                    console.log('[rajeshRowhouse.jsx] Bank image URL from fileName:', previewUrl);
+                    ('[rajeshRowhouse.jsx] Bank image URL from fileName:', previewUrl);
                 }
                 if (previewUrl) {
                     const bankImageObj = {
@@ -1609,14 +1609,14 @@ const RajeshRowHouseEditForm = ({ user, onLogin }) => {
                         name: dbData.bankImage.name || 'Bank Image',
                         path: dbData.bankImage.path || dbData.bankImage.fileName || ''
                     };
-                    console.log('[rajeshRowhouse.jsx] Bank image preview object:', bankImageObj);
+                    ('[rajeshRowhouse.jsx] Bank image preview object:', bankImageObj);
                     setBankImagePreview(bankImageObj);
-                    console.log('[rajeshRowhouse.jsx] Bank image preview set successfully');
+                    ('[rajeshRowhouse.jsx] Bank image preview set successfully');
                 } else {
-                    console.log('[rajeshRowhouse.jsx] No preview URL found for bank image');
+                    ('[rajeshRowhouse.jsx] No preview URL found for bank image');
                 }
             } else {
-                console.log('[rajeshRowhouse.jsx] No bank image data found - data.bankImage:', dbData.bankImage);
+                ('[rajeshRowhouse.jsx] No bank image data found - data.bankImage:', dbData.bankImage);
             }
 
             // Restore document previews from database
@@ -1675,12 +1675,12 @@ const RajeshRowHouseEditForm = ({ user, onLogin }) => {
             // If form not found (new form), try to autofill from last submitted form
             if (error.message && error.message.includes("not found")) {
                 try {
-                    console.log("[loadValuation] Form not found, attempting autofill from last form...");
+                    ("[loadValuation] Form not found, attempting autofill from last form...");
 
                     // Fetch last submitted form for autofilling valuation tab data only
                     const lastForm = await getLastSubmittedRajeshRowHouse();
 
-                    console.log("[loadValuation] Last form fetched:", {
+                    ("[loadValuation] Last form fetched:", {
                         exists: !!lastForm,
                         hasPdfDetails: lastForm && !!lastForm.pdfDetails,
                         pdfDetailsKeys: lastForm && lastForm.pdfDetails ? Object.keys(lastForm.pdfDetails).length : 0
@@ -1697,7 +1697,7 @@ const RajeshRowHouseEditForm = ({ user, onLogin }) => {
                         };
                         setValuation(autofilledFormData);
                         mapDataToForm(autofilledFormData);
-                        console.log("[loadValuation] ✅ Form autofilled with last valuation data");
+                        ("[loadValuation] ✅ Form autofilled with last valuation data");
                         showSuccess("New form created with last valuation data autofilled");
                         return;
                     } else {

@@ -614,7 +614,7 @@ export function generateValuationReportHTML(data = {}) {
   const normalizedData = normalizeDataForPDF(data);
 
   // Debug logging to verify data is being received
-  console.log('🔍 PDF Data Received:', {
+  ('🔍 PDF Data Received:', {
     hasData: !!data,
     hasRootFields: {
       uniqueId: !!data?.uniqueId,
@@ -694,7 +694,7 @@ export function generateValuationReportHTML(data = {}) {
     }
 
     // DEBUG: Log field mapping
-    console.log('🔧 Field Mapping Debug:', {
+    ('🔧 Field Mapping Debug:', {
       allPdfDetailsKeys: Object.keys(data.pdfDetails),
       classificationPosh: data.pdfDetails.classificationPosh,
       unitMaintenance: data.pdfDetails.unitMaintenance,
@@ -817,7 +817,7 @@ export function generateValuationReportHTML(data = {}) {
         pdfData.pdfDetails?.classificationOwnership ||
         data?.pdfDetails?.ownerOccupancyStatus ||
         data?.unitClassification?.ownerOccupiedOrLetOut;
-      console.log('⚠️ ownerOccupiedOrLetOut mapping:', {
+      ('⚠️ ownerOccupiedOrLetOut mapping:', {
         'pdfData.ownerOccupiedOrLetOut': pdfData.ownerOccupiedOrLetOut,
         'pdfData.ownerOccupancyStatus': pdfData.ownerOccupancyStatus,
         'data.ownerOccupancyStatus': data?.ownerOccupancyStatus,
@@ -977,7 +977,7 @@ export function generateValuationReportHTML(data = {}) {
   };
 
   // Debug: Log critical fields for troubleshooting
-  console.log('🔍 PDF Field Extraction Debug:', {
+  ('🔍 PDF Field Extraction Debug:', {
     areaClassification: pdfData.areaClassification,
     postalAddress: pdfData.postalAddress,
     postalAddressRaw: data?.postalAddress,
@@ -987,7 +987,7 @@ export function generateValuationReportHTML(data = {}) {
   });
 
   // DEBUG: Log final pdfData before rendering
-  console.log('📋 Final pdfData before HTML rendering:', {
+  ('📋 Final pdfData before HTML rendering:', {
     unitMaintenance: pdfData.unitMaintenance,
     unitClassification: pdfData.unitClassification,
     classificationPosh: pdfData.classificationPosh,
@@ -2614,7 +2614,7 @@ export function generateValuationReportHTML(data = {}) {
 
 export async function generateRecordPDF(record) {
   try {
-    console.log('📄 Generating PDF for record:', record?.uniqueId || record?.clientName || 'new');
+    ('📄 Generating PDF for record:', record?.uniqueId || record?.clientName || 'new');
     return await generateRecordPDFOffline(record);
   } catch (error) {
     console.error('❌ PDF generation error:', error);
@@ -2628,7 +2628,7 @@ export async function generateRecordPDF(record) {
  */
 export async function previewValuationPDF(record) {
   try {
-    console.log('👁️ Generating PDF preview for:', record?.uniqueId || record?.clientName || 'new');
+    ('👁️ Generating PDF preview for:', record?.uniqueId || record?.clientName || 'new');
 
     // Dynamically import jsPDF and html2canvas
     const { jsPDF } = await import('jspdf');
@@ -2691,7 +2691,7 @@ export async function previewValuationPDF(record) {
     const url = window.URL.createObjectURL(blob);
     window.open(url, '_blank');
 
-    console.log('✅ PDF preview opened');
+    ('✅ PDF preview opened');
     return url;
   } catch (error) {
     console.error('❌ PDF preview error:', error);
@@ -2817,8 +2817,8 @@ const convertImagesToBase64 = async (record) => {
  */
 export async function generateRecordPDFOffline(record) {
   try {
-    console.log('📠 Generating PDF (client-side mode)');
-    console.log('📊 Input Record Structure:', {
+    ('📠 Generating PDF (client-side mode)');
+    ('📊 Input Record Structure:', {
       recordKeys: Object.keys(record || {}),
       rootFields: {
         uniqueId: record?.uniqueId,
@@ -2850,7 +2850,7 @@ export async function generateRecordPDFOffline(record) {
     });
 
     // Convert images to base64 for PDF embedding
-    console.log('🖼️ Converting images to base64...');
+    ('🖼️ Converting images to base64...');
     const recordWithBase64Images = await convertImagesToBase64(record);
 
     // Dynamically import jsPDF and html2canvas to avoid SSR issues
@@ -2884,11 +2884,11 @@ export async function generateRecordPDFOffline(record) {
 
       // If image has no src or invalid src, mark container for removal
       if (!src || !src.trim() || src === 'undefined' || src === 'null') {
-        console.log(`⏭️ Invalid image src: ${alt}`);
+        (`⏭️ Invalid image src: ${alt}`);
         let parentContainer = img.closest('.image-container');
         if (parentContainer) {
           imagesToRemove.add(parentContainer);
-          console.log(`⏭️ Marking for removal (invalid src): ${alt}`);
+          (`⏭️ Marking for removal (invalid src): ${alt}`);
         }
       }
     });
@@ -2900,11 +2900,11 @@ export async function generateRecordPDFOffline(record) {
         const timeoutId = setTimeout(() => {
           // If image hasn't loaded after 5 seconds, mark for removal
           if (!img.complete || img.naturalHeight === 0) {
-            console.log(`⏭️ Image timeout/failed to load: ${alt}`);
+            (`⏭️ Image timeout/failed to load: ${alt}`);
             let parentContainer = img.closest('.image-container');
             if (parentContainer) {
               imagesToRemove.add(parentContainer);
-              console.log(`⏭️ Marking for removal (timeout): ${alt}`);
+              (`⏭️ Marking for removal (timeout): ${alt}`);
             }
           }
           resolve();
@@ -2912,17 +2912,17 @@ export async function generateRecordPDFOffline(record) {
 
         img.onload = () => {
           clearTimeout(timeoutId);
-          console.log(`✅ Image loaded successfully: ${alt}`);
+          (`✅ Image loaded successfully: ${alt}`);
           resolve();
         };
 
         img.onerror = () => {
           clearTimeout(timeoutId);
-          console.log(`❌ Image failed to load: ${alt}`);
+          (`❌ Image failed to load: ${alt}`);
           let parentContainer = img.closest('.image-container');
           if (parentContainer) {
             imagesToRemove.add(parentContainer);
-            console.log(`⏭️ Marking for removal (onerror): ${alt}`);
+            (`⏭️ Marking for removal (onerror): ${alt}`);
           }
           resolve();
         };
@@ -2931,14 +2931,14 @@ export async function generateRecordPDFOffline(record) {
         if (img.complete) {
           clearTimeout(timeoutId);
           if (img.naturalHeight === 0) {
-            console.log(`⏭️ Image failed (no height): ${alt}`);
+            (`⏭️ Image failed (no height): ${alt}`);
             let parentContainer = img.closest('.image-container');
             if (parentContainer) {
               imagesToRemove.add(parentContainer);
-              console.log(`⏭️ Marking for removal (no height): ${alt}`);
+              (`⏭️ Marking for removal (no height): ${alt}`);
             }
           } else {
-            console.log(`✅ Image already loaded: ${alt}`);
+            (`✅ Image already loaded: ${alt}`);
           }
           resolve();
         }
@@ -2946,19 +2946,19 @@ export async function generateRecordPDFOffline(record) {
     }));
 
     // Remove only failed/invalid image containers
-    console.log(`🗑️ Removing ${imagesToRemove.size} failed/invalid image containers`);
+    (`🗑️ Removing ${imagesToRemove.size} failed/invalid image containers`);
     imagesToRemove.forEach(el => {
       const alt = el.querySelector('img')?.getAttribute('alt') || 'unknown';
-      console.log(`✂️ Removed container: ${alt}`);
+      (`✂️ Removed container: ${alt}`);
       el.remove();
     });
 
-    console.log('✅ Image validation complete - now extracting images BEFORE rendering...');
+    ('✅ Image validation complete - now extracting images BEFORE rendering...');
 
     // CRITICAL: Render continuous-wrapper and .page elements separately for proper page breaks
     const continuousWrapper = container.querySelector('.continuous-wrapper');
     const pageElements = Array.from(container.querySelectorAll(':scope > .page'));
-    console.log(`📄 Total .page elements found: ${pageElements.length}`);
+    (`📄 Total .page elements found: ${pageElements.length}`);
 
     // Render continuous wrapper first
     let mainCanvas = null;
@@ -2982,14 +2982,14 @@ export async function generateRecordPDFOffline(record) {
           });
         }
       });
-      console.log('✅ Continuous wrapper canvas conversion complete');
+      ('✅ Continuous wrapper canvas conversion complete');
     }
 
     // Render each .page separately for proper page breaks
     const pageCanvases = [];
     for (let i = 0; i < pageElements.length; i++) {
       const pageEl = pageElements[i];
-      console.log(`📄 Rendering .page element ${i + 1}/${pageElements.length}`);
+      (`📄 Rendering .page element ${i + 1}/${pageElements.length}`);
 
       // Temporarily remove padding to render from top
       const originalPadding = pageEl.style.padding;
@@ -3026,14 +3026,14 @@ export async function generateRecordPDFOffline(record) {
       pageEl.style.padding = originalPadding;
 
       pageCanvases.push(pageCanvas);
-      console.log(`✅ .page ${i + 1} canvas conversion complete`);
+      (`✅ .page ${i + 1} canvas conversion complete`);
     }
 
-    console.log(`✅ Page rendering complete - ${pageCanvases.length} .page elements rendered separately`);
+    (`✅ Page rendering complete - ${pageCanvases.length} .page elements rendered separately`);
 
     // Extract images BEFORE removing container
     // This prevents empty/blank image containers from appearing in the PDF
-    console.log('⏳ Extracting images and removing containers from HTML...');
+    ('⏳ Extracting images and removing containers from HTML...');
     const images = Array.from(container.querySelectorAll('img.pdf-image'));
     const imageData = [];
 
@@ -3050,25 +3050,25 @@ export async function generateRecordPDFOffline(record) {
           type: label.includes('Location') ? 'location' :
             label.includes('Supporting') ? 'supporting' : 'property'
         });
-        console.log(`📸 Extracted image: ${label}`);
+        (`📸 Extracted image: ${label}`);
       } else {
-        console.log(`⏭️ Invalid image src, will not add to PDF: ${label}`);
+        (`⏭️ Invalid image src, will not add to PDF: ${label}`);
       }
 
       // CRITICAL FIX: REMOVE the ENTIRE image container from HTML
       // (not just hiding the image) to prevent empty boxes from rendering in PDF
       const parentContainer = img.closest('.image-container');
       if (parentContainer) {
-        console.log(`🗑️ Removing image container from HTML: ${label}`);
+        (`🗑️ Removing image container from HTML: ${label}`);
         parentContainer.remove();
       }
     }
 
-    console.log('✅ Extracted', imageData.length, 'images; removed', images.length, 'containers from HTML');
+    ('✅ Extracted', imageData.length, 'images; removed', images.length, 'containers from HTML');
 
     // Remove temporary container now that we've extracted images
     document.body.removeChild(container);
-    console.log('✅ Container removed from DOM');
+    ('✅ Container removed from DOM');
 
     // Create PDF from main canvas with header/footer margins
     // Use JPEG for better compression instead of PNG
@@ -3162,7 +3162,7 @@ export async function generateRecordPDFOffline(record) {
       const wrapperRect = continuousWrapper.getBoundingClientRect();
       const relativeY = rect.top - wrapperRect.top;
       cValuationYPixels = relativeY * 1.5; // Apply same scale as canvas
-      console.log(`🔍 C. VALUATION DETAILS section found at Y: ${cValuationYPixels}px (canvas coordinates)`);
+      (`🔍 C. VALUATION DETAILS section found at Y: ${cValuationYPixels}px (canvas coordinates)`);
     }
 
     const pdf = new jsPDF('p', 'mm', 'A4');
@@ -3182,7 +3182,7 @@ export async function generateRecordPDFOffline(record) {
 
         // If C. VALUATION section will be on this page, force it to next page instead
         if (sourceYPixels < cValuationYPixels && nextSourceYPixels > cValuationYPixels && pageNumber > 1) {
-          console.log(`⚠️ C. VALUATION DETAILS would split, forcing to new page`);
+          (`⚠️ C. VALUATION DETAILS would split, forcing to new page`);
           pdf.addPage();
           pageNumber++;
           cValuationPageBreakHandled = true;
@@ -3193,7 +3193,7 @@ export async function generateRecordPDFOffline(record) {
         } else if (sourceYPixels >= cValuationYPixels && sourceYPixels < cValuationYPixels + 100) {
           // We're at the C. VALUATION section, mark it handled
           cValuationPageBreakHandled = true;
-          console.log(`✅ C. VALUATION DETAILS is on new page as expected`);
+          (`✅ C. VALUATION DETAILS is on new page as expected`);
         }
       }
 
@@ -3391,7 +3391,7 @@ export async function generateRecordPDFOffline(record) {
     currentPageYPosition = headerHeight;
 
     // Add page canvases as separate pages in PDF
-    console.log(`📄 Adding ${pageCanvases.length} separate .page canvases to PDF...`);
+    (`📄 Adding ${pageCanvases.length} separate .page canvases to PDF...`);
     for (let i = 0; i < pageCanvases.length; i++) {
       const pageCanvas = pageCanvases[i];
       const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.85);
@@ -3403,9 +3403,9 @@ export async function generateRecordPDFOffline(record) {
         pdf.addPage();
         pageNumber++;
         currentPageYPosition = headerHeight;
-        console.log(`📄 Added new page for .page element ${i + 1}`);
+        (`📄 Added new page for .page element ${i + 1}`);
       } else {
-        console.log(`📄 Skipping new page for .page element ${i + 1} - minimal content on current page`);
+        (`📄 Skipping new page for .page element ${i + 1} - minimal content on current page`);
         // If on current page with minimal content, just continue on same page
         // currentPageYPosition already at headerHeight, ready for new content
       }
@@ -3424,16 +3424,16 @@ export async function generateRecordPDFOffline(record) {
       currentPageYPosition = topMargin + adjustedImgHeight;
 
       pageNumber++;
-      console.log(`✅ Added .page canvas ${i + 1} as page ${pageNumber - 1}`);
+      (`✅ Added .page canvas ${i + 1} as page ${pageNumber - 1}`);
     }
 
     // Add images as separate pages
-    console.log('📸 Adding', imageData.length, 'images to PDF...');
+    ('📸 Adding', imageData.length, 'images to PDF...');
 
     // Filter out images with invalid src before adding to PDF
     const validImages = imageData.filter(img => {
       if (!img.src || typeof img.src !== 'string' || !img.src.trim()) {
-        console.log(`⏭️ Skipping image with invalid src: ${img.label}`);
+        (`⏭️ Skipping image with invalid src: ${img.label}`);
         return false;
       }
       return true;
@@ -3467,7 +3467,7 @@ export async function generateRecordPDFOffline(record) {
                   pdf.setFont(undefined, 'bold');
                   pdf.text(img.label, 12, yPos);
                   pdf.addImage(img.src, 'JPEG', 12, yPos + 4, 92, 82);
-                  console.log(`✅ Added property image (L): ${img.label}`);
+                  (`✅ Added property image (L): ${img.label}`);
                 }
               } catch (err) {
                 console.warn(`Failed to add property image ${img.label}:`, err?.message);
@@ -3484,7 +3484,7 @@ export async function generateRecordPDFOffline(record) {
                   pdf.setFont(undefined, 'bold');
                   pdf.text(img.label, 108, yPos);
                   pdf.addImage(img.src, 'JPEG', 108, yPos + 4, 92, 82);
-                  console.log(`✅ Added property image (R): ${img.label}`);
+                  (`✅ Added property image (R): ${img.label}`);
                 }
               } catch (err) {
                 console.warn(`Failed to add property image ${img.label}:`, err?.message);
@@ -3522,7 +3522,7 @@ export async function generateRecordPDFOffline(record) {
             const imgHeight = 220;
             pdf.addImage(img.src, 'JPEG', 15, 25, imgWidth, imgHeight);
 
-            console.log(`✅ Added location image: ${img.label}`);
+            (`✅ Added location image: ${img.label}`);
           } catch (err) {
             console.warn(`Failed to add location image ${img.label}:`, err?.message);
           }
@@ -3551,21 +3551,21 @@ export async function generateRecordPDFOffline(record) {
             const imgHeight = 220;
             pdf.addImage(img.src, 'JPEG', 15, 25, imgWidth, imgHeight);
 
-            console.log(`✅ Added supporting document: ${img.label}`);
+            (`✅ Added supporting document: ${img.label}`);
           } catch (err) {
             console.warn(`Failed to add supporting document ${img.label}:`, err?.message);
           }
         }
       }
     } else {
-      console.log('⏭️ No valid images to add to PDF');
+      ('⏭️ No valid images to add to PDF');
     }
 
     // Download PDF
     const filename = `valuation_${record?.clientName || record?.uniqueId || Date.now()}.pdf`;
     pdf.save(filename);
 
-    console.log('✅ PDF generated and downloaded:', filename);
+    ('✅ PDF generated and downloaded:', filename);
     return filename;
   } catch (error) {
     console.error('❌ Client-side PDF generation error:', error);

@@ -566,7 +566,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
 
             try {
                 dataToDownload = await getRajeshBankById(id, username, role, clientId);
-                console.log('✅ Fresh Rajesh Bank data fetched for PDF:', {
+                ('✅ Fresh Rajesh Bank data fetched for PDF:', {
                     bankName: dataToDownload?.bankName,
                     city: dataToDownload?.city
                 });
@@ -580,7 +580,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                     dispatch(hideLoader());
                     return;
                 } else {
-                    console.log('⚠️ Using unsaved form data from memory for PDF generation');
+                    ('⚠️ Using unsaved form data from memory for PDF generation');
                 }
             }
 
@@ -751,12 +751,12 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
             // If form not found (new form), try to autofill from last submitted form
             if (error.message && error.message.includes("not found")) {
                 try {
-                    console.log("[loadValuation] Form not found, attempting autofill from last form...");
+                    ("[loadValuation] Form not found, attempting autofill from last form...");
                     
                     // Fetch last submitted form for autofilling valuation tab data only
                     const lastForm = await getLastSubmittedRajeshBank();
                     
-                    console.log("[loadValuation] Last form fetched:", {
+                    ("[loadValuation] Last form fetched:", {
                         exists: !!lastForm,
                         hasPdfDetails: lastForm && !!lastForm.pdfDetails,
                         pdfDetailsKeys: lastForm && lastForm.pdfDetails ? Object.keys(lastForm.pdfDetails).length : 0
@@ -773,7 +773,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                         };
                         setValuation(autofilledFormData);
                         mapDataToForm(autofilledFormData);
-                        console.log("[loadValuation] ✅ Form autofilled with last valuation data");
+                        ("[loadValuation] ✅ Form autofilled with last valuation data");
                         showSuccess("New form created with last valuation data autofilled");
                         return;
                     } else {
@@ -903,14 +903,14 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
             let dataToSave = { ...formData };
             
             if (formData.areaImages && Object.keys(formData.areaImages).length > 0) {
-                console.log('📤 Uploading area images...');
+                ('📤 Uploading area images...');
                 try {
                     const uploadedAreaImages = await uploadAreaImages(formData.areaImages, valuation.uniqueId);
                     dataToSave = {
                         ...dataToSave,
                         areaImages: uploadedAreaImages
                     };
-                    console.log('✅ Area images uploaded:', uploadedAreaImages);
+                    ('✅ Area images uploaded:', uploadedAreaImages);
                 } catch (error) {
                     console.error('⚠️ Error uploading area images:', error);
                     // Continue saving even if area images fail to upload
@@ -1616,7 +1616,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
             localStorage.removeItem(`valuation_draft_${username}`);
 
             // Call API to update Rajesh Bank form
-            console.log("[rajeshBank.jsx] Payload being sent to API:", {
+            ("[rajeshBank.jsx] Payload being sent to API:", {
                 clientId: payload.clientId,
                 uniqueId: payload.uniqueId,
                 bankName: payload.bankName,

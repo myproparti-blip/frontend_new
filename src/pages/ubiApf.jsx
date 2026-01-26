@@ -1004,7 +1004,7 @@ const handleDownloadPDF = useCallback(async () => {
             let dataToDownload;
             try {
                 dataToDownload = await getUbiApfFormById(id, username, role, clientId);
-                console.log(':white_tick: Fresh UBI APF data fetched for PDF:', {
+                (':white_tick: Fresh UBI APF data fetched for PDF:', {
                     bankName: dataToDownload?.bankName,
                     city: dataToDownload?.city,
                     supportingDocuments: dataToDownload?.supportingDocuments?.length || 0
@@ -1020,7 +1020,7 @@ const handleDownloadPDF = useCallback(async () => {
             }
             // Ensure documentPreviews is included from local state (has latest unsaved docs)
             if (documentPreviews && documentPreviews.length > 0) {
-                console.log(':page_facing_up: Merging local documentPreviews:', documentPreviews.length);
+                (':page_facing_up: Merging local documentPreviews:', documentPreviews.length);
                 dataToDownload = {
                     ...dataToDownload,
                     documentPreviews: documentPreviews

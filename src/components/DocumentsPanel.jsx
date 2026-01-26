@@ -153,7 +153,7 @@ const DocumentsPanel = ({
     // Sync areaImagePreviews prop changes to areaUploads and selectedAreas
     React.useEffect(() => {
         if (areaImagePreviews && Object.keys(areaImagePreviews).length > 0) {
-            console.log('[DocumentsPanel] areaImagePreviews updated:', Object.keys(areaImagePreviews));
+            ('[DocumentsPanel] areaImagePreviews updated:', Object.keys(areaImagePreviews));
             // Update selectedAreas with all areas that have images
             const newSelected = {};
             Object.keys(areaImagePreviews).forEach(area => {
@@ -182,7 +182,7 @@ const DocumentsPanel = ({
 
     // Monitor bankImagePreview prop
     React.useEffect(() => {
-        console.log('[DocumentsPanel] bankImagePreview prop received:', bankImagePreview);
+        ('[DocumentsPanel] bankImagePreview prop received:', bankImagePreview);
     }, [bankImagePreview]);
 
     // Sync imagePreviews prop changes to areaUploads if not already initialized from areaImages

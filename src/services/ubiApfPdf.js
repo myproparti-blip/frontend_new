@@ -621,7 +621,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
     const normalizedData = normalizeDataForPDF(data);
 
     // Debug logging to verify data is being received
-    console.log('🔍 PDF Data Received:', {
+    ('🔍 PDF Data Received:', {
         hasData: !!data,
         hasRootFields: {
             uniqueId: !!data?.uniqueId,
@@ -666,7 +666,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
         const preservedAreaImages = pdfData.areaImages;
         // Get supportImg from localStorage if documentPreviews is empty
         let preservedDocumentPreviews = pdfData.documentPreviews || data.documentPreviews || data.supportingDocuments;
-        console.log('🔍 Before localStorage check:', {
+        ('🔍 Before localStorage check:', {
             hasDocumentPreviews: !!pdfData.documentPreviews,
             documentPreviewsCount: pdfData.documentPreviews ? pdfData.documentPreviews.length : 0,
             hasDataDocumentPreviews: !!data.documentPreviews,
@@ -675,7 +675,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
         if (!preservedDocumentPreviews || preservedDocumentPreviews.length === 0) {
             try {
                 const supportImgFromStorage = localStorage.getItem('supportImg');
-                console.log('🔍 localStorage supportImg:', {
+                ('🔍 localStorage supportImg:', {
                     exists: !!supportImgFromStorage,
                     length: supportImgFromStorage ? supportImgFromStorage.length : 0
                 });
@@ -683,7 +683,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
                     const parsed = JSON.parse(supportImgFromStorage);
                     if (Array.isArray(parsed) && parsed.length > 0) {
                         preservedDocumentPreviews = parsed;
-                        console.log('📦 Loaded supportImg from localStorage:', parsed.length, 'images', parsed.map(p => ({ url: p.url ? 'YES' : 'NO', fileName: p.fileName })));
+                        ('📦 Loaded supportImg from localStorage:', parsed.length, 'images', parsed.map(p => ({ url: p.url ? 'YES' : 'NO', fileName: p.fileName })));
                     }
                 }
             } catch (e) {
@@ -711,7 +711,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
         }
 
         // Debug: Log what we have after merge
-        console.log('📄 Document Previews after pdfDetails merge:', {
+        ('📄 Document Previews after pdfDetails merge:', {
             preserved: preservedDocumentPreviews ? preservedDocumentPreviews.length : 0,
             pdfData: pdfData.documentPreviews ? pdfData.documentPreviews.length : 0,
             sample: pdfData.documentPreviews && pdfData.documentPreviews[0] ? { url: pdfData.documentPreviews[0].url ? 'YES' : 'NO', hasPreview: !!pdfData.documentPreviews[0].preview } : null
@@ -734,23 +734,23 @@ export function generateUbiApfValuationReportHTML(data = {}) {
         // Ensure total fields are explicitly mapped
         if (data.pdfDetails.totalBuiltUpSqm) {
             pdfData.totalBuiltUpSqm = data.pdfDetails.totalBuiltUpSqm;
-            console.log('[PDF Generation] Mapped totalBuiltUpSqm:', pdfData.totalBuiltUpSqm);
+            ('[PDF Generation] Mapped totalBuiltUpSqm:', pdfData.totalBuiltUpSqm);
         }
         if (data.pdfDetails.totalBuiltUpSqft) {
             pdfData.totalBuiltUpSqft = data.pdfDetails.totalBuiltUpSqft;
-            console.log('[PDF Generation] Mapped totalBuiltUpSqft:', pdfData.totalBuiltUpSqft);
+            ('[PDF Generation] Mapped totalBuiltUpSqft:', pdfData.totalBuiltUpSqft);
         }
         if (data.pdfDetails.totalFloorAreaBalconySqm) {
             pdfData.totalFloorAreaBalconySqm = data.pdfDetails.totalFloorAreaBalconySqm;
-            console.log('[PDF Generation] Mapped totalFloorAreaBalconySqm:', pdfData.totalFloorAreaBalconySqm);
+            ('[PDF Generation] Mapped totalFloorAreaBalconySqm:', pdfData.totalFloorAreaBalconySqm);
         }
         if (data.pdfDetails.totalFloorAreaBalconySqft) {
             pdfData.totalFloorAreaBalconySqft = data.pdfDetails.totalFloorAreaBalconySqft;
-            console.log('[PDF Generation] Mapped totalFloorAreaBalconySqft:', pdfData.totalFloorAreaBalconySqft);
+            ('[PDF Generation] Mapped totalFloorAreaBalconySqft:', pdfData.totalFloorAreaBalconySqft);
         }
 
         // DEBUG: Log field mapping
-        console.log('🔧 Field Mapping Debug:', {
+        ('🔧 Field Mapping Debug:', {
             allPdfDetailsKeys: Object.keys(data.pdfDetails),
             classificationPosh: data.pdfDetails.classificationPosh,
             unitMaintenance: data.pdfDetails.unitMaintenance,
@@ -872,7 +872,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
                 pdfData.pdfDetails?.classificationOwnership ||
                 data?.pdfDetails?.ownerOccupancyStatus ||
                 data?.unitClassification?.ownerOccupiedOrLetOut;
-            console.log('⚠️ ownerOccupiedOrLetOut mapping:', {
+            ('⚠️ ownerOccupiedOrLetOut mapping:', {
                 'pdfData.ownerOccupiedOrLetOut': pdfData.ownerOccupiedOrLetOut,
                 'pdfData.ownerOccupancyStatus': pdfData.ownerOccupancyStatus,
                 'data.ownerOccupancyStatus': data?.ownerOccupancyStatus,
@@ -1026,17 +1026,17 @@ export function generateUbiApfValuationReportHTML(data = {}) {
         // Images and Documents - with debug logging
         propertyImages: (() => {
             const result = pdfData.propertyImages || data?.propertyImages || [];
-            console.log('🖼️ propertyImages final:', { has: result.length > 0, count: result.length });
+            ('🖼️ propertyImages final:', { has: result.length > 0, count: result.length });
             return result;
         })(),
         locationImages: (() => {
             const result = pdfData.locationImages || data?.locationImages || [];
-            console.log('📍 locationImages final:', { has: result.length > 0, count: result.length, sample: result.slice(0, 1) });
+            ('📍 locationImages final:', { has: result.length > 0, count: result.length, sample: result.slice(0, 1) });
             return result;
         })(),
         documentPreviews: (() => {
             const result = pdfData.documentPreviews || data?.documentPreviews || data?.supportingDocuments || [];
-            console.log('📄 documentPreviews final:', { has: result.length > 0, count: result.length, sample: result.slice(0, 1) });
+            ('📄 documentPreviews final:', { has: result.length > 0, count: result.length, sample: result.slice(0, 1) });
             return result;
         })(),
 
@@ -1049,7 +1049,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
     };
 
     // Debug: Log critical fields for troubleshooting
-    console.log('🔍 PDF Field Extraction Debug:', {
+    ('🔍 PDF Field Extraction Debug:', {
         areaClassification: pdfData.areaClassification,
         postalAddress: pdfData.postalAddress,
         postalAddressRaw: data?.postalAddress,
@@ -1069,7 +1069,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
     });
 
     // DEBUG: Log final pdfData before rendering
-    console.log('📋 Final pdfData before HTML rendering:', {
+    ('📋 Final pdfData before HTML rendering:', {
         unitMaintenance: pdfData.unitMaintenance,
         unitClassification: pdfData.unitClassification,
         classificationPosh: pdfData.classificationPosh,
@@ -1098,7 +1098,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
     });
 
     // Auto-calculate total built up area if not provided
-    console.log('[PDF CALC] totalBuiltUpSqm status:', {
+    ('[PDF CALC] totalBuiltUpSqm status:', {
         current: pdfData.totalBuiltUpSqm,
         isEmpty: !pdfData.totalBuiltUpSqm || pdfData.totalBuiltUpSqm === 'NA' || pdfData.totalBuiltUpSqm === ''
     });
@@ -1112,7 +1112,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
             : 0;
 
         const totalSqm = basementSqm + groundSqm + firstSqm + customSqm;
-        console.log('[PDF CALC] totalBuiltUpSqm breakdown:', {
+        ('[PDF CALC] totalBuiltUpSqm breakdown:', {
             basementSqm, groundSqm, firstSqm, customCount: pdfData.customExtentOfSiteFields?.length || 0, customSqm, totalSqm
         });
         if (totalSqm > 0) {
@@ -1131,12 +1131,12 @@ export function generateUbiApfValuationReportHTML(data = {}) {
         const totalSqft = basementSqft + groundSqft + firstSqft + customSqft;
         if (totalSqft > 0) {
             pdfData.totalBuiltUpSqft = totalSqft.toFixed(2);
-            console.log('[PDF] Auto-calculated totalBuiltUpSqft:', pdfData.totalBuiltUpSqft);
+            ('[PDF] Auto-calculated totalBuiltUpSqft:', pdfData.totalBuiltUpSqft);
         }
     }
 
     // Auto-calculate total floor area including balcony if not provided
-    console.log('[PDF CALC] totalFloorAreaBalconySqm status:', {
+    ('[PDF CALC] totalFloorAreaBalconySqm status:', {
         current: pdfData.totalFloorAreaBalconySqm,
         isEmpty: !pdfData.totalFloorAreaBalconySqm || pdfData.totalFloorAreaBalconySqm === 'NA' || pdfData.totalFloorAreaBalconySqm === ''
     });
@@ -1150,7 +1150,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
             : 0;
 
         const totalSqm = basementSqm + groundSqm + firstSqm + customSqm;
-        console.log('[PDF CALC] totalFloorAreaBalconySqm breakdown:', {
+        ('[PDF CALC] totalFloorAreaBalconySqm breakdown:', {
             basementSqm, groundSqm, firstSqm, customCount: pdfData.customFloorAreaBalconyFields?.length || 0, customSqm, totalSqm
         });
         if (totalSqm > 0) {
@@ -1169,7 +1169,7 @@ export function generateUbiApfValuationReportHTML(data = {}) {
         const totalSqft = basementSqft + groundSqft + firstSqft + customSqft;
         if (totalSqft > 0) {
             pdfData.totalFloorAreaBalconySqft = totalSqft.toFixed(2);
-            console.log('[PDF] Auto-calculated totalFloorAreaBalconySqft:', {
+            ('[PDF] Auto-calculated totalFloorAreaBalconySqft:', {
                 basementSqft,
                 groundSqft,
                 firstSqft,
@@ -3358,7 +3358,7 @@ valuer organization discredits the profession.  </p>
 
 export async function generateUbiApfRecordPDF(record) {
     try {
-        console.log('📄 Generating PDF for record:', record?.uniqueId || record?.clientName || 'new');
+        ('📄 Generating PDF for record:', record?.uniqueId || record?.clientName || 'new');
         return await generateUbiApfRecordPDFOffline(record);
     } catch (error) {
         console.error('❌ PDF generation error:', error);
@@ -3372,7 +3372,7 @@ export async function generateUbiApfRecordPDF(record) {
  */
 export async function previewUbiApfValuationPDF(record) {
     try {
-        console.log('👁️ Generating PDF preview for:', record?.uniqueId || record?.clientName || 'new');
+        ('👁️ Generating PDF preview for:', record?.uniqueId || record?.clientName || 'new');
 
         // Dynamically import jsPDF and html2canvas
         const { jsPDF } = await import('jspdf');
@@ -3435,7 +3435,7 @@ export async function previewUbiApfValuationPDF(record) {
         const url = window.URL.createObjectURL(blob);
         window.open(url, '_blank');
 
-        console.log('✅ PDF preview opened');
+        ('✅ PDF preview opened');
         return url;
     } catch (error) {
         console.error('❌ PDF preview error:', error);
@@ -3500,7 +3500,7 @@ const urlToBase64 = async (url) => {
     try {
         // Check if URL is already a data URI
         if (url.startsWith('data:')) {
-            console.log('✅ URL is already a data URI, skipping conversion');
+            ('✅ URL is already a data URI, skipping conversion');
             return url;
         }
 
@@ -3509,7 +3509,7 @@ const urlToBase64 = async (url) => {
 
         // Compress image to reduce size
         const compressed = await compressImage(blob);
-        console.log('✅ Converted image URL to base64:', url.substring(0, 80) + '...');
+        ('✅ Converted image URL to base64:', url.substring(0, 80) + '...');
         return compressed;
     } catch (error) {
         console.warn('⚠️ Failed to convert image URL to base64, using original URL:', url.substring(0, 80), error.message);
@@ -3562,7 +3562,7 @@ const convertImagesToBase64 = async (record) => {
 
     // Convert supporting documents (from documentPreviews or supportingDocuments)
     const docsArray = recordCopy.documentPreviews || recordCopy.supportingDocuments;
-    console.log('📄 Document conversion check:', {
+    ('📄 Document conversion check:', {
         hasDocumentPreviews: Array.isArray(recordCopy.documentPreviews),
         documentPreviewsCount: Array.isArray(recordCopy.documentPreviews) ? recordCopy.documentPreviews.length : 0,
         hasSupportingDocuments: Array.isArray(recordCopy.supportingDocuments),
@@ -3576,7 +3576,7 @@ const convertImagesToBase64 = async (record) => {
                 if (!doc) return doc;
                 const url = typeof doc === 'string' ? doc : doc?.url;
                 if (!url) {
-                    console.log(`⚠️ Document #${idx + 1} has no URL`, doc);
+                    (`⚠️ Document #${idx + 1} has no URL`, doc);
                     return doc;
                 }
 
@@ -3590,7 +3590,7 @@ const convertImagesToBase64 = async (record) => {
         // Store in both possible field names for compatibility
         recordCopy.documentPreviews = convertedDocs;
         recordCopy.supportingDocuments = convertedDocs;
-        console.log('✅ Converted', convertedDocs.length, 'supporting documents to base64');
+        ('✅ Converted', convertedDocs.length, 'supporting documents to base64');
     }
 
     return recordCopy;
@@ -3602,14 +3602,14 @@ const convertImagesToBase64 = async (record) => {
  */
 export async function generateUbiApfRecordPDFOffline(record) {
     try {
-        console.log('📠 Generating PDF (client-side mode)');
-        console.log('📄 INITIAL RECORD CHECK - Supporting Documents:', {
+        ('📠 Generating PDF (client-side mode)');
+        ('📄 INITIAL RECORD CHECK - Supporting Documents:', {
             hasDocumentPreviews: record?.documentPreviews?.length || 0,
             hasSupportingDocuments: record?.supportingDocuments?.length || 0,
             documentPreviews: record?.documentPreviews?.slice(0, 1),
             supportingDocuments: record?.supportingDocuments?.slice(0, 1)
         });
-        console.log('📊 Input Record Structure:', {
+        ('📊 Input Record Structure:', {
             recordKeys: Object.keys(record || {}),
             rootFields: {
                 uniqueId: record?.uniqueId,
@@ -3643,11 +3643,11 @@ export async function generateUbiApfRecordPDFOffline(record) {
         });
 
         // Convert images to base64 for PDF embedding
-        console.log('🖼️ Converting images to base64...');
+        ('🖼️ Converting images to base64...');
         const recordWithBase64Images = await convertImagesToBase64(record);
 
         // Debug: Check what we have after conversion
-        console.log('✅ After conversion:', {
+        ('✅ After conversion:', {
             hasDocumentPreviews: recordWithBase64Images?.documentPreviews?.length || 0,
             hasSupportingDocuments: recordWithBase64Images?.supportingDocuments?.length || 0,
             documentPreviewsSample: recordWithBase64Images?.documentPreviews?.[0],
@@ -3670,13 +3670,13 @@ export async function generateUbiApfRecordPDFOffline(record) {
         const locationImagesIndex = htmlContent.indexOf('location-images-page');
         const supportingDocsIndex = htmlContent.indexOf('supporting-docs-page');
 
-        console.log(`🔍 Detected cost - of - construction - section at index: ${costOfConstructionIndex} `);
-        console.log(`🔍 Detected annexure - ii - section at index: ${annexure2Index} `);
-        console.log(`🔍 Detected annexure - iii - section at index: ${annexure3Index} `);
-        console.log(`🔍 Detected property - images - page at index: ${propertyImagesIndex} `);
-        console.log(`🔍 Detected area - images - page at index: ${areaImagesIndex} `);
-        console.log(`🔍 Detected location - images - page at index: ${locationImagesIndex} `);
-        console.log(`🔍 Detected supporting - docs - page at index: ${supportingDocsIndex} `);
+        (`🔍 Detected cost - of - construction - section at index: ${costOfConstructionIndex} `);
+        (`🔍 Detected annexure - ii - section at index: ${annexure2Index} `);
+        (`🔍 Detected annexure - iii - section at index: ${annexure3Index} `);
+        (`🔍 Detected property - images - page at index: ${propertyImagesIndex} `);
+        (`🔍 Detected area - images - page at index: ${areaImagesIndex} `);
+        (`🔍 Detected location - images - page at index: ${locationImagesIndex} `);
+        (`🔍 Detected supporting - docs - page at index: ${supportingDocsIndex} `);
 
         let mainHtmlContent = htmlContent;
         let costOfConstructionHtmlContent = '';
@@ -3727,7 +3727,7 @@ export async function generateUbiApfRecordPDFOffline(record) {
                     supportingDocsHtmlContent = sectionContent;
                 }
             }
-            console.log('✂️ Split HTML: Sections separated - Main Content (with Cost of Construction), Annexure-II, Annexure-III, Property Images, Area Images, Location Images, Supporting Docs');
+            ('✂️ Split HTML: Sections separated - Main Content (with Cost of Construction), Annexure-II, Annexure-III, Property Images, Area Images, Location Images, Supporting Docs');
         } else {
             // No other sections found, everything is main content
             mainHtmlContent = htmlContent;
@@ -3755,7 +3755,7 @@ export async function generateUbiApfRecordPDFOffline(record) {
         cleanMainContent = cleanMainContent.replace(/<div[^>]*supporting-docs-page[^>]*>[\s\S]*?<\/div>/g, '');
 
         mainHtmlContent = cleanMainContent;
-        console.log('🗑️ Removed separated sections from main content to prevent duplication');
+        ('🗑️ Removed separated sections from main content to prevent duplication');
 
         // Create a temporary container with cleaned main content only
         const container = document.createElement('div');
@@ -3781,11 +3781,11 @@ export async function generateUbiApfRecordPDFOffline(record) {
 
             // If image has no src or invalid src, mark container for removal
             if (!src || !src.trim() || src === 'undefined' || src === 'null') {
-                console.log(`⏭️ Invalid image src: ${alt} `);
+                (`⏭️ Invalid image src: ${alt} `);
                 let parentContainer = img.closest('.image-container');
                 if (parentContainer) {
                     imagesToRemove.add(parentContainer);
-                    console.log(`⏭️ Marking for removal(invalid src): ${alt} `);
+                    (`⏭️ Marking for removal(invalid src): ${alt} `);
                 }
             }
         });
@@ -3797,11 +3797,11 @@ export async function generateUbiApfRecordPDFOffline(record) {
                 const timeoutId = setTimeout(() => {
                     // If image hasn't loaded after 5 seconds, mark for removal
                     if (!img.complete || img.naturalHeight === 0) {
-                        console.log(`⏭️ Image timeout / failed to load: ${alt} `);
+                        (`⏭️ Image timeout / failed to load: ${alt} `);
                         let parentContainer = img.closest('.image-container');
                         if (parentContainer) {
                             imagesToRemove.add(parentContainer);
-                            console.log(`⏭️ Marking for removal(timeout): ${alt} `);
+                            (`⏭️ Marking for removal(timeout): ${alt} `);
                         }
                     }
                     resolve();
@@ -3809,17 +3809,17 @@ export async function generateUbiApfRecordPDFOffline(record) {
 
                 img.onload = () => {
                     clearTimeout(timeoutId);
-                    console.log(`✅ Image loaded successfully: ${alt} `);
+                    (`✅ Image loaded successfully: ${alt} `);
                     resolve();
                 };
 
                 img.onerror = () => {
                     clearTimeout(timeoutId);
-                    console.log(`❌ Image failed to load: ${alt} `);
+                    (`❌ Image failed to load: ${alt} `);
                     let parentContainer = img.closest('.image-container');
                     if (parentContainer) {
                         imagesToRemove.add(parentContainer);
-                        console.log(`⏭️ Marking for removal(onerror): ${alt} `);
+                        (`⏭️ Marking for removal(onerror): ${alt} `);
                     }
                     resolve();
                 };
@@ -3828,14 +3828,14 @@ export async function generateUbiApfRecordPDFOffline(record) {
                 if (img.complete) {
                     clearTimeout(timeoutId);
                     if (img.naturalHeight === 0) {
-                        console.log(`⏭️ Image failed(no height): ${alt} `);
+                        (`⏭️ Image failed(no height): ${alt} `);
                         let parentContainer = img.closest('.image-container');
                         if (parentContainer) {
                             imagesToRemove.add(parentContainer);
-                            console.log(`⏭️ Marking for removal(no height): ${alt} `);
+                            (`⏭️ Marking for removal(no height): ${alt} `);
                         }
                     } else {
-                        console.log(`✅ Image already loaded: ${alt} `);
+                        (`✅ Image already loaded: ${alt} `);
                     }
                     resolve();
                 }
@@ -3843,19 +3843,19 @@ export async function generateUbiApfRecordPDFOffline(record) {
         }));
 
         // Remove only failed/invalid image containers
-        console.log(`🗑️ Removing ${imagesToRemove.size} failed / invalid image containers`);
+        (`🗑️ Removing ${imagesToRemove.size} failed / invalid image containers`);
         imagesToRemove.forEach(el => {
             const alt = el.querySelector('img')?.getAttribute('alt') || 'unknown';
-            console.log(`✂️ Removed container: ${alt} `);
+            (`✂️ Removed container: ${alt} `);
             el.remove();
         });
 
-        console.log('✅ Image validation complete - now extracting images BEFORE rendering...');
+        ('✅ Image validation complete - now extracting images BEFORE rendering...');
 
         // CRITICAL: Render continuous-wrapper and .page elements separately for proper page breaks
         const continuousWrapper = container.querySelector('.continuous-wrapper');
         const pageElements = Array.from(container.querySelectorAll(':scope > .page'));
-        console.log(`📄 Total.page elements found: ${pageElements.length} `);
+        (`📄 Total.page elements found: ${pageElements.length} `);
 
         // Render continuous wrapper first
         let mainCanvas = null;
@@ -3879,14 +3879,14 @@ export async function generateUbiApfRecordPDFOffline(record) {
                     });
                 }
             });
-            console.log('✅ Continuous wrapper canvas conversion complete');
+            ('✅ Continuous wrapper canvas conversion complete');
         }
 
         // Render each .page separately for proper page breaks
         const pageCanvases = [];
         for (let i = 0; i < pageElements.length; i++) {
             const pageEl = pageElements[i];
-            console.log(`📄 Rendering.page element ${i + 1}/${pageElements.length}`);
+            (`📄 Rendering.page element ${i + 1}/${pageElements.length}`);
 
             // Temporarily remove padding to render from top
             const originalPadding = pageEl.style.padding;
@@ -3923,25 +3923,25 @@ export async function generateUbiApfRecordPDFOffline(record) {
             pageEl.style.padding = originalPadding;
 
             pageCanvases.push(pageCanvas);
-            console.log(`✅ .page ${i + 1} canvas conversion complete`);
+            (`✅ .page ${i + 1} canvas conversion complete`);
         }
 
-        console.log(`✅ Page rendering complete - ${pageCanvases.length} .page elements rendered separately`);
+        (`✅ Page rendering complete - ${pageCanvases.length} .page elements rendered separately`);
 
         // Extract images BEFORE removing container
         // This prevents empty/blank image containers from appearing in the PDF
-        console.log('⏳ Extracting images and removing containers from HTML...');
+        ('⏳ Extracting images and removing containers from HTML...');
         const images = Array.from(container.querySelectorAll('img.pdf-image'));
         const imageData = [];
 
-        console.log('🔍 Found total images with class="pdf-image":', images.length);
+        ('🔍 Found total images with class="pdf-image":', images.length);
 
         // Extract valid images and REMOVE ALL their containers
         for (const img of images) {
             const src = img.src || img.getAttribute('data-src');
             const label = img.getAttribute('alt') || 'Image';
 
-            console.log(`🖼️ Image found - label: "${label}", hasSrc: ${!!src}, srcType: ${src ? (src.startsWith('data:') ? 'data-uri' : src.startsWith('blob:') ? 'blob' : src.startsWith('http') ? 'http' : 'other') : 'none'}`);
+            (`🖼️ Image found - label: "${label}", hasSrc: ${!!src}, srcType: ${src ? (src.startsWith('data:') ? 'data-uri' : src.startsWith('blob:') ? 'blob' : src.startsWith('http') ? 'http' : 'other') : 'none'}`);
 
             // Only extract images with valid src
             if (src && (src.startsWith('data:') || src.startsWith('blob:') || src.startsWith('http'))) {
@@ -3951,25 +3951,25 @@ export async function generateUbiApfRecordPDFOffline(record) {
                     type: label.includes('Location') ? 'location' :
                         label.includes('Supporting') ? 'supporting' : 'property'
                 });
-                console.log(`✅ Extracted image: ${label} (type: ${label.includes('Location') ? 'location' : label.includes('Supporting') ? 'supporting' : 'property'})`);
+                (`✅ Extracted image: ${label} (type: ${label.includes('Location') ? 'location' : label.includes('Supporting') ? 'supporting' : 'property'})`);
             } else {
-                console.log(`⏭️ Invalid image src, will not add to PDF: ${label}`);
+                (`⏭️ Invalid image src, will not add to PDF: ${label}`);
             }
 
             // CRITICAL FIX: REMOVE the ENTIRE image container from HTML
             // (not just hiding the image) to prevent empty boxes from rendering in PDF
             const parentContainer = img.closest('.image-container');
             if (parentContainer) {
-                console.log(`🗑️ Removing image container from HTML: ${label}`);
+                (`🗑️ Removing image container from HTML: ${label}`);
                 parentContainer.remove();
             }
         }
 
-        console.log('✅ Extracted', imageData.length, 'images; removed', images.length, 'containers from HTML');
+        ('✅ Extracted', imageData.length, 'images; removed', images.length, 'containers from HTML');
 
         // Remove temporary container now that we've extracted images
         document.body.removeChild(container);
-        console.log('✅ Container removed from DOM');
+        ('✅ Container removed from DOM');
 
         // Create PDF from main canvas with header/footer margins
         // Use JPEG for better compression instead of PNG
@@ -4240,7 +4240,7 @@ export async function generateUbiApfRecordPDFOffline(record) {
                     // If we found an incomplete row at bottom, cut before it
                     if (foundIncompleteRow && lastCompleteRowBottom > 50) {
                         sourceHeightPixels = Math.floor(lastCompleteRowBottom);
-                        console.log(`✅ Detected incomplete row - cutting at ${sourceHeightPixels}px to push row to next page`);
+                        (`✅ Detected incomplete row - cutting at ${sourceHeightPixels}px to push row to next page`);
                     }
                 } catch (err) {
                     console.warn('⚠️ Error detecting incomplete rows:', err?.message);
@@ -4296,7 +4296,7 @@ export async function generateUbiApfRecordPDFOffline(record) {
                 return;
             }
 
-            console.log(`📄 Processing ${annexureName} section... Content length: ${annexureHtmlContent.length}`);
+            (`📄 Processing ${annexureName} section... Content length: ${annexureHtmlContent.length}`);
 
             // Create container for annexure
             const annexureContainer = document.createElement('div');
@@ -4334,9 +4334,9 @@ export async function generateUbiApfRecordPDFOffline(record) {
                 pdf.addPage();
                 pageNumber++;
                 currentPageYPosition = headerHeight;
-                console.log(`📄 Added new page for ${annexureName} (insufficient space)`);
+                (`📄 Added new page for ${annexureName} (insufficient space)`);
             } else if (needsNewPage && currentPageYPosition <= headerHeight + 50) {
-                console.log(`📄 Skipping new page for ${annexureName} - minimal content on current page, continuing`);
+                (`📄 Skipping new page for ${annexureName} - minimal content on current page, continuing`);
             }
             let annexureHeightLeft = annexureImgHeight;
             let annexureSourceY = 0;
@@ -4393,7 +4393,7 @@ export async function generateUbiApfRecordPDFOffline(record) {
 
             // Clean up container
             document.body.removeChild(annexureContainer);
-            console.log(`✅ ${annexureName} section added to PDF`);
+            (`✅ ${annexureName} section added to PDF`);
         };
 
         
@@ -4431,7 +4431,7 @@ export async function generateUbiApfRecordPDFOffline(record) {
             const docPageRegex = /<div[^>]*supporting-docs-page[^>]*>[\s\S]*?<\/div>/g;
             const docPages = supportingDocsHtmlContent.match(docPageRegex) || [];
 
-            console.log(`📄 Found ${docPages.length} supporting document pages`);
+            (`📄 Found ${docPages.length} supporting document pages`);
 
             // Process each document on a new page
             for (let i = 0; i < docPages.length; i++) {
@@ -4453,10 +4453,10 @@ export async function generateUbiApfRecordPDFOffline(record) {
             }
         }
 
-        console.log('📸 All image sections processed and added to PDF');
+        ('📸 All image sections processed and added to PDF');
 
         // Add page canvases as separate pages in PDF
-        console.log(`📄 Adding ${pageCanvases.length} separate .page canvases to PDF...`);
+        (`📄 Adding ${pageCanvases.length} separate .page canvases to PDF...`);
         for (let i = 0; i < pageCanvases.length; i++) {
             const pageCanvas = pageCanvases[i];
             const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.85);
@@ -4473,16 +4473,16 @@ export async function generateUbiApfRecordPDFOffline(record) {
             pdf.setFontSize(9);
             pdf.text(`Page ${pageNumber}`, 105, pageHeight - 5, { align: 'center' });
             pageNumber++;
-            console.log(`✅ Added .page canvas ${i + 1} as page ${pageNumber - 1}`);
+            (`✅ Added .page canvas ${i + 1} as page ${pageNumber - 1}`);
         }
 
         // Add images as separate pages
-        console.log('📸 Adding', imageData.length, 'images to PDF...');
+        ('📸 Adding', imageData.length, 'images to PDF...');
 
         // Filter out images with invalid src before adding to PDF
         const validImages = imageData.filter(img => {
             if (!img.src || typeof img.src !== 'string' || !img.src.trim()) {
-                console.log(`⏭️ Skipping image with invalid src: ${img.label}`);
+                (`⏭️ Skipping image with invalid src: ${img.label}`);
                 return false;
             }
             return true;
@@ -4516,7 +4516,7 @@ export async function generateUbiApfRecordPDFOffline(record) {
                                     pdf.setFont(undefined, 'bold');
                                     pdf.text(img.label, 12, yPos);
                                     pdf.addImage(img.src, 'JPEG', 12, yPos + 4, 92, 82);
-                                    console.log(`✅ Added property image (L): ${img.label}`);
+                                    (`✅ Added property image (L): ${img.label}`);
                                 }
                             } catch (err) {
                                 console.warn(`Failed to add property image ${img.label}:`, err?.message);
@@ -4533,7 +4533,7 @@ export async function generateUbiApfRecordPDFOffline(record) {
                                     pdf.setFont(undefined, 'bold');
                                     pdf.text(img.label, 108, yPos);
                                     pdf.addImage(img.src, 'JPEG', 108, yPos + 4, 92, 82);
-                                    console.log(`✅ Added property image (R): ${img.label}`);
+                                    (`✅ Added property image (R): ${img.label}`);
                                 }
                             } catch (err) {
                                 console.warn(`Failed to add property image ${img.label}:`, err?.message);
@@ -4552,16 +4552,16 @@ export async function generateUbiApfRecordPDFOffline(record) {
             // Location images are now rendered in HTML with page-break styling
             // They appear in the PDF automatically via html2canvas rendering
             if (locationImgs.length > 0) {
-                console.log(`✅ Location images (${locationImgs.length}) rendered via HTML`);
+                (`✅ Location images (${locationImgs.length}) rendered via HTML`);
             }
 
             // Supporting documents are now rendered in HTML with page-break styling
             // They appear in the PDF automatically via html2canvas rendering
             if (supportingImgs.length > 0) {
-                console.log(`✅ Supporting documents (${supportingImgs.length}) rendered via HTML`);
+                (`✅ Supporting documents (${supportingImgs.length}) rendered via HTML`);
             }
         } else {
-            console.log('⏭️ No valid images to add to PDF');
+            ('⏭️ No valid images to add to PDF');
         }
 
         // Add PDF metadata including generation time
@@ -4579,9 +4579,9 @@ export async function generateUbiApfRecordPDFOffline(record) {
         const filename = `valuation_${record?.clientName || record?.uniqueId || Date.now()}.pdf`;
         pdf.save(filename);
 
-        console.log(`✅ PDF generated at: ${generationTime}`);
+        (`✅ PDF generated at: ${generationTime}`);
 
-        console.log('✅ PDF generated and downloaded:', filename);
+        ('✅ PDF generated and downloaded:', filename);
         return filename;
     } catch (error) {
         console.error('❌ Client-side PDF generation error:', error);

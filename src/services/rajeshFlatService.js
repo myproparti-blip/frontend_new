@@ -230,9 +230,9 @@ export const deleteMultipleRajeshFlat = async (ids) => {
  */
 export const getLastSubmittedRajeshFlat = async () => {
   try {
-     console.log("[getLastSubmittedRajeshFlat] Calling API endpoint:", `${API_BASE_URL}/rajesh-flat/last-form/prefill`);
+     ("[getLastSubmittedRajeshFlat] Calling API endpoint:", `${API_BASE_URL}/rajesh-flat/last-form/prefill`);
     const response = await api.get(`${API_BASE_URL}/rajesh-flat/last-form/prefill`);
-    console.log("[getLastSubmittedRajeshFlat] API Response:", {
+    ("[getLastSubmittedRajeshFlat] API Response:", {
       success: response.data.success,
       message: response.data.message,
       hasData: !!response.data.data,
