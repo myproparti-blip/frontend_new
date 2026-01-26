@@ -322,11 +322,11 @@ const getSummaryValuesTableData = (pdfData) => [
 { label: 'Value of Land', value: (safeGet(pdfData, 'pdfDetails.valueOfLand') || safeGet(pdfData, 'valueOfLand')) ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.valueOfLand') || safeGet(pdfData, 'valueOfLand'), safeGet(pdfData, 'pdfDetails.valueOfLandWords')) : 'NA – As subject property is commercial Shop Composite Rate Area Method Adopted.' },
   { label: 'Area of Construction', value: safeGet(pdfData, 'pdfDetails.areaOfConstruction') || `As per Copy of Indenture of Allotment-cum-Sale:<br/>Carpet Area = ${safeGet(pdfData, 'pdfDetails.carpetArea', safeGet(pdfData, 'carpetArea'))} SMT = ${safeGet(pdfData, 'pdfDetails.carpetAreaSFT', safeGet(pdfData, 'carpetAreaSFT'))} SFT<br/>Built-up Area = ${safeGet(pdfData, 'pdfDetails.builtUpArea', safeGet(pdfData, 'builtUpArea'))} SMT = ${safeGet(pdfData, 'pdfDetails.builtUpAreaSFT', safeGet(pdfData, 'builtUpAreaSFT'))} SFT<br/>Super Built-up Area = ${safeGet(pdfData, 'pdfDetails.superBuiltUpArea', safeGet(pdfData, 'superBuiltUpArea'))} SMT = ${safeGet(pdfData, 'pdfDetails.superBuiltUpAreaSFT', safeGet(pdfData, 'superBuiltUpAreaSFT'))} SFT` },
   { label: 'Value of Construction', value: safeGet(pdfData, 'pdfDetails.valueOfConstruction') || `= ${safeGet(pdfData, 'pdfDetails.constructionSqft', safeGet(pdfData, 'constructionSqft'))} sq. ft x ₹ ${safeGet(pdfData, 'pdfDetails.constructionRate', safeGet(pdfData, 'constructionRate'))} sq. ft. = ₹ ${safeGet(pdfData, 'pdfDetails.constructionValue', safeGet(pdfData, 'constructionValue'))}` },
-  { label: 'TOTAL MARKET VALUE OF THE PROPERTY', value: formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.totalMarketValueOfTheProperty'), safeGet(pdfData, 'pdfDetails.marketValueWords')) },
-  { label: 'REALISABLE VALUE (90% of MV)', value: safeGet(pdfData, 'pdfDetails.realizableValue') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.realizableValue'), safeGet(pdfData, 'pdfDetails.realizableValueWords')) : 'NA' },
-  { label: 'DISTRESS SALE VALUE (80% of MV)', value: safeGet(pdfData, 'pdfDetails.distressValue') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.distressValue'), safeGet(pdfData, 'pdfDetails.distressValueWords')) : 'NA' },
-  { label: 'JANTRI VALUE OF PROPERTY', value: safeGet(pdfData, 'pdfDetails.jantriValue') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.jantriValue'), safeGet(pdfData, 'pdfDetails.jantriValueWords')) : 'NA' },
-  { label: 'INSURABLE VALUE OF PROPERTY', value: safeGet(pdfData, 'pdfDetails.insurableValue') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.insurableValue'), safeGet(pdfData, 'pdfDetails.insurableValueWords')) : 'NA' }
+  { label: 'TOTAL MARKET VALUE OF THE PROPERTY', value: `${safeGet(pdfData, 'pdfDetails.marketValueOfProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.marketValueOfProperty'), safeGet(pdfData, 'pdfDetails.marketValueOfProperty')) : 'NA'}` },
+  { label: 'REALISABLE VALUE (90% of MV)', value: `${safeGet(pdfData, 'pdfDetails.realizableValueProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.realizableValueProperty'), safeGet(pdfData, 'pdfDetails.realizableValueProperty')) : 'NA'}`},
+  { label: 'DISTRESS SALE VALUE (80% of MV)', value: `${safeGet(pdfData, 'pdfDetails.distressValueProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.distressValueProperty'), safeGet(pdfData, 'pdfDetails.distressValueProperty')) : 'NA'}` },
+  { label: 'JANTRI VALUE OF PROPERTY', value: `${safeGet(pdfData, 'pdfDetails.jantriValueProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.jantriValueProperty'), safeGet(pdfData, 'pdfDetails.jantriValueProperty')) : 'NA'}` },
+  { label: 'INSURABLE VALUE OF PROPERTY', value: `${safeGet(pdfData, 'pdfDetails.insurableValueProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.insurableValueProperty'), safeGet(pdfData, 'pdfDetails.insurableValueProperty')) : 'NA'}` }
 ];
 
 // PAGE 3: Introduction Table - DYNAMIC from pdfDetails
@@ -1292,8 +1292,6 @@ object-fit: contain;
   .form-table td {
     border-top: 1px solid #000 !important;
     border-bottom: 1px solid #000 !important;
-    border-left: 1px solid #000 !important;
-    border-right: 1px solid #000 !important;
     padding: 8px 12px;
     vertical-align: top !important;
     color: #000;
@@ -1311,31 +1309,15 @@ object-fit: contain;
   /* Header row - bold borders all around */
   .form-table tr:first-child td {
     border-top: 2px solid #000 !important;
-    border-bottom: 1px solid #000 !important;
-    border-left: 1px solid #000 !important;
-    border-right: 1px solid #000 !important;
     min-height: 32px;
     height: 32px;
     padding: 5px 8px;
     vertical-align: middle;
   }
 
-  .form-table tr:first-child td:first-child {
-    border-left: 2px solid #000 !important;
-  }
 
-  .form-table tr:first-child td:last-child {
-    border-right: 2px solid #000 !important;
-  }
 
-  /* Left and right edges - bold borders */
-  .form-table td:first-child {
-    border-left: 2px solid #000 !important;
-  }
-
-  .form-table td:last-child {
-    border-right: 2px solid #000 !important;
-  }
+  /* Left and right edges - borders removed */
 
   /* Bottom row - single border only */
   .form-table tr:last-child td {
@@ -1594,8 +1576,6 @@ object-fit: contain;
      .form-table td {
        border-top: 1px solid #000 !important;
        border-bottom: 1px solid #000 !important;
-       border-left: 1px solid #000 !important;
-       border-right: 1px solid #000 !important;
      }
 
      .header-section, .header {
@@ -1749,11 +1729,17 @@ object-fit: contain;
   </table>
 
   <!-- Bank Image Below Table -->
-  <div class="image-container" style="text-align: center; margin-top: 10px; margin-bottom: 5px; display: flex; justify-content: center;border: 2px solid #000 !important;
-              padding: 5px !important;
-              box-sizing: border-box !important;">
-   ${safeGet(pdfData, 'bankImage') ? `<img src="${getImageSource(safeGet(pdfData, 'bankImage'))}" alt="Bank Image" style="width: 700px; height: 450px; object-fit: cover; border: none; background: #f5f5f5; padding: 5px; box-sizing: border-box; margin: 0 auto;" crossorigin="anonymous" loading="eager" />` : ''}
-  </div>
+  ${(() => {
+    const bankImg = safeGet(pdfData, 'bankImage');
+    const imgSrc = getImageSource(bankImg);
+    return imgSrc ? `
+    <div class="image-container" style="text-align: center; margin-top: 10px; margin-bottom: 5px; display: flex; justify-content: center;border: 2px solid #000 !important;
+                 padding: 5px !important;
+                 box-sizing: border-box !important;">
+      <img src="${imgSrc}" alt="Bank Image" style="width: 700px; height: 450px; object-fit: cover; border: none; background: #f5f5f5; padding: 5px; box-sizing: border-box; margin: 0 auto;" crossorigin="anonymous" loading="eager" />
+    </div>
+    ` : '';
+  })()}
   </div>
 
   <!-- PAGE 1 FOOTER -->
@@ -1762,7 +1748,7 @@ object-fit: contain;
   <div class="" style="page-break-before: always !important; clear: both; margin-top: 0px; margin-bottom: 0px; padding: 5px 20px; width: 100%; box-sizing: border-box; display: block;">
   
   <!-- PAGE 2: Summary Values Table - Dynamically Generated -->
-          <p style="font-size: 14pt; font-weight: bold;text-align: center; margin: 5px 0 10px 0; color: #4472C4; text-decoration: underline;">VALUED PROPERTY AT A GLANCE WITH VALUATION CERTIFICATE</p>
+          <p style="font-size: 14pt; font-weight: bold;text-align: center; margin: 5px 0 10px 0; color: #4472C4; ">VALUED PROPERTY AT A GLANCE WITH VALUATION CERTIFICATE</p>
   <table style="width: 100%; border-collapse: collapse; font-size: 12pt; border: 1px solid #000000;">
   ${getSummaryValuesTableData(pdfData).map(row =>
           `<tr>
@@ -1840,7 +1826,7 @@ object-fit: contain;
 </table>
 
 <!-- Introduction Section -->
-<div style="margin-bottom: 5px;">
+<div style="margin-bottom: 15px;">
   <p style="font-size: 12pt; font-weight: bold; margin: 3px 0;">1. Introduction</p>
 </div>
 
@@ -1850,7 +1836,7 @@ object-fit: contain;
 </table>
 
 <!-- Physical Characteristics Section -->
-<div style="margin-bottom: 5px;">
+<div style="margin-bottom: 15px;">
   <p style="font-size: 12pt; font-weight: bold; margin: 3px 0;">2. Physical Characteristics of the Property</p>
 </div>
 
@@ -2242,7 +2228,7 @@ object-fit: contain;
  
  
   <div style="margin: 0; width: 100%;">
-  <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 12pt; table-layout: fixed; margin-bottom: 0; margin-top: 10px;">
+  <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 12pt; table-layout: fixed; margin-bottom: 0; margin-top: 20px;">
     <colgroup>
       <col style="width: 5%;"/>
       <col style="width: 45%;"/>
@@ -2262,18 +2248,26 @@ object-fit: contain;
           const text = item.item.replace(/^[ivxl]+\.\s*/, '');
           return `
       <tr>
-        <td style="width: 5%; vertical-align: top; border: 1px solid #000000; padding: 8px;">
-          <strong>${roman}</strong>
+        <td style="width: 5%; text-align: center; vertical-align: middle; border: 1px solid #000000; padding: 12px 5px; font-weight: bold; background-color: #ffffff;">
+          ${roman}
         </td>
-        <td style="width: 45%; vertical-align: top; border: 1px solid #000000; padding: 8px;">
+        <td style="width: 45%; vertical-align: top; border: 1px solid #000000; padding: 12px 8px; background-color: #ffffff;">
           ${text}
         </td>
-        <td style="width: 50%; border: 1px solid #000000; padding: 8px; background-color: #ffffffff;">${item.value}</td>
+        <td style="width: 50%; vertical-align: top; border: 1px solid #000000; padding: 12px 8px; background-color: #ffffff;">${item.value}</td>
       </tr>`;
       }).join('')}
+        </table>
+
       
       <!-- Section 6: Socio-cultural Aspects -->
-    
+      <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 12pt; table-layout: fixed; margin-bottom: 0; margin-top: 20px;">
+    <colgroup>
+      <col style="width: 5%;"/>
+      <col style="width: 45%;"/>
+      <col style="width: 50%;"/>
+    </colgroup>
+    <tbody>
       <tr>
         <td colspan="3" style="border: 1px solid #000000; padding: 8px; font-weight: bold; background: #ffffff;">
           <strong>6. Socio-cultural Aspects of the Property</strong>
@@ -2327,17 +2321,7 @@ object-fit: contain;
         <td style="width: 50%; border: 1px solid #000000; padding: 8px; background-color: #ffffffff;">${item.value}</td>
       </tr>`;
       }).join('')}
-       </tbody>
-    </table>
-    </div>
-<div style="margin: 0; width: 100%;">
-  <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 12pt; table-layout: fixed; margin-bottom: 0; margin-top: 10px;">
-    <colgroup>
-      <col style="width: 5%;"/>
-      <col style="width: 45%;"/>
-      <col style="width: 50%;"/>
-    </colgroup>
-    <tbody>
+   
       <!-- Section 8: Infrastructure Availability -->
       <tr>
         <td colspan="3" style="border: 1px solid #000000; padding: 8px; font-weight: bold; background: #ffffff;">
@@ -2884,15 +2868,15 @@ ${safeGet(pdfData, 'pdfDetails.marketValueOfProperty') ? formatCurrencyWithWords
     </p>
     
     <p style="margin: 8px 0; font-size: 12pt; color: #000000;">
-      <strong>The Realizable value of the above property is </strong><span style="background-color: #ffffff; color: #000000; display: inline-block; padding: 2px 4px;"><strong>${safeGet(pdfData, 'pdfDetails.realizableValueProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.realizableValueProperty'), safeGet(pdfData, 'pdfDetails.realizableValueProperty')) : 'NA'}</strong></span>
+      <strong>The Realizable value of the above property is </strong><span style=" color: #000000; display: inline-block; padding: 2px 4px;"><strong>${safeGet(pdfData, 'pdfDetails.realizableValueProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.realizableValueProperty'), safeGet(pdfData, 'pdfDetails.realizableValueProperty')) : 'NA'}</strong></span>
     </p>
     
     <p style="margin: 8px 0; font-size: 12pt; color: #000000;">
-      <strong>The Distress value </strong><span style="background-color: #ffffff; color: #000000; display: inline-block; padding: 2px 4px;"><strong>${safeGet(pdfData, 'pdfDetails.distressValueProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.distressValueProperty'), safeGet(pdfData, 'pdfDetails.distressValueProperty')) : 'NA'}</strong></span>
+      <strong>The Distress value </strong><span style=" color: #000000; display: inline-block; padding: 2px 4px;"><strong>${safeGet(pdfData, 'pdfDetails.distressValueProperty') ? formatCurrencyWithWordsAuto(safeGet(pdfData, 'pdfDetails.distressValueProperty'), safeGet(pdfData, 'pdfDetails.distressValueProperty')) : 'NA'}</strong></span>
     </p>
     
     <p style="margin: 8px 0; font-size: 12pt; color: #000000;">
-      <strong>The Book value of the above property </strong>
+      <strong>The Book value of the above property  </strong>
     </p>
   </div>
     
@@ -2964,8 +2948,8 @@ ${safeGet(pdfData, 'pdfDetails.marketValueOfProperty') ? formatCurrencyWithWords
 
 
   <!-- PAGE 18: PREAMBLE AND STANDARD OPERATING PROCEDURE -->
-  <div style="margin: 0; font-size: 12pt; line-height: 1.4; width: 100%;">
-  <p style="margin: 5px 0; font-weight: bold;">❖ PREAMBLE</p>
+  <div style="margin: 0; font-size: 12pt; line-height: 1.4; width: 100%; page-break-before: always; overflow: visible;">
+  <p style="margin: 10px 0; font-weight: bold; page-break-after: avoid;">❖ PREAMBLE</p>
   
   <p style="margin: 8px 0; text-align: justify;">
     Bank valuers in India rely on Standard Operating Procedures (SOPs) for several good reasons. SOPs help ensure consistency in property valuations by providing a standardised approach. This results in uniformity in the valuation process across different regions and properties, reducing discrepancies and ensuring fair and objective valuations. Moreover, SOPs establish guidelines and best practices that bank valuers must follow to maintain high-quality and accurate valuations. This guarantees that the bank receives reliable valuations, reducing the risk of financial loss due to overvaluation or undervaluation.
@@ -2985,7 +2969,7 @@ ${safeGet(pdfData, 'pdfDetails.marketValueOfProperty') ? formatCurrencyWithWords
   
 
   <!-- PAGE BREAK BEFORE SOP -->
-  <div style="margin: 0; font-size: 12pt; line-height: 1.5; width: 100%; page-break-before: always; padding: 0 20px;">
+  <div style="margin-top: 10px; font-size: 12pt; line-height: 1.5; width: 100%; page-break-before: always; padding: 0 20px; overflow: visible;">
     <p style="margin: 12px 0 10px 0; font-weight: bold; font-size: 13pt;">❖ Standard Operating Procedure (SOP)</p>
     <p style="margin: 6px 0; font-weight: normal;"><strong>1.</strong> Receive a valuation request from the bank.</p>
     <p style="margin: 6px 0; font-weight: normal;"><strong>2.</strong> Review the request thoroughly to understand the scope, purpose, and specific requirements of the valuation.</p>
@@ -3012,9 +2996,9 @@ ${safeGet(pdfData, 'pdfDetails.marketValueOfProperty') ? formatCurrencyWithWords
   
   <ul style="margin: 8px 0; padding-left: 20px;">
     <li style="margin: 6px 0; text-align: justify; page-break-after: avoid;">
-      The Indian Real Estate market is currently facing a transparency issue. It is highly fragmented and lacks authentic and reliable data on market transactions. The actual transaction value often differs from the value documented in official transactions. To accurately represent market trends, we conducted a market survey among sellers, brokers, developers, and other market participants. This survey is crucial to determine fair valuation in this subject area. Based on our verbal survey, we have gained insights into the real estate market in the subject area.
+      The Indian Real Estate market is currently facing a transparency issue. It is highly fragmented and lacks authentic and reliable data on market transactions. The actual transaction value often differs from the value documented in official transactions. To accurately represent market trends, we </br> </br> onducted a market survey among sellers, brokers, developers, and other market participants. This survey is crucial to determine fair valuation in this subject area. Based on our verbal survey, we have gained insights into the real estate market in the subject area.
     </li>
-    </br>
+  
     <li style="margin: 6px 0; text-align: justify; page-break-after: avoid;">
       To conduct a proper valuation, we have made the assumption that the property in question possesses a title that is clear and marketable and that it is free from any legal or physical encumbrances, disputes, claims, or other statutory liabilities. Additionally, we have assumed that the property has received the necessary planning approvals and clearances from the local authorities and that it adheres to the local development control regulations.
     </li>
@@ -3126,8 +3110,8 @@ from the date of the report. Simply possessing the report will not fulfill its i
   </div>
 </div>
   <!-- PAGE 22: DECLARATION-CUM-UNDERTAKING (ANNEXURE-IV) -->
-<div style=" background: white;padding: 12mm; width: 100%; box-sizing: border-box; page-break-before: always;" class="">
-<div style="font-size: 12pt; line-height: 1.4; margin-top: 16px; margin-left: 0; margin-right: 0; width: 100%;">
+<div style="background: white; padding: 12mm; width: 100%; box-sizing: border-box; page-break-before: always; overflow: visible;">
+<div style="font-size: 12pt; line-height: 1.4; margin-top: 20px; margin-left: 0; margin-right: 0; width: 100%; overflow: visible;">
   <div style="text-align: center; margin-bottom: 25px;">
     <p style="margin: 0; font-weight: bold; font-size: 12pt;">ANNEXURE – IV</p>
     <p style="margin: 8px 0 0 0; font-weight: bold; font-size: 12pt;">DECLARATION- CUM- UNDERTAKING</p>
@@ -3156,6 +3140,7 @@ from the date of the report. Simply possessing the report will not fulfill its i
 I have not been depanelled/ delisted by any other bank and in case any such deplanement by other banks 
 during my empanelment with you, I will inform you within 3 days of such depanelment. 
 </li>
+
 <li style="margin: 6px 0; text-align: justify; list-style-type: none; counter-increment: alphacounter; page-break-after: avoid;">
   <span style="margin-right: 8px; font-weight: bold; width: 20px; display: inline-block;">F.</span>I have not been removed/dismissed from service/employment earlier
 </li>
@@ -3211,6 +3196,7 @@ during my empanelment with you, I will inform you within 3 days of such depanelm
 <li style="margin: 6px 0; text-align: justify; list-style-type: none; counter-increment: alphacounter; page-break-after: avoid;">
   <span style="margin-right: 8px; font-weight: bold; width: 20px; display: inline-block;">W.</span>I will undertake the valuation work on receipt of Letter of Engagement generated from the system (i.e. LLMS/LOS) only
 </li>
+</br>
 <li style="margin: 6px 0; text-align: justify; list-style-type: none; counter-increment: alphacounter; page-break-after: avoid;">
   <span style="margin-right: 8px; font-weight: bold; width: 20px; display: inline-block;">X.</span>Further, I hereby provide the following information
 </li>
@@ -3218,8 +3204,8 @@ during my empanelment with you, I will inform you within 3 days of such depanelm
 </div>
 </div>
 <!-- PAGE 23: VALUATION DETAILS TABLE -->
-<div style="margin: 0; padding: 12mm; background: white; width: 100%; box-sizing: border-box; page-break-before: always;" class="print-container">
-<div style="font-size: 12pt; line-height: 1.4;">
+<div style="margin: 0; padding: 12mm; background: white; width: 100%; box-sizing: border-box; page-break-before: always; overflow: visible;" class="print-container">
+<div style="font-size: 12pt; line-height: 1.4; overflow: visible;">
   <table style="width: 100%; border-collapse: collapse; margin: 0; border: 1px solid #000; table-layout: fixed;">
     <tr>
       <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 5%; font-weight: bold;">No.</td>
@@ -3287,23 +3273,25 @@ during my empanelment with you, I will inform you within 3 days of such depanelm
       <td style="border: 1px solid #000; padding: 6px;">we are Not responsible for Title of the property and valuations affected by the same</td>
     </tr>
      <tr>
-    <td style="border: none; padding: 6px;">
-      <p style="margin: 0; text-align: left; white-space: nowrap;"><strong>Place:&nbsp;${safeGet(pdfData, 'city') || 'NA'}</strong></p>
-      <p style="margin: 5px 0; text-align: left; white-space: nowrap;"><strong>Date:&nbsp;${formatDate(safeGet(pdfData, 'dateOfValuationReport')) || 'NA'}</strong></p>
-    </td>
-    <td style="border: none; padding: 6px;">
-      <div style="margin-top: 30px;">
-        <p style="margin: 0; font-weight: bold;text-align:right;">Rajesh Ganatra</p>
-      </div>
-    </td>
-  </tr>
+     <td colspan="2" style="border: none; padding: 6px;">
+       <div style="display: flex; align-items: flex-start; width: 100%;">
+         <div style="flex: 1;">
+           <p style="margin: 0; text-align: left; white-space: nowrap;"><strong>Place:&nbsp;${safeGet(pdfData, 'city') || 'NA'}</strong></p>
+           <p style="margin: 5px 0 0 0; text-align: left; white-space: nowrap;"><strong>Date:&nbsp;${formatDate(safeGet(pdfData, 'dateOfValuationReport')) || 'NA'}</strong></p>
+         </div>
+         <div style="margin-left: 60px; text-align: right; flex-shrink: 0;">
+           <p style="margin: 0; font-weight: bold;">Rajesh Ganatra</p>
+         </div>
+       </div>
+     </td>
+     </tr>
 </table>
 </div>
 </div>
 
 <!-- PAGE 24-25: MODEL CODE OF CONDUCT FOR VALUERS -->
-<div class="page print-container" style="margin: 0; padding: 12mm; background: white; width: 100%; box-sizing: border-box; page-break-before: always;">
-<div style="font-size: 12pt; line-height: 1.4;">
+<div class="page print-container" style="margin: 0; padding: 12mm; background: white; width: 100%; box-sizing: border-box; page-break-before: always; overflow: visible;">
+<div style="font-size: 12pt; line-height: 1.4; overflow: visible;">
   <div style="text-align: center; margin-bottom: 20px;">
     <p style="margin: 0; font-weight: bold; font-size: 12pt;">(Annexure-V)</p>
     <p style="margin: 5px 0 0 0; font-weight: bold; font-size: 12pt;">MODEL CODE OF CONDUCT FOR VALUERS</p>
@@ -3360,8 +3348,8 @@ during my empanelment with you, I will inform you within 3 days of such depanelm
       <span>A valuer shall clearly state to his client the services that he would be competent to provide and the services for which he would be relying on other valuers or professionals or for which the client can have a separate arrangement with other valuers.</span>
     </div>
   </div>
-</br>
   <p style=" font-weight: bold;">Independence and Disclosure of Interest</p>
+  </br>
   <div style="margin: 5px 0 10px 0; padding: 0;">
     <div style="margin: 4px 0; text-align: justify; display: flex;">
       <span style="font-weight: bold; min-width: 24px;">12.</span>
@@ -3412,10 +3400,14 @@ during my empanelment with you, I will inform you within 3 days of such depanelm
       <span style="font-weight: bold; min-width: 24px;">21.</span>
       <span>A valuer shall ensure that he/it maintains written contemporaneous records for any decision taken, the reasons for taking the decision, and the information and evidence in support of such decision. This shall be maintained so as to sufficiently enable a reasonable person to take a view on the appropriateness of his/its decisions and actions.</span>
     </div>
+    </br>
+    </br>
+    </br>
     <div style="margin: 4px 0; text-align: justify; display: flex;">
       <span style="font-weight: bold; min-width: 24px;">22.</span>
-      <span>A valuer shall appear, co-operate and be available for inspections and investigations carried out by the authority, any person authorised by the authority, the registered valuers organisation with which he/it is registered or any other statutory regulatory body.</span>
+      <span>A valuer shall appear, co-operate and be available for inspections and investigations carried out by the authority, any person authorised by the authority, the registered valuers </br> organisation with which he/it is registered or any other statutory regulatory body.</span>
     </div>
+ 
     <div style="margin: 4px 0; text-align: justify; display: flex;">
       <span style="font-weight: bold; min-width: 24px;">23.</span>
       <span>A valuer shall provide all information and records as may be required by the authority, the Tribunal, Appellate Tribunal, the registered valuers organisation with which he/it is registered, or any other statutory regulatory body.</span>

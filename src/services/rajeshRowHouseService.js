@@ -231,6 +231,42 @@ export const deleteMultipleRajeshRowHouse = async (ids) => {
 };
 
 /**
+  * Get last submitted Rajesh House form for autofilling new forms
+ * @returns {Promise} Last form data with pdfDetails
+ */
+export const getLastSubmittedRajeshRowHouse = async () => {
+  try {
+    console.log("[getLastSubmittedRajeshRowHouse] Calling API endpoint:", `${API_BASE_URL}/rajesh-row-house/last-form/prefill`);
+    
+    const response = await api.get(`${API_BASE_URL}/rajesh-row-house/last-form/prefill`);
+    console.log("[getLastSubmittedRajeshRowHouse] API Response:", {
+      success: response.data.success,
+      message: response.data.message,
+      hasData: !!response.data.data,
+      dataKeys: response.data.data ? Object.keys(response.data.data).slice(0, 10) : []
+    });
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Failed to fetch last form');
+    }
+
+    return response.data.data;
+  } catch (error) {
+    console.error("[getLastSubmittedRajeshRowHouse] Error:", {
+      status: error.response?.status,
+      message: error.message,
+      errorData: error.response?.data
+    });
+    
+    // Return null if no previous form exists (this is not an error condition)
+    if (error.response?.status === 404 || error.message?.includes('not found')) {
+      return null;
+    }
+    throw error.response?.data || { message: error.message };
+  }
+};
+
+/**
  * Invalidate Rajesh RowHouse cache
  * @param {String} pattern - Optional cache pattern
  */

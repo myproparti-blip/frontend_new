@@ -2811,7 +2811,7 @@ export function generateValuationReportHTML(data = {}) {
           <td colspan="2" style="border: 1px solid #000; padding: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
               <div style="font-size: 11pt;">
-                <p style="margin: 2px 0; font-weight: bold;">Date: ${formatDate(safeGet(pdfData, 'dateOfReport'))}</p>
+                <p style="margin: 2px 0; font-weight: bold;">Date: ${formatDate(safeGet(pdfData, 'dateOfInspection'))}</p>
                 <p style="margin: 2px 0; font-weight: bold;">Place: ${safeGet(pdfData, 'city')}</p>
               </div>
               <div style="font-size: 11pt; text-align: right;">
@@ -2850,7 +2850,7 @@ export function generateValuationReportHTML(data = {}) {
        <tr>
          <td class="row-num" style="border: 1px solid #000; padding: 8px;"></td>
          <td class="label" style="border: 1px solid #000; padding: 8px;">b) Date on which the valuation is made</td>
-         <td class="value" style="border: 1px solid #000; padding: 8px;">${formatDate(safeGet(pdfData, 'dateValuationMade'))}</td>
+         <td class="value" style="border: 1px solid #000; padding: 8px;">${formatDate(safeGet(pdfData, 'dateOfInspection'))}</td>
        </tr>
       
       <tr>
@@ -3257,7 +3257,7 @@ export function generateValuationReportHTML(data = {}) {
             <td style="width: 45%; border: 1px solid #000; padding: 8px 12px; font-weight: normal; font-size: 11pt; vertical-align: top;">Guideline rate obtained from the Registrar's Office (an evidence thereof to be enclosed)</td>
             <td style="width: 50%; border: 1px solid #000; padding: 8px 12px; ; font-size: 11pt; text-align: justify;">
               <strong>As per GARVI / JANTRI Portal, the Jantri Rate for Industrial Land is ₹ ${safeGet(pdfData, 'jantriRate', '1070')} per sq.mtr as per revised Guidelines for Jantri</strong><br/><br/>
-              Rates 2 time of Old Rates, dated on 13/04/2023,<br/>
+              Rates 2 time of Old Rates, dated on ${formatDate(safeGet(pdfData, 'dateOfInspection'))},<br/>
               = ${safeGet(pdfData, 'jantriRate', '1070')} X 2 = ${safeGet(pdfData, 'guidelineRateAdopted', '2140')}/- per sq.mtr<br/>
               <span style=";">Land Value = ${safeGet(pdfData, 'extentOfSite', '13873')} x ${safeGet(pdfData, 'guidelineRateAdopted', '2140')}/- = ₹ ${safeGet(pdfData, 'jantriLandValue', '2,96,88,220.00')}<br/>
               Building Value = ₹ ${safeGet(pdfData, 'jantriBuildingValue', '3,18,96,328.50')}<br/>
@@ -3489,7 +3489,7 @@ export function generateValuationReportHTML(data = {}) {
                 Date of issue and validity of layout of approved map / plan
             </td>
             <td style="border: 1px solid #000; padding: 8px 12px; font-size: 11pt; background: #ffffff; vertical-align: top;">
-                ${safeGet(pdfData, 'approvedMapDateValidity', 'No. 393, Dated: 25/06/2013, Approved by Industrial Safety & Health ' + safeGet(pdfData, 'city') + ' Regional.')}
+                ${safeGet(pdfData, 'pdfDetails.documents.propertyRecords.naLatter','NA')}
             </td>
         </tr>
         <tr>
@@ -4012,7 +4012,7 @@ export function generateValuationReportHTML(data = {}) {
                         <tr>
                           <td style="width: 15%; border: none; padding: 4px 8px; font-weight: bold; font-size: 11pt; ;">Date</td>
                           <td style="width: 5%; border: none; padding: 4px 8px; font-size: 11pt;">: -</td>
-                          <td style="width: 30%; border: none; padding: 4px 8px; font-size: 11pt; ;">${formatDate(safeGet(pdfData, 'valuationMadeDate'))}</td>
+                          <td style="width: 30%; border: none; padding: 4px 8px; font-size: 11pt; ;">${formatDate(safeGet(pdfData, 'dateOfInspection'))}</td>
                           <td style="width: 50%; border: none; padding: 4px 8px; font-size: 11pt; text-align: right;">Rajesh Ganatra </td>
                         </tr>
                         <tr>
@@ -4024,7 +4024,7 @@ export function generateValuationReportHTML(data = {}) {
                       </tbody>
                     </table>
 
-                    <p style="margin: 12px 0; font-size: 11pt; text-align: justify;">The undersigned has inspected the property detailed in Valuation Report dated on <span style=";">${safeGet(pdfData, 'pdfDetails.signatureDetails.valuer.date')}</span></p>
+                    <p style="margin: 12px 0; font-size: 11pt; text-align: justify;">The undersigned has inspected the property detailed in Valuation Report dated on <span style=";">${formatDate(safeGet(pdfData, 'dateOfInspection'))}</span></p>
                     <p style="margin: 0 0 12px 0; font-size: 11pt; text-align: justify;">We are satisfied that the fair and reasonable market value of the property is <span style=";"><strong> ${formatCurrencyWithWords(safeGet(pdfData, 'totalMarketValue')) || formatCurrencyWithWords(safeGet(pdfData, 'fairMarketValue'))}</strong></span></p>
 
                     <table style="width: 100%; border-collapse: collapse; margin: 12px 0;">
@@ -4032,7 +4032,7 @@ export function generateValuationReportHTML(data = {}) {
                         <tr>
                           <td style="width: 15%; border: none; padding: 4px 8px; font-weight: bold; font-size: 11pt; ;">Date</td>
                           <td style="width: 5%; border: none; padding: 4px 8px; font-size: 11pt;">: -</td>
-                          <td style="width: 30%; border: none; padding: 4px 8px; font-size: 11pt; ;">${safeGet(pdfData, 'pdfDetails.signatureDetails.branchManager.date')}</td>
+                          <td style="width: 30%; border: none; padding: 4px 8px; font-size: 11pt; ;">${formatDate(safeGet(pdfData, 'dateOfInspection'))}</td>
                           <td style="width: 50%; border: none; padding: 4px 8px; font-size: 11pt;"></td>
                         </tr>
                         <tr>
@@ -4356,10 +4356,10 @@ export function generateValuationReportHTML(data = {}) {
             <strong>b.</strong> I will not undertake valuation of any assets in which I have a direct or indirect interest or become so interested at any time during a period of three years prior to my appointment as valuer or three years after the valuation of assets was conducted by me.
         </p>
         <p style="margin: 8px 0 8px 0; font-size: 11pt; text-align: justify;">
-            <strong>c.</strong> The information furnished in my valuation report dated <strong>${formatDate(safeGet(pdfData, 'valuationMadeDate'))}</strong> is true and correct to the best of my knowledge and belief and I have made an impartial and true valuation of the property.
+            <strong>c.</strong> The information furnished in my valuation report dated <strong>${formatDate(safeGet(pdfData, 'dateOfInspection'))}</strong> is true and correct to the best of my knowledge and belief and I have made an impartial and true valuation of the property.
         </p>
         <p style="margin: 8px 0 8px 0; font-size: 11pt; text-align: justify;">
-            <strong>d.</strong> I have personally inspected the property on <strong>${formatDate(safeGet(pdfData, 'valuationMadeDate'))}</strong>. The work is not sub-contracted to any other valuer and carried out by myself.
+            <strong>d.</strong> I have personally inspected the property on <strong>${formatDate(safeGet(pdfData, 'dateOfInspection'))}</strong>. The work is not sub-contracted to any other valuer and carried out by myself.
         </p>
         
         <p style="margin: 8px 0 8px 0; font-size: 11pt; text-align: justify;">
@@ -4459,7 +4459,7 @@ export function generateValuationReportHTML(data = {}) {
             <tr>
                 <td style="border: 1px solid #333; padding: 10px 12px; text-align: center; vertical-align: top;">5</td>
                 <td style="border: 1px solid #333; padding: 10px 12px; vertical-align: top;">date of appointment, valuation date and date of report;</td>
-                <td style="border: 1px solid #333; padding: 10px 12px; vertical-align: top;">Date of Report: ${formatDate(safeGet(pdfData, 'dateOfReport'))}<br/>Date of Visit: ${formatDate(safeGet(pdfData, 'dateOfVisit'))}</td>
+                <td style="border: 1px solid #333; padding: 10px 12px; vertical-align: top;">Date of Report: ${formatDate(safeGet(pdfData, 'dateOfReport'))}<br/>Date of Visit: ${formatDate(safeGet(pdfData, 'dateOfInspection'))}</td>
             </tr>
             <tr>
                 <td style="border: 1px solid #333; padding: 10px 12px; text-align: center; vertical-align: top;">6</td>
@@ -4500,7 +4500,7 @@ export function generateValuationReportHTML(data = {}) {
             <td style="border: 1px solid #333; padding: 12px;"></td>
             <td style="border: 1px solid #333; padding: 12px; vertical-align: top;">
                 <p style="margin: 0 0 8px 0; font-size: 11pt; font-weight: bold;">Place:${safeGet(pdfData, 'city')}</p>
-                <p style="margin: 0; font-size: 11pt; font-weight: bold;">Date: ${formatDate(safeGet(pdfData, 'valuationMadeDate'))}</p>
+                <p style="margin: 0; font-size: 11pt; font-weight: bold;">Date: ${formatDate(safeGet(pdfData, 'dateOfInspection'))}</p>
             </td>
             <td style="border: 1px solid #333; padding: 12px; text-align: center; vertical-align: top;">
                 <p style="margin: 0; font-size: 11pt; font-weight: bold;">Rajesh Ganatra</p>
@@ -4592,7 +4592,7 @@ export function generateValuationReportHTML(data = {}) {
                       <p style="margin: 8px 0 4px 0; font-size: 10pt;"><strong>Signature of the valuer:</strong> _______________________</p>
                       <p style="margin: 4px 0; font-size: 10pt;"><strong>Name of the Valuer:</strong> Rajesh Ganatra</p>
                       <p style="margin: 4px 0; font-size: 10pt;"><strong>Address of the valuer:</strong> 5<sup>th</sup> floor, Shailvik Complex, behind Ganesh Plaza, Opp. Sanmukh Complex, Off. C G Road, Navrangpura, Ahmedabad – 380009</p>
-                      <p style="margin: 4px 0; font-size: 10pt;"><strong>Date:</strong> ${formatDate(safeGet(pdfData, 'valuationMadeDate'))}</p>
+                      <p style="margin: 4px 0; font-size: 10pt;"><strong>Date:</strong> ${formatDate(safeGet(pdfData, 'dateOfInspection'))}</p>
                       <p style="margin: 4px 0; font-size: 10pt;"><strong>Place:</strong>${safeGet(pdfData, 'city')}</p>
                     </div>
                     </div>

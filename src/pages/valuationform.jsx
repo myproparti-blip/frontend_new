@@ -7,10 +7,10 @@ import { v4 as uuidv4 } from "uuid";
 import { createValuation } from "../services/ubiShopService";
 import { createBofMaharashtra } from "../services/bomFlatService";
 import { createUbiApfForm } from "../services/ubiApfService";
-import { createRajeshHouse } from "../services/rajeshHouseService";
-import { createRajeshBank } from "../services/rajeshBankService";
-import { createRajeshFlat } from "../services/rajeshFlatService";
-import { createRajeshRowHouse } from "../services/rajeshRowHouseService";
+import { createRajeshHouse, getLastSubmittedRajeshHouse } from "../services/rajeshHouseService";
+import { createRajeshBank, getLastSubmittedRajeshBank } from "../services/rajeshBankService";
+import { createRajeshFlat, getLastSubmittedRajeshFlat } from "../services/rajeshFlatService";
+import { createRajeshRowHouse , getLastSubmittedRajeshRowHouse} from "../services/rajeshRowHouseService";
 import { isBofMaharashtraBank } from "../config/bankFormMapping";
 import { addCustomOption, getCustomOptions, deleteCustomOption } from "../services/customOptionsService";
 import api, { invalidateCache } from "../services/axios";
@@ -385,16 +385,60 @@ const FormPage = ({ user, onLogin }) => {
                 response = await createUbiApfForm(payload);
             } else if (selectedForm === 'rajeshhouse') {
                 console.log("[onFinish] Creating Rajesh House form:", { finalBankName, selectedForm });
+                try {
+                    const lastForm = await getLastSubmittedRajeshHouse();
+                    if (lastForm && lastForm.pdfDetails) {
+                        payload.pdfDetails = lastForm.pdfDetails;
+                        console.log("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
+                    }
+                } catch (autofillError) {
+                    console.warn("[onFinish] Could not autofill pdfDetails:", autofillError.message);
+                    // Continue creating form without autofill
+                }
                 response = await createRajeshHouse(payload);
             } else if (selectedForm === 'rajeshbank') {
                 console.log("[onFinish] Creating Rajesh Bank form:", { finalBankName, selectedForm });
+                
+                // Fetch last submitted form's pdfDetails for autofilling
+                try {
+                    const lastForm = await getLastSubmittedRajeshBank();
+                    if (lastForm && lastForm.pdfDetails) {
+                        payload.pdfDetails = lastForm.pdfDetails;
+                        console.log("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
+                    }
+                } catch (autofillError) {
+                    console.warn("[onFinish] Could not autofill pdfDetails:", autofillError.message);
+                    // Continue creating form without autofill
+                }
+                
                 response = await createRajeshBank(payload);
             } else if (selectedForm === 'rajeshrowhouse') {
                 console.log("[onFinish] Creating Rajesh Row House form:", { finalBankName, selectedForm });
+                try {
+                    const lastForm = await getLastSubmittedRajeshRowHouse();
+                    if (lastForm && lastForm.pdfDetails) {
+                        payload.pdfDetails = lastForm.pdfDetails;
+                        console.log("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
+                    }
+                } catch (autofillError) {
+                    console.warn("[onFinish] Could not autofill pdfDetails:", autofillError.message);
+                    // Continue creating form without autofill
+                }
                 response = await createRajeshRowHouse(payload);
             } 
             else if (selectedForm === 'rajeshflat') {
                console.log("[onFinish] Creating Rajesh Flat form:", { finalBankName, selectedForm });
+               // Fetch last submitted form's pdfDetails for autofilling
+                try {
+                    const lastForm = await getLastSubmittedRajeshFlat();
+                    if (lastForm && lastForm.pdfDetails) {
+                        payload.pdfDetails = lastForm.pdfDetails;
+                        console.log("[onFinish] ✅ Autofill pdfDetails from last form:", Object.keys(lastForm.pdfDetails).length, "fields");
+                    }
+                } catch (autofillError) {
+                    console.warn("[onFinish] Could not autofill pdfDetails:", autofillError.message);
+                    // Continue creating form without autofill
+                }
                response = await createRajeshFlat(payload);
             }
             else 

@@ -875,7 +875,7 @@ export function generateValuationReportHTML(data = {}) {
         </tr>
         <tr style=";">
           <td style="border: 1px solid #000; padding: 8px 10px; font-weight: bold; width: 30%; font-size: 11pt;">Purpose of Valuation</td>
-          <td style="border: 1px solid #000; padding: 8px 10px; width: 70%; ;  font-size: 11pt;">${safeGet(pdfData, 'pdfDetails.valuationHeader.purposeForValuation', '')}</td>
+          <td style="border: 1px solid #000; padding: 8px 10px; width: 70%; ;  font-size: 11pt;">${safeGet(pdfData, 'pdfDetails.valuationHeader.purposeForValuation', 'NA')}</td>
         </tr>
         <tr style="background: #ffffff;">
           <td style="border: 1px solid #000; padding: 8px 10px; font-weight: bold; width: 30%; font-size: 11pt;">Date of Valuation</td>
@@ -2011,7 +2011,7 @@ ${safeGet(pdfData, 'pdfDetails.propertyOwnerDetails.nameOfOwner', 'NA')}        
               </div>
               ` : ''}
 
-              <div style="margin-top: 15px;">
+              <div style="page-break-before: always; margin-top: 40px; margin-bottom: 40px;">
               <p style="margin: 5px 0; font-size: 12pt; line-height: 1.6;"><strong><span>
 As subjected property is Apartment, we have adopted market approach for this valuation excises. 
 The Comparable Sales Approach/ Market Approach </strong></span>
@@ -2483,75 +2483,75 @@ the better and more accurate your estimate will be using this approach.</span>
 <!-- PAGE 23: VALUATION DETAILS TABLE -->
 <div class="" style=" background: white; width: 100%;" class="">
   <div style="font-size: 12pt; line-height: 1.4;">
-    <table style="width: 100%; border-collapse: separate; border-spacing: 0;; margin: 0; border: 1px solid #000; page-break-inside: avoid;">
+    <table style="width: 100%; border-collapse: collapse; margin: 0; border: 1px solid #000; page-break-inside: avoid;">
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%; font-weight: bold;">Sl. No.</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%; font-weight: bold;">Sr. No.</td>
         <td style="border: 1px solid #000; padding: 6px; width: 42%; font-weight: bold;">Particulars</td>
         <td style="border: 1px solid #000; padding: 6px; width: 50%; font-weight: bold;">Valuer comment</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">1</td>
-        <td style="border: 1px solid #000; padding: 6px;">background information of the asset being valued;</td>
-        <td style="border: 1px solid #000; padding: 6px;">Referred provided documents</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">1</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">background information of the asset being valued;</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">Referred provided documents</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">2</td>
-        <td style="border: 1px solid #000; padding: 6px;">purpose of valuation and appointing authority</td>
-        <td style="border: 1px solid #000; padding: 6px;"><strong>${safeGet(pdfData, 'pdfDetails.valuationHeader.purposeForValuation', '')}</strong></td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">2</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">purpose of valuation and appointing authority</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;"><strong>${safeGet(pdfData, 'pdfDetails.valuationHeader.purposeForValuation', '')}</strong></td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">3</td>
-        <td style="border: 1px solid #000; padding: 6px;">identity of the valuer and any other experts involved in the valuation;</td>
-        <td style="border: 1px solid #000; padding: 6px;">Self-assessment</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">3</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">identity of the valuer and any other experts involved in the valuation;</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">Self-assessment</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">4</td>
-        <td style="border: 1px solid #000; padding: 6px;">disclosure of valuer interest or conflict, if any;</td>
-        <td style="border: 1px solid #000; padding: 6px;">N.A.</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">4</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">disclosure of valuer interest or conflict, if any;</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">N.A.</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">5</td>
-        <td style="border: 1px solid #000; padding: 6px;">date of appointment, valuation date and date of report;</td>
-        <td style="border: 1px solid #000; padding: 6px;"><strong>Date of report:${formatDate(safeGet(pdfData, 'pdfDetails.dateOfValuationReport', 'NA'))}</p>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">5</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">date of appointment, valuation date and date of report;</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;"><strong>Date of report:${formatDate(safeGet(pdfData, 'pdfDetails.dateOfValuationReport', 'NA'))}</p>
       <p style="margin: 4px 0; font-size: 12pt; background-color: #ffffffff; padding: 4px; display: inline-block;"> Date of Visit:  ${formatDate(safeGet(pdfData, 'pdfDetails.dateOfInspectionOfProperty', 'NA'))}</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">6</td>
-        <td style="border: 1px solid #000; padding: 6px;">inspections and/or investigations undertaken;</td>
-        <td style="border: 1px solid #000; padding: 6px;">Yes.</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">6</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">inspections and/or investigations undertaken;</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">Yes.</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">7</td>
-        <td style="border: 1px solid #000; padding: 6px;">nature and sources of the information used or relied upon;</td>
-        <td style="border: 1px solid #000; padding: 6px;">Local inquiries, brokers, known websites, i.e., magicbricks, 99acres, propertywall, proprtiger, housing, etc., if available</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">7</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">nature and sources of the information used or relied upon;</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">Local inquiries, brokers, known websites, i.e., magicbricks, 99acres, propertywall, proprtiger, housing, etc., if available</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">8</td>
-        <td style="border: 1px solid #000; padding: 6px;">procedures adopted in carrying out the valuation and valuation standards followed.</td>
-        <td style="border: 1px solid #000; padding: 6px;">Land & Building Method, with Market Approach for Land and Cost Approach for Building.</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">8</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">procedures adopted in carrying out the valuation and valuation standards followed.</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">Land & Building Method, with Market Approach for Land and Cost Approach for Building.</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">9</td>
-        <td style="border: 1px solid #000; padding: 6px;">restrictions on use of the report, if any;</td>
-        <td style="border: 1px solid #000; padding: 6px;">As per purpose mentioned in report.</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">9</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">restrictions on use of the report, if any;</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">As per purpose mentioned in report.</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">10</td>
-        <td style="border: 1px solid #000; padding: 6px;">major factors that were taken into account during the valuation;</td>
-        <td style="border: 1px solid #000; padding: 6px;">Location of the property, with developing of surroundings, for going-purpose valuation</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">10</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">major factors that were taken into account during the valuation;</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">Location of the property, with developing of surroundings, for going-purpose valuation</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">11</td>
-        <td style="border: 1px solid #000; padding: 6px;">Caveats, limitations and disclaimers to the extent they explain or elucidate the limitations faced by valuer, which shall not be for the purpose of limiting his responsibility for the valuation report.</td>
-        <td style="border: 1px solid #000; padding: 6px;">Future market events and Government Policies.</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">11</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">Caveats, limitations and disclaimers to the extent they explain or elucidate the limitations faced by valuer, which shall not be for the purpose of limiting his responsibility for the valuation report.</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">Future market events and Government Policies.</td>
       </tr>
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center;">12</td>
-        <td style="border: 1px solid #000; padding: 6px;">Caveats, limitations and disclaimers to the extent they explain or elucidate the limitations faced by valuer, which shall not be for the purpose of limiting his responsibility for the valuation report.</td>
-        <td style="border: 1px solid #000; padding: 6px;">We are not responsible for Title of the subjected property and valuations affected by the same</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%;">12</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 42%;">Caveats, limitations and disclaimers to the extent they explain or elucidate the limitations faced by valuer, which shall not be for the purpose of limiting his responsibility for the valuation report.</td>
+        <td style="border: 1px solid #000; padding: 6px; width: 50%;">We are not responsible for Title of the subjected property and valuations affected by the same</td>
       </tr>
       <tr>
-         <td colspan="3" style="border: none !important; border-bottom: none !important; padding: 15px 6px;">
+         <td colspan="3" style="border: 1px solid #000; padding: 15px 6px;">
            <div style="">
              <div style="display: flex; justify-content: space-between; align-items: center;">
                <p style="margin: 0; border: none; text-decoration: none;"><strong>Place: ${safeGet(pdfData, 'city') || safeGet(pdfData, 'pdfDetails.city')}</strong></p>

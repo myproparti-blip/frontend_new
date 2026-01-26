@@ -26,7 +26,7 @@ import {
     FaLeaf
 } from "react-icons/fa";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Textarea, Label, Badge, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, RadioGroup, RadioGroupItem, ChipSelect } from "../components/ui";
-import { getRajeshBankById, updateRajeshBank, managerSubmitRajeshBank } from "../services/rajeshBankService";
+import { getRajeshBankById, updateRajeshBank, managerSubmitRajeshBank, getLastSubmittedRajeshBank } from "../services/rajeshBankService";
 import { showLoader, hideLoader } from "../redux/slices/loaderSlice";
 import { useNotification } from "../context/NotificationContext";
 import { uploadPropertyImages, uploadLocationImages, uploadDocuments, uploadAreaImages } from "../services/imageService";
@@ -671,73 +671,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
             // Pass user info for authentication
             const dbData = await getRajeshBankById(id, username, role, clientId);
             setValuation(dbData);
-            
-            // Load file's own saved data. Each file is completely independent.
-            // CRITICAL: Always deep copy to prevent shared object references between files
-            let dataToLoad = dbData;
-            const fileSpecificData = localStorage.getItem(`valuation_file_${id}`);
-            
-            if (fileSpecificData) {
-                // File has saved data - use ONLY this file's data (don't look at other files)
-                try {
-                    const parsedFileData = JSON.parse(fileSpecificData);
-                    // Deep copy all nested objects to prevent reference sharing
-                    dataToLoad = {
-                        ...dbData,
-                        ...parsedFileData,
-                        directions: parsedFileData.directions ? JSON.parse(JSON.stringify(parsedFileData.directions)) : (dbData.directions || {}),
-                        coordinates: parsedFileData.coordinates ? JSON.parse(JSON.stringify(parsedFileData.coordinates)) : (dbData.coordinates || {}),
-                        pdfDetails: parsedFileData.pdfDetails ? JSON.parse(JSON.stringify(parsedFileData.pdfDetails)) : (dbData.pdfDetails || {}),
-                        photos: parsedFileData.photos ? JSON.parse(JSON.stringify(parsedFileData.photos)) : (dbData.photos || {}),
-                        areaImages: parsedFileData.areaImages ? JSON.parse(JSON.stringify(parsedFileData.areaImages)) : (dbData.areaImages || {}),
-                        checklist: parsedFileData.checklist ? JSON.parse(JSON.stringify(parsedFileData.checklist)) : (dbData.checklist || {}),
-                        propertyImages: parsedFileData.propertyImages ? JSON.parse(JSON.stringify(parsedFileData.propertyImages)) : (dbData.propertyImages || []),
-                        locationImages: parsedFileData.locationImages ? JSON.parse(JSON.stringify(parsedFileData.locationImages)) : (dbData.locationImages || [])
-                    };
-                    console.log("[rajeshBank.jsx] ✓ Loaded this file's saved data for File ID:", id);
-                } catch (e) {
-                    console.error("Failed to parse file-specific data:", e);
-                }
-            } else {
-                // File has NO saved data yet. Auto-fill from LAST SAVED file (one-time copy at creation)
-                // This data becomes THIS file's independent copy
-                const lastFileId = localStorage.getItem(`last_valuation_file_${username}`);
-                
-                if (lastFileId && lastFileId !== id) {
-                    const previousFileData = localStorage.getItem(`valuation_file_${lastFileId}`);
-                    if (previousFileData) {
-                        try {
-                            const parsedPreviousData = JSON.parse(previousFileData);
-                            // Auto-load previous file data as a ONE-TIME COPY
-                            // Exclude CLIENT ID (must be fresh for each file)
-                            const { clientId: _, clientName: __, ...restPreviousData } = parsedPreviousData;
-                            // Deep copy all nested objects to create independent copies
-                            dataToLoad = {
-                                ...dbData,
-                                ...restPreviousData,
-                                // Keep clientId and clientName from current file (not auto-filled)
-                                clientId: dbData.clientId,
-                                clientName: dbData.clientName,
-                                directions: restPreviousData.directions ? JSON.parse(JSON.stringify(restPreviousData.directions)) : (dbData.directions || {}),
-                                coordinates: restPreviousData.coordinates ? JSON.parse(JSON.stringify(restPreviousData.coordinates)) : (dbData.coordinates || {}),
-                                pdfDetails: restPreviousData.pdfDetails ? JSON.parse(JSON.stringify(restPreviousData.pdfDetails)) : (dbData.pdfDetails || {}),
-                                photos: restPreviousData.photos ? JSON.parse(JSON.stringify(restPreviousData.photos)) : (dbData.photos || {}),
-                                areaImages: restPreviousData.areaImages ? JSON.parse(JSON.stringify(restPreviousData.areaImages)) : (dbData.areaImages || {}),
-                                checklist: restPreviousData.checklist ? JSON.parse(JSON.stringify(restPreviousData.checklist)) : (dbData.checklist || {}),
-                                propertyImages: restPreviousData.propertyImages ? JSON.parse(JSON.stringify(restPreviousData.propertyImages)) : (dbData.propertyImages || []),
-                                locationImages: restPreviousData.locationImages ? JSON.parse(JSON.stringify(restPreviousData.locationImages)) : (dbData.locationImages || [])
-                            };
-                            
-                            console.log("[rajeshBank.jsx] ✓ Auto-filled new file from previous file:", lastFileId, "→", id);
-                            console.log("[rajeshBank.jsx] ✓ This file is now INDEPENDENT - changes won't affect other files");
-                        } catch (e) {
-                            console.error("Failed to auto-fill from previous file:", e);
-                        }
-                    }
-                }
-            }
-            
-            mapDataToForm(dataToLoad);
+            mapDataToForm(dbData);
 
             // Restore property image previews from database
             if (dbData.propertyImages && Array.isArray(dbData.propertyImages)) {
@@ -813,10 +747,45 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
             setEngineerName(dbData.engineerName || "");
         } catch (error) {
             console.error("Error loading valuation:", error);
-            // If form not found, show message but allow user to create new form
+            
+            // If form not found (new form), try to autofill from last submitted form
             if (error.message && error.message.includes("not found")) {
+                try {
+                    console.log("[loadValuation] Form not found, attempting autofill from last form...");
+                    
+                    // Fetch last submitted form for autofilling valuation tab data only
+                    const lastForm = await getLastSubmittedRajeshBank();
+                    
+                    console.log("[loadValuation] Last form fetched:", {
+                        exists: !!lastForm,
+                        hasPdfDetails: lastForm && !!lastForm.pdfDetails,
+                        pdfDetailsKeys: lastForm && lastForm.pdfDetails ? Object.keys(lastForm.pdfDetails).length : 0
+                    });
+                    
+                    if (lastForm && lastForm.pdfDetails && Object.keys(lastForm.pdfDetails).length > 0) {
+                        // Create a new form with autofilled pdfDetails only
+                        const autofilledFormData = {
+                            ...formData,
+                            uniqueId: id,
+                            username: username,
+                            clientId: clientId,
+                            pdfDetails: { ...lastForm.pdfDetails }
+                        };
+                        setValuation(autofilledFormData);
+                        mapDataToForm(autofilledFormData);
+                        console.log("[loadValuation] ✅ Form autofilled with last valuation data");
+                        showSuccess("New form created with last valuation data autofilled");
+                        return;
+                    } else {
+                        console.warn("[loadValuation] Last form has no pdfDetails data to autofill");
+                    }
+                } catch (autofillError) {
+                    console.warn("Could not autofill from last form:", autofillError.message);
+                    // Continue with empty form if autofill fails
+                }
+                
+                // If no autofill possible, initialize with empty form
                 showError("Rajesh Bank form not found. Creating new form...");
-                // Initialize with empty form
                 const newFormData = {
                     ...formData,
                     uniqueId: id,
@@ -977,7 +946,44 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                 [field]: value
             };
 
-            // Auto-calculate Estimated Value = Qty × Rate for all 10 items
+            // AUTO-CALCULATE LAND VALUE: Value of Land = Land Area × Land Rate
+            if (field === 'landAreaSqmt' || field === 'landRatePerSqmtr') {
+                const landArea = parseFloat(newPdfDetails.landAreaSqmt) || 0;
+                const landRate = parseFloat(newPdfDetails.landRatePerSqmtr) || 0;
+                const valueOfLand = landArea * landRate;
+                newPdfDetails.valueOfLandMarket = valueOfLand > 0 ? valueOfLand.toString() : '';
+                // Also update totalLandValue to be same as valueOfLandMarket (since there's only one row)
+                newPdfDetails.totalLandValue = valueOfLand > 0 ? valueOfLand.toString() : '';
+            }
+
+            // AUTO-CALCULATE BUILDING VALUE: Value of Construction = Plinth Area × Replacement Depreciation Rate
+            if (field === 'plinthAreaSqft' || field === 'replacementDepreciation') {
+                const plinthArea = parseFloat(newPdfDetails.plinthAreaSqft) || 0;
+                const replacementRate = parseFloat(newPdfDetails.replacementDepreciation) || 0;
+                const valueOfConstruction = plinthArea * replacementRate;
+                newPdfDetails.valueOfConstructionMarket = valueOfConstruction > 0 ? valueOfConstruction.toString() : '';
+                // Total Building Value = Value of Construction (after depreciation applied)
+                newPdfDetails.totalBuildingValue = valueOfConstruction > 0 ? valueOfConstruction.toString() : '';
+            }
+
+            // AUTO-CALCULATE TOTAL MARKET VALUE OF PROPERTY = Total Land Value + Total Building Value
+            if (field === 'totalLandValue' || field === 'totalBuildingValue' || 
+                field === 'landAreaSqmt' || field === 'landRatePerSqmtr' ||
+                field === 'plinthAreaSqft' || field === 'replacementDepreciation') {
+                const totalLandValue = parseFloat(newPdfDetails.totalLandValue) || 0;
+                const totalBuildingValue = parseFloat(newPdfDetails.totalBuildingValue) || 0;
+                const marketValueOfProperty = totalLandValue + totalBuildingValue;
+                newPdfDetails.marketValueOfProperty = marketValueOfProperty > 0 ? marketValueOfProperty.toString() : '';
+
+                // AUTO-CALCULATE DERIVED VALUES based on Fair Market Value (Market Value of Property)
+                if (marketValueOfProperty > 0) {
+                    newPdfDetails.realizableValueProperty = (marketValueOfProperty * 0.9).toString(); // 90%
+                    newPdfDetails.distressValueProperty = (marketValueOfProperty * 0.8).toString();   // 80%
+                    newPdfDetails.insurableValueProperty = marketValueOfProperty.toString();          // 100% (Insurable = Fair Market Value)
+                }
+            }
+
+            // Auto-calculate Estimated Value = Qty × Rate for all 10 items (legacy functionality)
             const items = [
                 { qtyField: 'presentValueQty', rateField: 'presentValueRate', valueField: 'presentValue' },
                 { qtyField: 'wardrobesQty', rateField: 'wardrobesRate', valueField: 'wardrobes' },
@@ -1491,7 +1497,6 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
         try {
             dispatch(showLoader("Saving..."));
 
-            // CRITICAL: Deep copy all nested objects to prevent cross-file data sharing
             const payload = {
                 clientId: clientId,
                 uniqueId: formData.uniqueId || id,
@@ -1509,24 +1514,22 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                 engineerName: formData.engineerName || "",
                 notes: formData.notes,
                 elevation: formData.elevation,
-                // Deep copy nested objects to prevent reference sharing
-                directions: formData.directions ? JSON.parse(JSON.stringify(formData.directions)) : {},
-                coordinates: formData.coordinates ? JSON.parse(JSON.stringify(formData.coordinates)) : {},
-                propertyImages: formData.propertyImages ? JSON.parse(JSON.stringify(formData.propertyImages)) : [],
-                locationImages: formData.locationImages ? JSON.parse(JSON.stringify(formData.locationImages)) : [],
+                directions: formData.directions,
+                coordinates: formData.coordinates,
+                propertyImages: formData.propertyImages || [],
+                locationImages: formData.locationImages || [],
                 bankImage: formData.bankImage || null,
-                areaImages: formData.areaImages ? JSON.parse(JSON.stringify(formData.areaImages)) : {},
+                areaImages: formData.areaImages || {},
                 documentPreviews: (formData.documentPreviews || []).map(doc => ({
                     fileName: doc.fileName,
                     size: doc.size,
                     ...(doc.url && { url: doc.url })
                 })),
-                photos: formData.photos ? JSON.parse(JSON.stringify(formData.photos)) : { elevationImages: [], siteImages: [] },
+                photos: formData.photos || { elevationImages: [], siteImages: [] },
                 status: "on-progress",
-                // Deep copy pdfDetails and checklist to prevent cross-file contamination
-                pdfDetails: formData.pdfDetails ? JSON.parse(JSON.stringify(formData.pdfDetails)) : {},
-                checklist: formData.checklist ? JSON.parse(JSON.stringify(formData.checklist)) : {},
-                customFields: customFields ? JSON.parse(JSON.stringify(customFields)) : [],
+                pdfDetails: formData.pdfDetails,
+                checklist: formData.checklist,
+                customFields: customFields,
                 managerFeedback: formData.managerFeedback || "",
                 submittedByManager: formData.submittedByManager || false,
                 lastUpdatedBy: username,
@@ -1611,34 +1614,6 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
 
             // Clear draft before API call
             localStorage.removeItem(`valuation_draft_${username}`);
-            
-            // Save file-specific data to localStorage for future file creation
-            // NOTE: Exclude clientId and clientName - these must be entered fresh for each new file
-            const fileSpecificDataToSave = {
-                bankName: payload.bankName,
-                city: payload.city,
-                mobileNumber: payload.mobileNumber,
-                address: payload.address,
-                payment: payload.payment,
-                collectedBy: payload.collectedBy,
-                dsa: payload.dsa,
-                engineerName: payload.engineerName,
-                notes: payload.notes,
-                elevation: payload.elevation,
-                directions: payload.directions,
-                coordinates: payload.coordinates,
-                pdfDetails: payload.pdfDetails,
-                checklist: payload.checklist,
-                customFields: customFields
-            };
-            localStorage.setItem(`valuation_file_${id}`, JSON.stringify(fileSpecificDataToSave));
-            
-            // Update the last saved file so next NEW file can auto-fill from this one
-            // This is a ONE-TIME copy when next file is created. Files are then independent.
-            localStorage.setItem(`last_valuation_file_${username}`, id);
-            
-            console.log("[rajeshBank.jsx] ✓ Saved file-specific data for ID:", id);
-            console.log("[rajeshBank.jsx] ✓ Next NEW file will auto-fill from this file at creation only");
 
             // Call API to update Rajesh Bank form
             console.log("[rajeshBank.jsx] Payload being sent to API:", {
@@ -1851,74 +1826,6 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                     </div>
                 </div>
 
-                {/* Valuation Summary Values */}
-                <div className="bg-yellow-50 rounded-xl border border-yellow-200 p-4 mb-6">
-                    <h4 className="font-bold text-slate-900 mb-4 text-sm">Valuation Summary Values</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-bold text-gray-900">Total Market Value</Label>
-                            <Input
-                                type="number"
-                                inputMode="numeric"
-                                placeholder="₹ 0.00"
-                                value={formData.pdfDetails?.totalMarketValueOfTheProperty || ""}
-                                onChange={(e) => handleValuationChange('totalMarketValueOfTheProperty', e.target.value)}
-                                disabled={!canEdit}
-                                className="h-9 text-sm rounded-lg border border-yellow-300 py-1 px-3 bg-white font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                            />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-bold text-gray-900">Realisable Value (90%)</Label>
-                            <Input
-                                type="number"
-                                inputMode="numeric"
-                                placeholder="₹ 0.00"
-                                value={formData.pdfDetails?.realizableValue || ""}
-                                onChange={(e) => handleValuationChange('realizableValue', e.target.value)}
-                                disabled={!canEdit}
-                                className="h-9 text-sm rounded-lg border border-yellow-300 py-1 px-3 bg-white font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                            />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-bold text-gray-900">Distress Sale Value (80%)</Label>
-                            <Input
-                                type="number"
-                                inputMode="numeric"
-                                placeholder="₹ 0.00"
-                                value={formData.pdfDetails?.distressValue || ""}
-                                onChange={(e) => handleValuationChange('distressValue', e.target.value)}
-                                disabled={!canEdit}
-                                className="h-9 text-sm rounded-lg border border-yellow-300 py-1 px-3 bg-white font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                            />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-bold text-gray-900">Jantri Value</Label>
-                            <Input
-                                type="number"
-                                inputMode="numeric"
-                                placeholder="₹ 0.00"
-                                value={formData.pdfDetails?.jantriValue || ""}
-                                onChange={(e) => handleValuationChange('jantriValue', e.target.value)}
-                                disabled={!canEdit}
-                                className="h-9 text-sm rounded-lg border border-yellow-300 py-1 px-3 bg-white font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                            />
-                        </div>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-yellow-200">
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-bold text-gray-900">Insurable Value of Property</Label>
-                            <Input
-                                type="number"
-                                inputMode="numeric"
-                                placeholder="₹ 0.00"
-                                value={formData.pdfDetails?.insurableValue || ""}
-                                onChange={(e) => handleValuationChange('insurableValue', e.target.value)}
-                                disabled={!canEdit}
-                                className="h-9 text-sm rounded-lg border border-yellow-300 py-1 px-3 bg-white font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                            />
-                        </div>
-                    </div>
-                </div>
 
                 {/* INTRODUCTION SECTION */}
                 <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl border border-blue-200 shadow-sm">
@@ -3755,7 +3662,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                     </div>
 
                     {/* Row 3: Guideline Value */}
-                    <div className="bg-yellow-50 rounded-xl border border-yellow-300 p-4 mt-2">
+                    <div className=" rounded-xl  p-4 mt-2">
                         <div className="space-y-2">
                             <Label className="text-sm font-bold text-gray-900">GUIDELINE VALUE</Label>
                             <Input
@@ -3763,7 +3670,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                                 value={formData.pdfDetails?.guidelineValue || ""}
                                 onChange={(e) => handleValuationChange('guidelineValue', e.target.value)}
                                 disabled={!canEdit}
-                                className="h-9 text-sm rounded-lg border border-yellow-400 py-1 px-3 bg-white font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                className="h-9 text-sm rounded-lg border  py-1 px-3 bg-white font-semibold focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                             />
                         </div>
                     </div>
@@ -3821,7 +3728,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                                         />
                                     </td>
                                 </tr>
-                                <tr className="bg-yellow-50">
+                                <tr className="bg-gray-50">
                                     <td className="border border-gray-400 p-2 font-bold text-right" colSpan="3">Total Land Value</td>
                                     <td className="border border-gray-400 p-2">
                                         <Input
@@ -3857,7 +3764,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                             <tbody>
                                 <tr>
                                     <td className="border border-gray-400 p-2 font-bold">1.</td>
-                                    <td className="border border-gray-400 p-2 bg-yellow-100">
+                                    <td className="border border-gray-400 p-2 ">
                                         <Input
                                             placeholder="As per Allotment Deed - SBUA"
                                             value={formData.pdfDetails?.buildingParticulars || ""}
@@ -3866,7 +3773,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                                             className="h-8 text-sm rounded-lg border border-neutral-300 py-1 px-2 bg-white"
                                         />
                                     </td>
-                                    <td className="border border-gray-400 p-2 bg-yellow-100">
+                                    <td className="border border-gray-400 p-2 ">
                                         <Input
                                             placeholder="000.00"
                                             value={formData.pdfDetails?.plinthAreaSqft || ""}
@@ -3893,7 +3800,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                                             className="h-8 text-sm rounded-lg border border-neutral-300 py-1 px-2 bg-white"
                                         />
                                     </td>
-                                    <td className="border border-gray-400 p-2 bg-yellow-100">
+                                    <td className="border border-gray-400 p-2 ">
                                         <Input
                                             placeholder="₹ 00,000/- per sq.mtr SBUA rate"
                                             value={formData.pdfDetails?.replacementDepreciation || ""}
@@ -3902,7 +3809,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                                             className="h-8 text-sm rounded-lg border border-neutral-300 py-1 px-2 bg-white text-xs"
                                         />
                                     </td>
-                                    <td className="border border-gray-400 p-2 bg-yellow-100 font-bold">
+                                    <td className="border border-gray-400 p-2 font-bold">
                                         <Input
                                             placeholder="₹ 00.00.00,000.00"
                                             value={formData.pdfDetails?.valueOfConstructionMarket || ""}
@@ -3912,7 +3819,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                                         />
                                     </td>
                                 </tr>
-                                <tr className="bg-yellow-100">
+                                <tr className="bg-gray-100">
                                     <td className="border border-gray-400 p-2 font-bold text-right" colSpan="6">Total Building Value</td>
                                     <td className="border border-gray-400 p-2">
                                         <Input
@@ -3958,7 +3865,7 @@ const RajeshBankEditForm = ({ user, onLogin }) => {
                                         />
                                     </td>
                                 </tr>
-                                <tr className="bg-yellow-50">
+                                <tr>
                                     <td className="border border-gray-400 p-3 font-bold text-left">Distress Value Rs. (80% of Fair market value)</td>
                                     <td className="border border-gray-400 p-3">
                                         <Input

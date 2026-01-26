@@ -24,7 +24,7 @@ import {
     FaRedo
 } from "react-icons/fa";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Textarea, Label, Badge, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, RadioGroup, RadioGroupItem, ChipSelect } from "../components/ui";
-import { getRajeshHouseById, updateRajeshHouse, managerSubmitRajeshHouse } from "../services/rajeshHouseService";
+import { getRajeshHouseById, updateRajeshHouse, managerSubmitRajeshHouse, getLastSubmittedRajeshHouse } from "../services/rajeshHouseService";
 import { showLoader, hideLoader } from "../redux/slices/loaderSlice";
 import { useNotification } from "../context/NotificationContext";
 import { uploadPropertyImages, uploadLocationImages, uploadDocuments } from "../services/imageService";
@@ -781,81 +781,54 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                 bankImageData: dbData.bankImage
             });
             setValuation(dbData);
-            
-            // Load file's own saved data. Each file is completely independent.
-            // CRITICAL: Always deep copy to prevent shared object references between files
-            let dataToLoad = dbData;
-            const fileSpecificData = localStorage.getItem(`valuation_file_${id}`);
-            
-            if (fileSpecificData) {
-                // File has saved data - use ONLY this file's data (don't look at other files)
-                try {
-                    const parsedFileData = JSON.parse(fileSpecificData);
-                    // Deep copy all nested objects to prevent reference sharing
-                    dataToLoad = {
-                        ...dbData,
-                        ...parsedFileData,
-                        directions: parsedFileData.directions ? JSON.parse(JSON.stringify(parsedFileData.directions)) : (dbData.directions || {}),
-                        coordinates: parsedFileData.coordinates ? JSON.parse(JSON.stringify(parsedFileData.coordinates)) : (dbData.coordinates || {}),
-                        pdfDetails: parsedFileData.pdfDetails ? JSON.parse(JSON.stringify(parsedFileData.pdfDetails)) : (dbData.pdfDetails || {}),
-                        constructionCostAnalysis: parsedFileData.constructionCostAnalysis ? JSON.parse(JSON.stringify(parsedFileData.constructionCostAnalysis)) : (dbData.constructionCostAnalysis || {}),
-                        propertyImages: parsedFileData.propertyImages ? JSON.parse(JSON.stringify(parsedFileData.propertyImages)) : (dbData.propertyImages || []),
-                        locationImages: parsedFileData.locationImages ? JSON.parse(JSON.stringify(parsedFileData.locationImages)) : (dbData.locationImages || [])
-                    };
-                    console.log("[rajeshHouse.jsx] ✓ Loaded this file's saved data for File ID:", id);
-                } catch (e) {
-                    console.error("Failed to parse file-specific data:", e);
-                }
-            } else {
-                // File has NO saved data yet. Auto-fill from LAST SAVED file (one-time copy at creation)
-                // This data becomes THIS file's independent copy
-                const lastFileId = localStorage.getItem(`last_valuation_file_${username}`);
-                
-                if (lastFileId && lastFileId !== id) {
-                    const previousFileData = localStorage.getItem(`valuation_file_${lastFileId}`);
-                    if (previousFileData) {
-                        try {
-                            const parsedPreviousData = JSON.parse(previousFileData);
-                            // Auto-load previous file data as a ONE-TIME COPY
-                            // Exclude CLIENT ID (must be fresh for each file)
-                            const { clientId: _, clientName: __, ...restPreviousData } = parsedPreviousData;
-                            // Deep copy all nested objects to create independent copies
-                            dataToLoad = {
-                                ...dbData,
-                                ...restPreviousData,
-                                // Keep clientId and clientName from current file (not auto-filled)
-                                clientId: dbData.clientId,
-                                clientName: dbData.clientName,
-                                directions: restPreviousData.directions ? JSON.parse(JSON.stringify(restPreviousData.directions)) : (dbData.directions || {}),
-                                coordinates: restPreviousData.coordinates ? JSON.parse(JSON.stringify(restPreviousData.coordinates)) : (dbData.coordinates || {}),
-                                pdfDetails: restPreviousData.pdfDetails ? JSON.parse(JSON.stringify(restPreviousData.pdfDetails)) : (dbData.pdfDetails || {}),
-                                constructionCostAnalysis: restPreviousData.constructionCostAnalysis ? JSON.parse(JSON.stringify(restPreviousData.constructionCostAnalysis)) : (dbData.constructionCostAnalysis || {}),
-                                propertyImages: restPreviousData.propertyImages ? JSON.parse(JSON.stringify(restPreviousData.propertyImages)) : (dbData.propertyImages || []),
-                                locationImages: restPreviousData.locationImages ? JSON.parse(JSON.stringify(restPreviousData.locationImages)) : (dbData.locationImages || [])
-                            };
-                            
-                            console.log("[rajeshHouse.jsx] ✓ Auto-filled new file from previous file:", lastFileId, "→", id);
-                            console.log("[rajeshHouse.jsx] ✓ This file is now INDEPENDENT - changes won't affect other files");
-                        } catch (e) {
-                            console.error("Failed to auto-fill from previous file:", e);
-                        }
-                    }
-                }
-            }
-            
-            mapDataToForm(dataToLoad);
-            restoreImagePreviews(dataToLoad);
+            mapDataToForm(dbData);
+            restoreImagePreviews(dbData);
 
-            setBankName(dataToLoad.bankName || "");
-            setCity(dataToLoad.city || "");
-            setDsa(dataToLoad.dsa || "");
-            setEngineerName(dataToLoad.engineerName || "");
+            setBankName(dbData.bankName || "");
+            setCity(dbData.city || "");
+            setDsa(dbData.dsa || "");
+            setEngineerName(dbData.engineerName || "");
         } catch (error) {
             console.error("Error loading valuation:", error);
-            // If form not found, show message but allow user to create new form
+            // If form not found (new form), try to autofill from last submitted form
             if (error.message && error.message.includes("not found")) {
-                showError("Rajesh House form not found. Creating new form...");
-                // Initialize with empty form
+                try {
+                     console.log("[loadValuation] Form not found, attempting autofill from last form...");
+                    
+                    // Fetch last submitted form for autofilling valuation tab data only
+                    const lastForm = await getLastSubmittedRajeshHouse();
+                    
+                   console.log("[loadValuation] Last form fetched:", {
+                        exists: !!lastForm,
+                        hasPdfDetails: lastForm && !!lastForm.pdfDetails,
+                        pdfDetailsKeys: lastForm && lastForm.pdfDetails ? Object.keys(lastForm.pdfDetails).length : 0
+                    });
+                    
+                    if (lastForm && lastForm.pdfDetails && Object.keys(lastForm.pdfDetails).length > 0) {
+                        // Create a new form with autofilled pdfDetails only
+                        const autofilledFormData = {
+                            ...formData,
+                            uniqueId: id,
+                            username: username,
+                            clientId: clientId,
+                            pdfDetails: { ...lastForm.pdfDetails }
+                        };
+                        setValuation(autofilledFormData);
+                        mapDataToForm(autofilledFormData);
+                         console.log("[loadValuation] ✅ Form autofilled with last valuation data");
+                        showSuccess("New form created with last valuation data autofilled");
+                        return;
+                        } else {
+                        console.warn("[loadValuation] Last form has no pdfDetails data to autofill");
+                    
+                    }
+                } catch (autofillError) {
+                    console.warn("Could not autofill from last form:", autofillError.message);
+                    // Continue with empty form if autofill fails
+                }
+                
+                // If no autofill possible, initialize with empty form
+                showError("Rajesh House form not found. Creating new form...");                // Initialize with empty form
                 const newFormData = {
                     ...formData,
                     uniqueId: id,
@@ -989,39 +962,6 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
     const handleSave = async () => {
         try {
             dispatch(showLoader());
-            
-            // Save file-specific data to localStorage BEFORE API call
-            const fileDataToSave = {
-                uniqueId: formData.uniqueId,
-                directions: formData.directions ? JSON.parse(JSON.stringify(formData.directions)) : {},
-                coordinates: formData.coordinates ? JSON.parse(JSON.stringify(formData.coordinates)) : {},
-                pdfDetails: formData.pdfDetails ? JSON.parse(JSON.stringify(formData.pdfDetails)) : {},
-                constructionCostAnalysis: formData.constructionCostAnalysis ? JSON.parse(JSON.stringify(formData.constructionCostAnalysis)) : {},
-                propertyImages: formData.propertyImages ? JSON.parse(JSON.stringify(formData.propertyImages)) : [],
-                locationImages: formData.locationImages ? JSON.parse(JSON.stringify(formData.locationImages)) : [],
-                documentPreviews: (formData.documentPreviews || []).map(doc => ({
-                    fileName: doc.fileName,
-                    size: doc.size,
-                    ...(doc.url && { url: doc.url })
-                })),
-                customFields: formData.customFields ? JSON.parse(JSON.stringify(formData.customFields)) : [],
-                customConstructionCostFields: customConstructionCostFields ? JSON.parse(JSON.stringify(customConstructionCostFields)) : [],
-                // Store all other form fields
-                bankName: formData.bankName,
-                city: formData.city,
-                dsa: formData.dsa,
-                engineerName: formData.engineerName,
-                clientName: formData.clientName,
-                mobileNumber: formData.mobileNumber,
-                address: formData.address,
-                payment: formData.payment,
-                collectedBy: formData.collectedBy,
-                notes: formData.notes,
-                elevation: formData.elevation
-            };
-            localStorage.setItem(`valuation_file_${id}`, JSON.stringify(fileDataToSave));
-            localStorage.setItem(`last_valuation_file_${username}`, id);
-            
             await updateRajeshHouse(id, formData, user.username, user.role, user.clientId);
             invalidateCache();
             dispatch(hideLoader());
@@ -1110,7 +1050,22 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
     // Render field based on type
     const renderFormField = (field) => {
         const value = getNestedProperty(formData.pdfDetails, field.key);
-        const isDisabled = field.disabled || !canEdit;
+        // Auto-calculated fields should be disabled
+        const autoCalculatedFields = [
+            'briefDescription.totalMarketValue',
+            'valuationSummary.realisableValue.amount',
+            'valuationSummary.distressValue.amount',
+            'totalAbstract.partA.value',
+            'totalAbstract.partB.value',
+            'totalAbstract.partC.value',
+            'totalAbstract.partD.value',
+            'totalAbstract.partE.value',
+            'totalAbstract.partF.value',
+            'totalAbstract.totalValue',
+            'totalAbstract.sayValue'
+        ];
+        const isAutoCalculated = autoCalculatedFields.includes(field.key);
+        const isDisabled = field.disabled || !canEdit || isAutoCalculated;
 
         if (isDateField(field.key)) {
             return (
@@ -1120,6 +1075,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                     onChange={(e) => handleValuationChange(field.key, e.target.value)}
                     disabled={isDisabled}
                     className="h-8 text-xs rounded-lg border border-neutral-300 py-1 px-2 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                    title={isAutoCalculated ? 'This value is automatically calculated' : ''}
                 />
             );
         }
@@ -1133,6 +1089,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                         onChange={(e) => handleValuationChange(field.key, e.target.value)}
                         disabled={isDisabled}
                         className="h-8 text-xs rounded-lg border border-neutral-300 py-1 px-2 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                        title={isAutoCalculated ? 'This value is automatically calculated' : ''}
                     >
                         {options.map(option => (
                             <option key={option} value={option}>{option || 'Select'}</option>
@@ -1149,6 +1106,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                 onChange={(e) => handleValuationChange(field.key, e.target.value)}
                 disabled={isDisabled}
                 className="h-8 text-xs rounded-lg border border-neutral-300 py-1 px-2 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                title={isAutoCalculated ? 'This value is automatically calculated' : ''}
             />
         );
     };
@@ -1240,15 +1198,67 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                 setNestedProperty(newPdfDetails, 'services.total', totalServices > 0 ? totalServices.toString() : '');
             }
 
-            // Auto-calculate Total Abstract totalValue based on 6 part values (A through F)
+
+
+            // Auto-calculate Total Market Value, Realisable Value, and Distress Value
+            if (field === 'briefDescription.valueOfLand' || field === 'briefDescription.valueOfConstruction') {
+                const valueOfLand = parseFloat(getNestedProperty(newPdfDetails, 'briefDescription.valueOfLand')) || 0;
+                const valueOfConstruction = parseFloat(getNestedProperty(newPdfDetails, 'briefDescription.valueOfConstruction')) || 0;
+                
+                const totalMarketValue = valueOfLand + valueOfConstruction;
+                const realisableValue = totalMarketValue * 0.9; // 90% of TMV
+                const distressValue = totalMarketValue * 0.8;   // 80% of TMV
+                
+                setNestedProperty(newPdfDetails, 'briefDescription.totalMarketValue', totalMarketValue > 0 ? parseFloat(totalMarketValue.toFixed(2)).toString() : '');
+                setNestedProperty(newPdfDetails, 'valuationSummary.realisableValue.amount', realisableValue > 0 ? parseFloat(realisableValue.toFixed(2)).toString() : '');
+                setNestedProperty(newPdfDetails, 'valuationSummary.distressValue.amount', distressValue > 0 ? parseFloat(distressValue.toFixed(2)).toString() : '');
+            }
+
+            // Auto-calculate Part A from Land Valuation sayRO
+            if (field === 'landValuation.sayRO') {
+                const partAValue = parseFloat(getNestedProperty(newPdfDetails, 'landValuation.sayRO')) || 0;
+                setNestedProperty(newPdfDetails, 'totalAbstract.partA.value', partAValue > 0 ? partAValue.toString() : '');
+            }
+
+            // Auto-calculate Part B from Construction Cost total roundedValue
+            if (field.startsWith('constructionCostAnalysis.')) {
+                const partBValue = parseFloat(getNestedProperty(newPdfDetails, 'constructionCostAnalysis.total.roundedValue')) || 0;
+                setNestedProperty(newPdfDetails, 'totalAbstract.partB.value', partBValue > 0 ? partBValue.toString() : '');
+            }
+
+            // Auto-calculate Part C from Fixed Furniture total
+            if (field.startsWith('fixedFurniture.')) {
+                const partCValue = parseFloat(getNestedProperty(newPdfDetails, 'fixedFurniture.total')) || 0;
+                setNestedProperty(newPdfDetails, 'totalAbstract.partC.value', partCValue > 0 ? partCValue.toString() : '');
+            }
+
+            // Auto-calculate Part D from Amenities total
+            if (field.startsWith('amenities.')) {
+                const partDValue = parseFloat(getNestedProperty(newPdfDetails, 'amenities.total')) || 0;
+                setNestedProperty(newPdfDetails, 'totalAbstract.partD.value', partDValue > 0 ? partDValue.toString() : '');
+            }
+
+            // Auto-calculate Part E from Miscellaneous total
+            if (field.startsWith('miscellaneous.')) {
+                const partEValue = parseFloat(getNestedProperty(newPdfDetails, 'miscellaneous.total')) || 0;
+                setNestedProperty(newPdfDetails, 'totalAbstract.partE.value', partEValue > 0 ? partEValue.toString() : '');
+            }
+
+            // Auto-calculate Part F from Services total
+            if (field.startsWith('services.')) {
+                const partFValue = parseFloat(getNestedProperty(newPdfDetails, 'services.total')) || 0;
+                setNestedProperty(newPdfDetails, 'totalAbstract.partF.value', partFValue > 0 ? partFValue.toString() : '');
+            }
+
+            // Recalculate Total Abstract whenever any part changes (to ensure totalValue and sayValue are updated)
             const abstractPartFields = ['totalAbstract.partA.value', 'totalAbstract.partB.value', 'totalAbstract.partC.value', 'totalAbstract.partD.value', 'totalAbstract.partE.value', 'totalAbstract.partF.value'];
-            if (abstractPartFields.includes(field)) {
+            if (abstractPartFields.includes(field) || field === 'landValuation.sayRO' || field.startsWith('constructionCostAnalysis.') || field.startsWith('fixedFurniture.') || field.startsWith('amenities.') || field.startsWith('miscellaneous.') || field.startsWith('services.')) {
                 const totalAbstractValue = abstractPartFields.reduce((sum, fieldName) => {
                     const value = parseFloat(getNestedProperty(newPdfDetails, fieldName)) || 0;
                     return sum + value;
                 }, 0);
                 setNestedProperty(newPdfDetails, 'totalAbstract.totalValue', totalAbstractValue > 0 ? totalAbstractValue.toString() : '');
-
+                
                 // Auto-calculate Say Value as rounded figure of Total Value (round to nearest 1000)
                 const roundedSayValue = Math.round(totalAbstractValue / 1000) * 1000;
                 setNestedProperty(newPdfDetails, 'totalAbstract.sayValue', roundedSayValue > 0 ? roundedSayValue.toString() : '');
@@ -1658,62 +1668,34 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                                 return;
                             }
 
-                            // Helper function to convert empty strings to empty objects for nested structures
-                             const cleanPdfDetails = (pdf) => {
-                                 if (!pdf) return {};
-                                 const cleaned = JSON.parse(JSON.stringify(pdf));
-                                 
-                                 // Ensure valuationSummary is an object, not a string
-                                 if (typeof cleaned.valuationSummary === 'string' || cleaned.valuationSummary === '') {
-                                     cleaned.valuationSummary = {};
-                                 }
-                                 
-                                 // Recursively ensure all expected objects are objects, not strings
-                                 const objectFields = ['basicInfo', 'valuationPurpose', 'documents', 'checklistOfDocuments', 
-                                     'ownerDetails', 'propertyLocation', 'areaClassification', 'boundaryDetails', 
-                                     'dimensions', 'coordinates', 'extent', 'occupationStatus', 'siteCharacteristics', 
-                                     'briefDescription', 'landValuation', 'buildingDetails', 'constructionCostAnalysis', 
-                                     'extraItems', 'amenities', 'miscellaneous', 'services', 'totalAbstract', 'signatureDetails', 'qrCode'];
-                                 
-                                 objectFields.forEach(field => {
-                                     if (cleaned[field] && typeof cleaned[field] === 'string') {
-                                         cleaned[field] = {};
-                                     } else if (!cleaned[field]) {
-                                         cleaned[field] = {};
-                                     }
-                                 });
-                                 
-                                 return cleaned;
-                             };
-
-                             // Build the complete payload
-                             const payload = {
-                                 clientId: user.clientId,
-                                 uniqueId: formData.uniqueId || id,
-                                 username: formData.username || user.username,
-                                 dateTime: formData.dateTime,
-                                 day: formData.day,
-                                 bankName: bankName || "",
-                                 city: city || "",
-                                 clientName: formData.clientName,
-                                 mobileNumber: formData.mobileNumber,
-                                 address: formData.address,
-                                 payment: formData.payment,
-                                 collectedBy: formData.collectedBy,
-                                 dsa: dsa || "",
-                                 engineerName: engineerName || "",
-                                 notes: formData.notes,
-                                 elevation: formData.elevation,
-                                 directions: formData.directions,
-                                 coordinates: formData.coordinates,
-                                 ...(valuation?._id && { status: "on-progress" }),
-                                 managerFeedback: formData.managerFeedback,
-                                 submittedByManager: formData.submittedByManager,
-                                 customFields: customFields,
-                                 customConstructionCostFields: customConstructionCostFields,
-                                 constructionCostAnalysis: formData.constructionCostAnalysis,
-                                 pdfDetails: cleanPdfDetails(formData.pdfDetails)
-                             };
+                            // Build the complete payload
+                            const payload = {
+                                clientId: user.clientId,
+                                uniqueId: formData.uniqueId || id,
+                                username: formData.username || user.username,
+                                dateTime: formData.dateTime,
+                                day: formData.day,
+                                bankName: bankName || "",
+                                city: city || "",
+                                clientName: formData.clientName,
+                                mobileNumber: formData.mobileNumber,
+                                address: formData.address,
+                                payment: formData.payment,
+                                collectedBy: formData.collectedBy,
+                                dsa: dsa || "",
+                                engineerName: engineerName || "",
+                                notes: formData.notes,
+                                elevation: formData.elevation,
+                                directions: formData.directions,
+                                coordinates: formData.coordinates,
+                                ...(valuation?._id && { status: "on-progress" }),
+                                managerFeedback: formData.managerFeedback,
+                                submittedByManager: formData.submittedByManager,
+                                customFields: customFields,
+                                customConstructionCostFields: customConstructionCostFields,
+                                constructionCostAnalysis: formData.constructionCostAnalysis,
+                                pdfDetails: formData.pdfDetails
+                            };
 
                             // Parallel image uploads (including supporting images and area images)
                             const [uploadedPropertyImages, uploadedLocationImages, uploadedSupportingImages, uploadedAreaImages] = await Promise.all([
@@ -1834,50 +1816,19 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                             }))];
 
                             // Handle area images - combine uploaded with existing ones
-                             if (uploadedAreaImages && Object.keys(uploadedAreaImages).length > 0) {
-                                 payload.areaImages = uploadedAreaImages;
-                             } else if (formData.areaImages && Object.keys(formData.areaImages).length > 0) {
-                                 // Keep existing area images if no new uploads
-                                 payload.areaImages = formData.areaImages;
-                             }
+                            if (uploadedAreaImages && Object.keys(uploadedAreaImages).length > 0) {
+                                payload.areaImages = uploadedAreaImages;
+                            } else if (formData.areaImages && Object.keys(formData.areaImages).length > 0) {
+                                // Keep existing area images if no new uploads
+                                payload.areaImages = formData.areaImages;
+                            }
 
-                             // Save file-specific data to localStorage BEFORE API call
-                             const fileDataToSave = {
-                                 uniqueId: payload.uniqueId,
-                                 directions: payload.directions ? JSON.parse(JSON.stringify(payload.directions)) : {},
-                                 coordinates: payload.coordinates ? JSON.parse(JSON.stringify(payload.coordinates)) : {},
-                                 pdfDetails: payload.pdfDetails ? JSON.parse(JSON.stringify(payload.pdfDetails)) : {},
-                                 constructionCostAnalysis: payload.constructionCostAnalysis ? JSON.parse(JSON.stringify(payload.constructionCostAnalysis)) : {},
-                                 propertyImages: payload.propertyImages ? JSON.parse(JSON.stringify(payload.propertyImages)) : [],
-                                 locationImages: payload.locationImages ? JSON.parse(JSON.stringify(payload.locationImages)) : [],
-                                 documentPreviews: (payload.documentPreviews || []).map(doc => ({
-                                     fileName: doc.fileName,
-                                     size: doc.size,
-                                     ...(doc.url && { url: doc.url })
-                                 })),
-                                 customFields: payload.customFields ? JSON.parse(JSON.stringify(payload.customFields)) : [],
-                                 customConstructionCostFields: payload.customConstructionCostFields ? JSON.parse(JSON.stringify(payload.customConstructionCostFields)) : [],
-                                 bankName: payload.bankName,
-                                 city: payload.city,
-                                 dsa: payload.dsa,
-                                 engineerName: payload.engineerName,
-                                 clientName: payload.clientName,
-                                 mobileNumber: payload.mobileNumber,
-                                 address: payload.address,
-                                 payment: payload.payment,
-                                 collectedBy: payload.collectedBy,
-                                 notes: payload.notes,
-                                 elevation: payload.elevation
-                             };
-                             localStorage.setItem(`valuation_file_${id}`, JSON.stringify(fileDataToSave));
-                             localStorage.setItem(`last_valuation_file_${user.username}`, id);
+                            // Clear draft before API call
+                            localStorage.removeItem(`valuation_draft_${user.username}`);
 
-                             // Clear draft before API call
-                             localStorage.removeItem(`valuation_draft_${user.username}`);
-
-                             // Call API to update rajesh house
-                             await updateRajeshHouse(id, payload, user.username, user.role, user.clientId);
-                             invalidateCache("/rajesh-house");
+                            // Call API to update rajesh house
+                            await updateRajeshHouse(id, payload, user.username, user.role, user.clientId);
+                            invalidateCache("/rajesh-house");
 
                             showSuccess('Rajesh House form saved successfully');
                             resolve();
@@ -2240,16 +2191,12 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                     { key: 'briefDescription.valueOfLand', label: 'Value of Land' },
                     { key: 'briefDescription.areaOfConstruction', label: 'Area of Construction' },
                     { key: 'briefDescription.valueOfConstruction', label: 'Value of Construction' },
+                    { key: 'briefDescription.totalMarketValue', label: 'Total Market Value' },
                     { key: 'valuationSummary.realisableValue.amount', label: 'Realisable Value - Amount' },
                     { key: 'valuationSummary.distressValue.amount', label: 'Distress Value - Amount' },
                     { key: 'valuationSummary.jantriValue.amount', label: 'Jantri Value - Amount' },
-                    { key: 'briefDescription.totalMarketValue', label: 'Total Market Value' },
                     { key: 'briefDescription.insurableValue', label: 'Insurable Value' },
-                                        { key: 'valuationPurpose.dateOfReport', label: 'Date Of Report' },
-
                     { key: 'valuationPurpose.dateOfInspection', label: 'Date Of Inspection' },
-                    { key: 'valuationPurpose.dateValuationMade', label: 'Date Valuation Made' },
-                    { key: 'valuationPurpose.dateOfVisit', label: 'Date Of Visit' }
                 ].map(field => (
                     <div key={field.key} className="space-y-1">
                         <Label className="text-xs font-bold text-gray-900">{field.label}</Label>
@@ -2500,7 +2447,6 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                             { key: 'buildingDetails.plinthAreaFloorWise', label: 'Plinth Area Floor Wise' },
                             { key: 'buildingDetails.condition.exterior', label: 'Condition - Exterior' },
                             { key: 'buildingDetails.condition.interior', label: 'Condition - Interior' },
-                            { key: 'buildingDetails.approvedMap.dateValidity', label: 'Approved Map - Date Validity' },
                             { key: 'buildingDetails.approvedMap.issuingAuthority', label: 'Approved Map - Issuing Authority' },
                             { key: 'buildingDetails.approvedMap.genuinessVerified', label: 'Approved Map - Genuineness Verified' },
                             { key: 'buildingDetails.otherCommentsOnApprovedPlan', label: 'Other Comments on Approved Plan' }
@@ -2620,7 +2566,7 @@ const RajeshHouseEditForm = ({ user, onLogin }) => {
                                                     ...prev,
                                                     pdfDetails: { ...prev.pdfDetails, landValuation: { ...prev.pdfDetails.landValuation, sayRO: e.target.value } }
                                                 }))}
-                                                className="h-7 text-xs bg-yellow-50 font-semibold"
+                                                className="h-7 text-xs  font-semibold"
                                                 disabled={!canEdit}
                                                 title="Say Rate/Order - Rounded figure of total value"
                                             />

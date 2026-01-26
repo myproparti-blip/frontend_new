@@ -225,6 +225,39 @@ export const deleteMultipleRajeshFlat = async (ids) => {
 };
 
 /**
+ * Get last submitted Rajesh Bank form for autofilling new forms
+ * @returns {Promise} Last form data with pdfDetails
+ */
+export const getLastSubmittedRajeshFlat = async () => {
+  try {
+     console.log("[getLastSubmittedRajeshFlat] Calling API endpoint:", `${API_BASE_URL}/rajesh-flat/last-form/prefill`);
+    const response = await api.get(`${API_BASE_URL}/rajesh-flat/last-form/prefill`);
+    console.log("[getLastSubmittedRajeshFlat] API Response:", {
+      success: response.data.success,
+      message: response.data.message,
+      hasData: !!response.data.data,
+      dataKeys: response.data.data ? Object.keys(response.data.data).slice(0, 10) : []
+    });
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'Failed to fetch last form');
+    }
+
+    return response.data.data;
+  } catch (error) {
+     console.error("[getLastSubmittedRajeshFlat] Error:", {
+      status: error.response?.status,
+      message: error.message,
+      errorData: error.response?.data
+    });
+    // Return null if no previous form exists (this is not an error condition)
+    if (error.response?.status === 404 || error.message?.includes('not found')) {
+      return null;
+    }
+    throw error.response?.data || { message: error.message };
+  }
+};
+
+/**
  * Invalidate Rajesh Flat cache
  * @param {String} pattern - Optional cache pattern
  */

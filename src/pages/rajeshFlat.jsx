@@ -27,7 +27,7 @@ import {
     FaChartBar
 } from "react-icons/fa";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Textarea, Label, Badge, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, RadioGroup, RadioGroupItem, ChipSelect } from "../components/ui";
-import { getRajeshFlatById, updateRajeshFlat, managerSubmitRajeshFlat } from "../services/rajeshFlatService";
+import { getRajeshFlatById, updateRajeshFlat, managerSubmitRajeshFlat , getLastSubmittedRajeshFlat} from "../services/rajeshFlatService";
 import { showLoader, hideLoader } from "../redux/slices/loaderSlice";
 import { useNotification } from "../context/NotificationContext";
 import { uploadPropertyImages, uploadLocationImages, uploadDocuments, uploadAreaImages } from "../services/imageService";
@@ -129,170 +129,170 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
         lastUpdatedByRole: '',
 
         // PDF DETAILS - FLAT STRUCTURE FOR FORM (maps to nested schema in database)
-        // All fields mapped 100% to rajeshFlatModel.js schema
-        pdfDetails: {
-            // EXTRA FIELDS (used in form UI but not in schema)
-            accountName: '',
-            client: '',
-            typeOfProperty: '',
-            propertyDetailsLocation: '',
-            valuationDoneByApproved: '',
-            purposeOfValuationIntro: '',
-            nameOfOwnerValuation: '',
-            addressPropertyValuation: '',
-            requisiteDetailsAsPerSaleDeedAuthoritiesDocuments: '',
-            areaOfLand: '',
-            valueOfConstruction: '',
-            totalMarketValueOfTheProperty: '',
-            realizableValue: '',
-            dateOfInspectionOfProperty: '',
-            dateOfValuationReport: '',
-            docSaleDeed: '',
-            docBuildingPlanApproval: '',
-            docPowerOfAttorney: '',
-            docConstructionPermission: '',
-            docNALetter: '',
-            docTCR: '',
-            docPropertyTax: '',
-            nameAddressOfManager: '',
-            plotNoRevenueNo: '',
-            doorNumber: '',
-            villageOrTalukSubRegisterBlock: '',
-            dateOfIssueValidity: '',
-            approvedMapPlan: '',
-            approvedMapPlanAuthority: '',
-            genuinenessVerified: '',
-            otherComments: '',
-            cityTown: '',
-            saleableArea: '',
-            siteAreaForValuation: '',
-            constructionType: '',
-            tsNo: '',
-            blockNo: '',
-            wardNo: '',
-            villageOrMunicipality: '',
-            doorNoStreetRoadPinCode: '',
-            localityDescription: '',
-            buildingAge: '',
-            structureType: '',
-            dwellingUnits: '',
-            constructionQuality: '',
-            buildingAppearance: '',
-            maintenanceStatus: '',
-            hasLift: '',
-            hasWaterSupply: '',
-            hasSewerage: '',
-            hasCarParking: '',
-            hasCompoundWall: '',
-            hasPavement: '',
-            flatLocation: '',
-            flatDoorNumber: '',
-            specRoof: '',
-            specFlooring: '',
-            specDoors: '',
-            specWindows: '',
-            specFittings: '',
-            specFinishing: '',
-            taxAssessmentNo: '',
-            taxPaidName: '',
-            taxAmount: '',
-            electricityConnectionNo: '',
-            unitMaintenance: '',
-            conveyanceDeedName: '',
-            undividedLandArea: '',
-            flatPlinthArea: '',
-            carpetAreaFlat: '',
-            flatClass: '',
-            usagePurpose: '',
-            marketabilityLocational: '',
-            marketabilityScarcity: '',
-            marketabilityDemandSupply: '',
-            compositeDepreciatedBuildingRate: '',
-            compositeReplacementCost: '',
-            compositeAgeOfBuilding: '',
-            compositeLifeOfBuilding: '',
-            compositeDepreciationPercentage: '',
-            compositeDepreciatedRatio: '',
-            compositeTotalRateForValuation: '',
-            compositeDepreciatedBuildingRateVI: '',
-            compositeRateForLand: '',
-            compositeTotalCompositeRate: '',
-            presentValueQty: '',
-            presentValueRate: '',
-            presentValue: '',
+         // All fields mapped 100% to rajeshFlatModel.js schema
+         pdfDetails: {
+             // EXTRA FIELDS (used in form UI but not in schema)
+             accountName: '',
+             client: '',
+             typeOfProperty: '',
+             propertyDetailsLocation: '',
+             valuationDoneByApproved: '',
+             purposeOfValuationIntro: '',
+             nameOfOwnerValuation: '',
+             addressPropertyValuation: '',
+             requisiteDetailsAsPerSaleDeedAuthoritiesDocuments: '',
+             areaOfLand: '',
+             valueOfConstruction: '',
+             totalMarketValueOfTheProperty: '',
+             realizableValue: '',
+             dateOfInspectionOfProperty: '',
+             dateOfValuationReport: '',
+             docSaleDeed: '',
+             docBuildingPlanApproval: '',
+             docPowerOfAttorney: '',
+             docConstructionPermission: '',
+             docNALetter: '',
+             docTCR: '',
+             docPropertyTax: '',
+             nameAddressOfManager: '',
+             plotNoRevenueNo: '',
+             doorNumber: '',
+             villageOrTalukSubRegisterBlock: '',
+             dateOfIssueValidity: '',
+             approvedMapPlan: '',
+             approvedMapPlanAuthority: '',
+             genuinenessVerified: '',
+             otherComments: '',
+             cityTown: '',
+             saleableArea: '',
+             siteAreaForValuation: '',
+             constructionType: '',
+             tsNo: '',
+             blockNo: '',
+             wardNo: '',
+             villageOrMunicipality: '',
+             doorNoStreetRoadPinCode: '',
+             localityDescription: '',
+             buildingAge: '',
+             structureType: '',
+             dwellingUnits: '',
+             constructionQuality: '',
+             buildingAppearance: '',
+             maintenanceStatus: '',
+             hasLift: '',
+             hasWaterSupply: '',
+             hasSewerage: '',
+             hasCarParking: '',
+             hasCompoundWall: '',
+             hasPavement: '',
+             flatLocation: '',
+             flatDoorNumber: '',
+             specRoof: '',
+             specFlooring: '',
+             specDoors: '',
+             specWindows: '',
+             specFittings: '',
+             specFinishing: '',
+             taxAssessmentNo: '',
+             taxPaidName: '',
+             taxAmount: '',
+             electricityConnectionNo: '',
+             unitMaintenance: '',
+             conveyanceDeedName: '',
+             undividedLandArea: '',
+             flatPlinthArea: '',
+             carpetAreaFlat: '',
+             flatClass: '',
+             usagePurpose: '',
+             marketabilityLocational: '',
+             marketabilityScarcity: '',
+             marketabilityDemandSupply: '',
+             compositeDepreciatedBuildingRate: '',
+             compositeReplacementCost: '',
+             compositeAgeOfBuilding: '',
+             compositeLifeOfBuilding: '',
+             compositeDepreciationPercentage: '',
+             compositeDepreciatedRatio: '',
+             compositeTotalRateForValuation: '',
+             compositeDepreciatedBuildingRateVI: '',
+             compositeRateForLand: '',
+             compositeTotalCompositeRate: '',
+             presentValueQty: '',
+             presentValueRate: '',
+             presentValue: '',
 
-            // DETAILS OF VALUATION FIELDS
-            wardrobes: '',
-            wardrobesRate: '',
-            wardrobesValue: '',
-            showcases: '',
-            showcasesRate: '',
-            showcasesValue: '',
-            kitchenArrangements: '',
-            kitchenRate: '',
-            kitchenValue: '',
-            superfineFinish: '',
-            finishRate: '',
-            finishValue: '',
-            interiorDecorations: '',
-            decorationRate: '',
-            decorationValue: '',
-            electricityDeposits: '',
-            electricityRate: '',
-            electricityValue: '',
-            grillWorks: '',
-            grillRate: '',
-            grillValue: '',
-            potentialValue: '',
-            potentialRate: '',
-            potentialValueAmount: '',
-            valuationTotalValue: '',
+             // DETAILS OF VALUATION FIELDS
+             wardrobes: '',
+             wardrobesRate: '',
+             wardrobesValue: '',
+             showcases: '',
+             showcasesRate: '',
+             showcasesValue: '',
+             kitchenArrangements: '',
+             kitchenRate: '',
+             kitchenValue: '',
+             superfineFinish: '',
+             finishRate: '',
+             finishValue: '',
+             interiorDecorations: '',
+             decorationRate: '',
+             decorationValue: '',
+             electricityDeposits: '',
+             electricityRate: '',
+             electricityValue: '',
+             grillWorks: '',
+             grillRate: '',
+             grillValue: '',
+             potentialValue: '',
+             potentialRate: '',
+             potentialValueAmount: '',
+             valuationTotalValue: '',
 
-            // AREA CLASSIFICATION FIELDS
-            residentialArea: '',
-            commercialArea: '',
-            industrialArea: '',
-            areaGrade: '',
-            areaType: '',
-            areaClassificationHighMiddlePoor: '',
-            areaClassificationUrbanSemiUrbanRural: '',
-            governanceType: '',
-            governmentEnactments: '',
-            corporationLimit: '',
-            stateGovernmentEnactments: '',
+             // AREA CLASSIFICATION FIELDS
+             residentialArea: '',
+             commercialArea: '',
+             industrialArea: '',
+             areaGrade: '',
+             areaType: '',
+             areaClassificationHighMiddlePoor: '',
+             areaClassificationUrbanSemiUrbanRural: '',
+             governanceType: '',
+             governmentEnactments: '',
+             corporationLimit: '',
+             stateGovernmentEnactments: '',
 
-            // LOCATION DETAILS FIELDS
-            locationOfProperty: '',
-            wardTaluka: '',
-            district: '',
+             // LOCATION DETAILS FIELDS
+             locationOfProperty: '',
+             wardTaluka: '',
+             district: '',
 
-            // EXTENT OF SITE FIELDS
-            extentOfSiteSaleDeed: '',
-            extentOfSiteApprovedPlan: '',
-            extentOfSiteTaxBill: '',
-            extentOfSiteForValuation: '',
+             // EXTENT OF SITE FIELDS
+             extentOfSiteSaleDeed: '',
+             extentOfSiteApprovedPlan: '',
+             extentOfSiteTaxBill: '',
+             extentOfSiteForValuation: '',
 
-            // FLAT OCCUPANCY & DETAILS FIELDS
-            floorSpaceIndex: '',
-            occupancyType: '',
-            monthlyRent: '',
+             // FLAT OCCUPANCY & DETAILS FIELDS
+             floorSpaceIndex: '',
+             occupancyType: '',
+             monthlyRent: '',
 
-            // VALUATION HEADER (valuationHeaderSchema)
-            applicant: '',
-            valuationDoneBy: '',
-            purposeForValuation: '',
-            dateOfInspection: '',
-            dateOfValuation: '',
+              // VALUATION HEADER (valuationHeaderSchema)
+             applicant: '',
+             valuationDoneBy: '',
+             purposeForValuation: '',
+             dateOfInspection: '',
+             dateOfValuation: '',
 
-            // PROPERTY OWNER DETAILS (propertyOwnerDetailsSchema)
-            nameOfOwner: '',
-            ownerAddress: '',
+             // PROPERTY OWNER DETAILS (propertyOwnerDetailsSchema)
+             nameOfOwner: '',
+             ownerAddress: '',
 
-            // PROPERTY DESCRIPTION (propertyDescriptionSchema)
-            briefDescriptionOfProperty: '',
-            locationOfProperty: '',
-            googleMapCoordinates: '',
-            otherCommentsByValuers: '',
+             // PROPERTY DESCRIPTION (propertyDescriptionSchema)
+             briefDescriptionOfProperty: '',
+             locationOfProperty: '',
+             googleMapCoordinates: '',
+             otherCommentsByValuers: '',
 
             // LOCATION DETAILS (locationDetailsSchema)
             plotNoSurveyNo: '',
@@ -733,79 +733,11 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
             const dbData = await getRajeshFlatById(id, username, role, clientId);
             console.log("[loadValuation] Data loaded from DB, pdfDetails keys:", Object.keys(dbData.pdfDetails || {}).slice(0, 5));
             setValuation(dbData);
-
-            // Load file's own saved data. Each file is completely independent.
-            // CRITICAL: Always deep copy to prevent shared object references between files
-            let dataToLoad = dbData;
-            const fileSpecificData = localStorage.getItem(`valuation_file_${id}`);
-
-            if (fileSpecificData) {
-                // File has saved data - use ONLY this file's data (don't look at other files)
-                try {
-                    const parsedFileData = JSON.parse(fileSpecificData);
-                    // Deep copy all nested objects to prevent reference sharing
-                    dataToLoad = {
-                        ...dbData,
-                        ...parsedFileData,
-                        directions: parsedFileData.directions ? JSON.parse(JSON.stringify(parsedFileData.directions)) : (dbData.directions || {}),
-                        coordinates: parsedFileData.coordinates ? JSON.parse(JSON.stringify(parsedFileData.coordinates)) : (dbData.coordinates || {}),
-                        pdfDetails: parsedFileData.pdfDetails ? JSON.parse(JSON.stringify(parsedFileData.pdfDetails)) : (dbData.pdfDetails || {}),
-                        photos: parsedFileData.photos ? JSON.parse(JSON.stringify(parsedFileData.photos)) : (dbData.photos || {}),
-                        areaImages: parsedFileData.areaImages ? JSON.parse(JSON.stringify(parsedFileData.areaImages)) : (dbData.areaImages || {}),
-                        checklist: parsedFileData.checklist ? JSON.parse(JSON.stringify(parsedFileData.checklist)) : (dbData.checklist || {}),
-                        propertyImages: parsedFileData.propertyImages ? JSON.parse(JSON.stringify(parsedFileData.propertyImages)) : (dbData.propertyImages || []),
-                        locationImages: parsedFileData.locationImages ? JSON.parse(JSON.stringify(parsedFileData.locationImages)) : (dbData.locationImages || []),
-                        customValuationItems: parsedFileData.customValuationItems ? JSON.parse(JSON.stringify(parsedFileData.customValuationItems)) : (dbData.customValuationItems || [])
-                    };
-                    console.log("[rajeshFlat.jsx] ✓ Loaded this file's saved data for File ID:", id);
-                } catch (e) {
-                    console.error("Failed to parse file-specific data:", e);
-                }
-            } else {
-                // File has NO saved data yet. Auto-fill from LAST SAVED file (one-time copy at creation)
-                // This data becomes THIS file's independent copy
-                const lastFileId = localStorage.getItem(`last_valuation_file_${username}`);
-
-                if (lastFileId && lastFileId !== id) {
-                    const previousFileData = localStorage.getItem(`valuation_file_${lastFileId}`);
-                    if (previousFileData) {
-                        try {
-                            const parsedPreviousData = JSON.parse(previousFileData);
-                            // Auto-load previous file data as a ONE-TIME COPY
-                            // Exclude CLIENT ID (must be fresh for each file)
-                            const { clientId: _, clientName: __, ...restPreviousData } = parsedPreviousData;
-                            // Deep copy all nested objects to create independent copies
-                            dataToLoad = {
-                                ...dbData,
-                                ...restPreviousData,
-                                // Keep clientId and clientName from current file (not auto-filled)
-                                clientId: dbData.clientId,
-                                clientName: dbData.clientName,
-                                directions: restPreviousData.directions ? JSON.parse(JSON.stringify(restPreviousData.directions)) : (dbData.directions || {}),
-                                coordinates: restPreviousData.coordinates ? JSON.parse(JSON.stringify(restPreviousData.coordinates)) : (dbData.coordinates || {}),
-                                pdfDetails: restPreviousData.pdfDetails ? JSON.parse(JSON.stringify(restPreviousData.pdfDetails)) : (dbData.pdfDetails || {}),
-                                photos: restPreviousData.photos ? JSON.parse(JSON.stringify(restPreviousData.photos)) : (dbData.photos || {}),
-                                areaImages: restPreviousData.areaImages ? JSON.parse(JSON.stringify(restPreviousData.areaImages)) : (dbData.areaImages || {}),
-                                checklist: restPreviousData.checklist ? JSON.parse(JSON.stringify(restPreviousData.checklist)) : (dbData.checklist || {}),
-                                propertyImages: restPreviousData.propertyImages ? JSON.parse(JSON.stringify(restPreviousData.propertyImages)) : (dbData.propertyImages || []),
-                                locationImages: restPreviousData.locationImages ? JSON.parse(JSON.stringify(restPreviousData.locationImages)) : (dbData.locationImages || []),
-                                customValuationItems: restPreviousData.customValuationItems ? JSON.parse(JSON.stringify(restPreviousData.customValuationItems)) : (dbData.customValuationItems || [])
-                            };
-
-                            console.log("[rajeshFlat.jsx] ✓ Auto-filled new file from previous file:", lastFileId, "→", id);
-                            console.log("[rajeshFlat.jsx] ✓ This file is now INDEPENDENT - changes won't affect other files");
-                        } catch (e) {
-                            console.error("Failed to auto-fill from previous file:", e);
-                        }
-                    }
-                }
-            }
-
-            mapDataToForm(dataToLoad);
+            mapDataToForm(dbData);
 
             // Restore property image previews from database
-            if (dataToLoad.propertyImages && Array.isArray(dataToLoad.propertyImages)) {
-                const propertyPreviews = dataToLoad.propertyImages
+            if (dbData.propertyImages && Array.isArray(dbData.propertyImages)) {
+                const propertyPreviews = dbData.propertyImages
                     .filter(img => img && typeof img === 'object')
                     .map((img, idx) => {
                         let previewUrl = '';
@@ -823,8 +755,8 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
             }
 
             // Restore location image previews from database
-            if (dataToLoad.locationImages && Array.isArray(dataToLoad.locationImages)) {
-                const locationPreviews = dataToLoad.locationImages
+            if (dbData.locationImages && Array.isArray(dbData.locationImages)) {
+                const locationPreviews = dbData.locationImages
                     .filter(img => img && typeof img === 'object')
                     .map((img, idx) => {
                         let previewUrl = '';
@@ -842,12 +774,12 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
             }
 
             // Restore bank image preview from database
-            if (dataToLoad.bankImage) {
+            if (dbData.bankImage) {
                 let previewUrl = '';
-                if (typeof dataToLoad.bankImage === 'string' && dataToLoad.bankImage.startsWith('data:')) {
-                    previewUrl = dataToLoad.bankImage;
-                } else if (typeof dataToLoad.bankImage === 'string') {
-                    const fileName = dataToLoad.bankImage.split('\\').pop() || dataToLoad.bankImage.split('/').pop();
+                if (typeof dbData.bankImage === 'string' && dbData.bankImage.startsWith('data:')) {
+                    previewUrl = dbData.bankImage;
+                } else if (typeof dbData.bankImage === 'string') {
+                    const fileName = dbData.bankImage.split('\\').pop() || dbData.bankImage.split('/').pop();
                     previewUrl = `/api/uploads/${fileName}`;
                 }
                 if (previewUrl) {
@@ -856,34 +788,69 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
             }
 
             // Restore document previews from database
-            if (dataToLoad.documentPreviews && Array.isArray(dataToLoad.documentPreviews)) {
+            if (dbData.documentPreviews && Array.isArray(dbData.documentPreviews)) {
                 setFormData(prev => ({
                     ...prev,
-                    documentPreviews: dataToLoad.documentPreviews
+                    documentPreviews: dbData.documentPreviews
                 }));
             }
 
             // Restore area images from database
-            if (dataToLoad.areaImages && typeof dataToLoad.areaImages === 'object' && Object.keys(dataToLoad.areaImages).length > 0) {
+            if (dbData.areaImages && typeof dbData.areaImages === 'object' && Object.keys(dbData.areaImages).length > 0) {
                 setFormData(prev => ({
                     ...prev,
-                    areaImages: dataToLoad.areaImages
+                    areaImages: dbData.areaImages
                 }));
             }
 
-            setBankName(dataToLoad.bankName || "");
-            setCity(dataToLoad.city || "");
-            setDsa(dataToLoad.dsa || "");
-            setEngineerName(dataToLoad.engineerName || "");
+            setBankName(dbData.bankName || "");
+            setCity(dbData.city || "");
+            setDsa(dbData.dsa || "");
+            setEngineerName(dbData.engineerName || "");
 
             // Restore custom valuation items from database
-            if (dataToLoad.customValuationItems && Array.isArray(dataToLoad.customValuationItems)) {
-                setCustomValuationItems(dataToLoad.customValuationItems);
+            if (dbData.customValuationItems && Array.isArray(dbData.customValuationItems)) {
+                setCustomValuationItems(dbData.customValuationItems);
             }
         } catch (error) {
             console.error("Error loading valuation:", error);
-            // If form not found, show message but allow user to create new form
+             // If form not found (new form), try to autofill from last submitted form
             if (error.message && error.message.includes("not found")) {
+                try {
+                    console.log("[loadValuation] Form not found, attempting autofill from last form...");
+                    // Fetch last submitted form for autofilling valuation tab data only
+                    const lastForm = await getLastSubmittedRajeshFlat();
+                    
+                     console.log("[loadValuation] Last form fetched:", {
+                        exists: !!lastForm,
+                        hasPdfDetails: lastForm && !!lastForm.pdfDetails,
+                        pdfDetailsKeys: lastForm && lastForm.pdfDetails ? Object.keys(lastForm.pdfDetails).length : 0
+                    });
+                    
+                    if (lastForm && lastForm.pdfDetails && Object.keys(lastForm.pdfDetails).length > 0) {
+                        // Create a new form with autofilled pdfDetails only
+                        const autofilledFormData = {
+                            ...formData,
+                            uniqueId: id,
+                            username: username,
+                            clientId: clientId,
+                            pdfDetails: { ...lastForm.pdfDetails }
+                        };
+                        setValuation(autofilledFormData);
+                        mapDataToForm(autofilledFormData);
+                         console.log("[loadValuation] ✅ Form autofilled with last valuation data");
+                        showSuccess("New form created with last valuation data autofilled");
+                        return;
+                        } else {
+                        console.warn("[loadValuation] Last form has no pdfDetails data to autofill");
+                    
+                    }
+                } catch (autofillError) {
+                    console.warn("Could not autofill from last form:", autofillError.message);
+                    // Continue with empty form if autofill fails
+                }
+                
+                // If no autofill possible, initialize with empty form
                 showError("Rajesh Flat form not found. Creating new form...");
                 // Initialize with empty form
                 const newFormData = {
@@ -1574,7 +1541,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
             flattened.industrialArea = area.industrialArea || '';
             flattened.corporationLimit = area.corporationLimit || '';
             flattened.stateGovernmentEnactments = area.stateGovernmentEnactments || '';
-
+            
             if (area.areaClassification) {
                 flattened.areaClassificationHighMiddlePoor = area.areaClassification.highMiddlePoor || '';
                 flattened.areaClassificationUrbanSemiUrbanRural = area.areaClassification.urbanSemiUrbanRural || '';
@@ -1584,7 +1551,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
         // siteDetails
         if (nestedPdfDetails.siteDetails) {
             const site = nestedPdfDetails.siteDetails;
-
+            
             // boundaries
             if (site.boundaries) {
                 flattened.boundaryDeedEast = site.boundaries.east?.saleDeed || '';
@@ -1596,7 +1563,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.boundaryDeedSouth = site.boundaries.south?.saleDeed || '';
                 flattened.boundarySiteSouth = site.boundaries.south?.siteVisit || '';
             }
-
+            
             // dimensions
             if (site.dimensions) {
                 flattened.dimensionsDeedEast = site.dimensions.east?.deed || '';
@@ -1608,14 +1575,14 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.dimensionsDeedSouth = site.dimensions.south?.deed || '';
                 flattened.dimensionsPlanSouth = site.dimensions.south?.actual || '';
             }
-
+            
             // extentOfSite
             if (site.extentOfSite) {
                 flattened.extentOfSiteSaleDeed = site.extentOfSite.saleDeed || '';
                 flattened.extentOfSiteApprovedPlan = site.extentOfSite.approvedPlan || '';
                 flattened.extentOfSiteTaxBill = site.extentOfSite.taxBill || '';
             }
-
+            
             flattened.extentOfSiteForValuation = site.extentOfSiteForValuation || '';
             flattened.occupancyStatus = site.occupancyStatus || '';
             flattened.rentReceivedPerMonth = site.rentReceivedPerMonth || '';
@@ -1624,7 +1591,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
         // buildingAndProperty
         if (nestedPdfDetails.buildingAndProperty) {
             const building = nestedPdfDetails.buildingAndProperty;
-
+            
             if (building.apartmentBuilding) {
                 const apt = building.apartmentBuilding;
                 flattened.natureOfApartment = apt.natureOfApartment || '';
@@ -1636,7 +1603,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.qualityOfConstruction = apt.qualityOfConstruction || '';
                 flattened.appearanceOfBuilding = apt.appearanceOfBuilding || '';
                 flattened.maintenanceOfBuilding = apt.maintenanceOfBuilding || '';
-
+                
                 if (apt.location) {
                     flattened.apartmentLocationTsNo = apt.location.tsNo || '';
                     flattened.apartmentLocationBlockNo = apt.location.blockNo || '';
@@ -1645,7 +1612,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                     flattened.apartmentLocationDoorNoStreetOrRoad = apt.location.doorNoStreetOrRoad || '';
                     flattened.apartmentLocationPinCode = apt.location.pinCode || '';
                 }
-
+                
                 if (apt.facilitiesAvailable) {
                     flattened.facilitiesLift = apt.facilitiesAvailable.lift || '';
                     flattened.facilitiesProtectedWaterSupply = apt.facilitiesAvailable.protectedWaterSupply || '';
@@ -1655,7 +1622,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                     flattened.facilitiesPavementAroundBuilding = apt.facilitiesAvailable.pavementAroundBuilding || '';
                 }
             }
-
+            
             if (building.flatDetails) {
                 const flat = building.flatDetails;
                 flattened.flatDetailsFloorNumber = flat.floorNumber || '';
@@ -1671,7 +1638,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.flatDetailsPurposeOfUse = flat.purposeOfUse || '';
                 flattened.flatDetailsOccupancyType = flat.occupancyType || '';
                 flattened.flatDetailsMonthlyRent = flat.monthlyRent || '';
-
+                
                 if (flat.specifications) {
                     flattened.flatDetailsSpecificationsRoof = flat.specifications.roof || '';
                     flattened.flatDetailsSpecificationsFlooring = flat.specifications.flooring || '';
@@ -1680,7 +1647,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                     flattened.flatDetailsSpecificationsFittings = flat.specifications.fittings || '';
                     flattened.flatDetailsSpecificationsFinishing = flat.specifications.finishing || '';
                 }
-
+                
                 if (flat.houseTaxDetails) {
                     flattened.flatDetailsHouseTaxDetailsHouseTax = flat.houseTaxDetails.houseTax || '';
                     flattened.flatDetailsHouseTaxDetailsAssessmentNo = flat.houseTaxDetails.assessmentNo || '';
@@ -1704,7 +1671,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
             flattened.rateAnalysisCompositeRateAnalysis = rate.compositeRateAnalysis || '';
             flattened.rateAnalysisAdoptedCompositeRate = rate.adoptedCompositeRate || '';
             flattened.rateAnalysisGuidelineRate = rate.guidelineRate || '';
-
+            
             if (rate.rateBreakup) {
                 flattened.rateAnalysisRateBreakupBuildingServices = rate.rateBreakup.buildingServices || '';
                 flattened.rateAnalysisRateBreakupLandOthers = rate.rateBreakup.landOthers || '';
@@ -1714,7 +1681,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
         // valuationComputation
         if (nestedPdfDetails.valuationComputation) {
             const comp = nestedPdfDetails.valuationComputation;
-
+            
             if (comp.jantriValueDetails) {
                 flattened.jantriValueDetailsJantriValue = comp.jantriValueDetails.jantriValue || '';
                 flattened.jantriValueDetailsGuideline = comp.jantriValueDetails.guideline || '';
@@ -1722,7 +1689,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.jantriValueDetailsCalculatedValue = comp.jantriValueDetails.calculatedValue || '';
                 flattened.jantriValueDetailsDetails = comp.jantriValueDetails.details || '';
             }
-
+            
             if (comp.depreciationDetails) {
                 flattened.depreciationDetailsDeprecatedBuildingRate = comp.depreciationDetails.deprecatedBuildingRate || '';
                 flattened.depreciationDetailsReplacementCostOfFlatWithServices = comp.depreciationDetails.replacementCostOfFlatWithServices || '';
@@ -1735,7 +1702,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.depreciationDetailsRateForLandAndOther = comp.depreciationDetails.rateForLandAndOther || '';
                 flattened.depreciationDetailsTotalCompositeRate = comp.depreciationDetails.totalCompositeRate || '';
             }
-
+            
             if (comp.valuationSummary) {
                 flattened.marketValue = comp.valuationSummary.marketValue || '';
                 flattened.marketValueInWords = comp.valuationSummary.marketValueInWords || '';
@@ -1748,7 +1715,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.jantriValue = comp.valuationSummary.jantriValue || '';
                 flattened.jantriValueInWords = comp.valuationSummary.jantriValueInWords || '';
             }
-
+            
             flattened.valuationDetailsArray = comp.valuationDetails || [];
             flattened.totalValueFromValuation = comp.totalValueFromValuation || '';
         }
@@ -1756,7 +1723,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
         // documentation
         if (nestedPdfDetails.documentation) {
             const docs = nestedPdfDetails.documentation;
-
+            
             if (docs.documents) {
                 flattened.documentsDocSaleDeed = docs.documents.saleDeed || '';
                 flattened.documentsApprovedPlan = docs.documents.approvedPlan || '';
@@ -1766,7 +1733,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.documentsTcr = docs.documents.tcr || '';
                 flattened.documentsTaxBill = docs.documents.taxBill || '';
             }
-
+            
             if (docs.documentChecklist) {
                 const checklist = docs.documentChecklist;
                 flattened.documentChecklistEngagementLetterConfirmation = checklist.engagementLetterConfirmation || '';
@@ -1801,7 +1768,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.documentChecklistBrokerRecording = checklist.brokerRecording || '';
                 flattened.documentChecklistPastValuationRate = checklist.pastValuationRate || '';
             }
-
+            
             if (docs.declarationDetails) {
                 flattened.declarationDetailsValuationReportDate = docs.declarationDetails.valuationReportDate || '';
                 flattened.declarationDetailsInformationFurnished = docs.declarationDetails.informationFurnished || '';
@@ -1815,7 +1782,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
         // approvalAndCertification
         if (nestedPdfDetails.approvalAndCertification) {
             const approval = nestedPdfDetails.approvalAndCertification;
-
+            
             if (approval.signatureDetails) {
                 flattened.signatureDetailsValuersName = approval.signatureDetails.valuersName || '';
                 flattened.signatureDetailsValuersDesignation = approval.signatureDetails.valuersDesignation || '';
@@ -1827,7 +1794,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                 flattened.signatureDetailsBranchManagerPlace = approval.signatureDetails.branchManagerPlace || '';
                 flattened.signatureDetailsBranchManagerSignature = approval.signatureDetails.branchManagerSignature || '';
             }
-
+            
             if (approval.certificationDetails) {
                 flattened.certificationDetailsInspectionDate = approval.certificationDetails.inspectionDate || '';
                 flattened.certificationDetailsReportDate = approval.certificationDetails.reportDate || '';
@@ -2068,6 +2035,17 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
             } else {
                 // Fallback for flat field paths
                 newPdfDetails[field] = value;
+            }
+
+            // Auto-calculate Realizable Value (90%) and Distress Value (80%) based on Total Market Value
+            if (field === 'totalMarketValueOfTheProperty') {
+                const totalValue = parseFloat(value) || 0;
+                if (totalValue > 0) {
+                    const realisableValue = (totalValue * 90) / 100;
+                    const distressValue = (totalValue * 80) / 100;
+                    newPdfDetails.realizableValue = realisableValue.toString();
+                    newPdfDetails.distressValue = distressValue.toString();
+                }
             }
 
             // Auto-calculate Estimated Value = Qty × Rate for all 9 valuation items
@@ -2415,32 +2393,32 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                             }
 
                             // Build the complete payload
-                            const payload = {
-                                clientId: user.clientId,
-                                uniqueId: formData.uniqueId || id,
-                                username: formData.username || user.username,
-                                dateTime: formData.dateTime,
-                                day: formData.day,
-                                bankName: bankName || "",
-                                city: city || "",
-                                clientName: formData.clientName,
-                                mobileNumber: formData.mobileNumber,
-                                address: formData.address,
-                                payment: formData.payment,
-                                collectedBy: formData.collectedBy,
-                                dsa: dsa || "",
-                                engineerName: engineerName || "",
-                                notes: formData.notes,
-                                elevation: formData.elevation,
-                                directions: formData.directions,
-                                coordinates: formData.coordinates,
-                                ...(valuation?._id && { status: "on-progress" }),
-                                managerFeedback: formData.managerFeedback,
-                                submittedByManager: formData.submittedByManager,
-                                customFields: customFields,
-                                customValuationItems: customValuationItems,
-                                pdfDetails: convertFlatPdfDetailsToNested(formData.pdfDetails)
-                            };
+                             const payload = {
+                                 clientId: user.clientId,
+                                 uniqueId: formData.uniqueId || id,
+                                 username: formData.username || user.username,
+                                 dateTime: formData.dateTime,
+                                 day: formData.day,
+                                 bankName: bankName || "",
+                                 city: city || "",
+                                 clientName: formData.clientName,
+                                 mobileNumber: formData.mobileNumber,
+                                 address: formData.address,
+                                 payment: formData.payment,
+                                 collectedBy: formData.collectedBy,
+                                 dsa: dsa || "",
+                                 engineerName: engineerName || "",
+                                 notes: formData.notes,
+                                 elevation: formData.elevation,
+                                 directions: formData.directions,
+                                 coordinates: formData.coordinates,
+                                 ...(valuation?._id && { status: "on-progress" }),
+                                 managerFeedback: formData.managerFeedback,
+                                 submittedByManager: formData.submittedByManager,
+                                 customFields: customFields,
+                                 customValuationItems: customValuationItems,
+                                 pdfDetails: convertFlatPdfDetailsToNested(formData.pdfDetails)
+                             };
 
                             // Parallel image uploads
                             const [uploadedPropertyImages, uploadedLocationImages, uploadedSupportingImages, uploadedAreaImages] = await Promise.all([
@@ -2743,47 +2721,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
             // Clear draft before API call
             localStorage.removeItem(`valuation_draft_${username}`);
 
-            // CRITICAL: Check if this is a NEW file or EDITING an existing file
-            // Check BEFORE saving so we know if this file existed before
-            const wasFileNewBeforeSave = !localStorage.getItem(`valuation_file_${id}`);
-
-            // Save file-specific data to localStorage for future file creation
-            // NOTE: Exclude clientId and clientName - these must be entered fresh for each new file
-            const fileSpecificDataToSave = {
-                bankName: payload.bankName,
-                city: payload.city,
-                mobileNumber: payload.mobileNumber,
-                address: payload.address,
-                payment: payload.payment,
-                collectedBy: payload.collectedBy,
-                dsa: payload.dsa,
-                engineerName: payload.engineerName,
-                notes: payload.notes,
-                elevation: payload.elevation,
-                directions: payload.directions,
-                coordinates: payload.coordinates,
-                pdfDetails: payload.pdfDetails,
-                checklist: payload.checklist,
-                customFields: customFields,
-                customValuationItems: customValuationItems
-            };
-            localStorage.setItem(`valuation_file_${id}`, JSON.stringify(fileSpecificDataToSave));
-
-            // Only update inheritance chain if this is a NEW file (first save)
-            // If file was already saved before, this is an EDIT - don't update the chain
-            // This ensures: File 1 → File 2 → File 3 chain is NEVER broken by editing File 2
-            if (wasFileNewBeforeSave) {
-                localStorage.setItem(`last_valuation_file_${username}`, id);
-                console.log("[rajeshFlat.jsx] ✓ NEW file saved - Updated inheritance chain");
-                console.log("[rajeshFlat.jsx] ✓ Next NEW file will auto-fill from this file at creation only");
-            } else {
-                console.log("[rajeshFlat.jsx] ✓ Existing file edited - Inheritance chain UNCHANGED");
-                console.log("[rajeshFlat.jsx] ✓ Only THIS file's data was modified, no other files affected");
-            }
-
-            console.log("[rajeshFlat.jsx] ✓ Saved file-specific data for ID:", id);
-
-            // Call API to update Rajesh Flat form
+            // Call API to update Rajesh Bank form
             console.log("[rajeshFlat.jsx] Payload being sent to API:", {
                 clientId: payload.clientId,
                 uniqueId: payload.uniqueId,
@@ -2991,7 +2929,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                             disabled={!canEdit}
                         />
                     </div>
-
+                    
 
                     {/* Brief description of the Property */}
                     <div className="space-y-1.5">
@@ -3063,6 +3001,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                             className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                             disabled={!canEdit}
                         />
+                        <p className="text-xs text-gray-500">Auto-calculated as 90% of Total Market Value</p>
                     </div>
 
                     {/* DISTRESS SALE VALUE (80% of MV) */}
@@ -3075,6 +3014,7 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                             className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                             disabled={!canEdit}
                         />
+                        <p className="text-xs text-gray-500">Auto-calculated as 80% of Total Market Value</p>
                     </div>
 
                     {/* JANTRI VALUE OF PROPERTY */}
@@ -3275,16 +3215,16 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                             />
                         </div>
                         {/* 6. Location Details of Area Surroundings with Google Location */}
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-bold text-gray-900">6. Location Details </Label>
-                            <Input
-                                placeholder=""
-                                value={formData.pdfDetails?.locationOfProperty || ""}
-                                onChange={(e) => handleValuationChange('locationOfProperty', e.target.value)}
-                                className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                disabled={!canEdit}
-                            />
-                        </div>
+                         <div className="space-y-1.5">
+                             <Label className="text-sm font-bold text-gray-900">6. Location Details </Label>
+                             <Input
+                                 placeholder=""
+                                 value={formData.pdfDetails?.locationOfProperty || ""}
+                                 onChange={(e) => handleValuationChange('locationOfProperty', e.target.value)}
+                                 className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                 disabled={!canEdit}
+                             />
+                         </div>
                         {/* 6a) Plot No./Survey No. */}
                         <div className="space-y-1.5">
                             <Label className="text-sm font-bold text-gray-900">Plot No./Survey No.</Label>
@@ -3326,16 +3266,16 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                         </div>
 
                         {/* d) Ward / Taluka */}
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-bold text-gray-900">Ward / Taluka</Label>
-                            <Input
-                                placeholder="City"
-                                value={formData.pdfDetails?.wardTaluka || ""}
-                                onChange={(e) => handleValuationChange('wardTaluka', e.target.value)}
-                                className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                disabled={!canEdit}
-                            />
-                        </div>
+                         <div className="space-y-1.5">
+                             <Label className="text-sm font-bold text-gray-900">Ward / Taluka</Label>
+                             <Input
+                                 placeholder="City"
+                                 value={formData.pdfDetails?.wardTaluka || ""}
+                                 onChange={(e) => handleValuationChange('wardTaluka', e.target.value)}
+                                 className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                 disabled={!canEdit}
+                             />
+                         </div>
 
                         {/* e) Mandal / District */}
                         <div className="space-y-1.5">
@@ -3435,16 +3375,16 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
                                 <option value="No">No</option>
                             </select>
                         </div>
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-bold text-gray-900">8. City / Town</Label>
-                            <Input
-                                placeholder="e.g., Ahmedabad"
-                                value={formData.pdfDetails?.cityTown || ""}
-                                onChange={(e) => handleValuationChange('cityTown', e.target.value)}
-                                className=" text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                disabled={!canEdit}
-                            />
-                        </div>
+                         <div className="space-y-1.5">
+                        <Label className="text-sm font-bold text-gray-900">8. City / Town</Label>
+                        <Input
+                            placeholder="e.g., Ahmedabad"
+                            value={formData.pdfDetails?.cityTown || ""}
+                            onChange={(e) => handleValuationChange('cityTown', e.target.value)}
+                            className=" text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                            disabled={!canEdit}
+                        />
+                    </div>
                     </div>
                 </div>
             </div>
@@ -3745,40 +3685,40 @@ const RajeshFlatEditForm = ({ user, onLogin }) => {
 
                     <div className="grid grid-cols-3 gap-4">
                         {/* As per Sale Deed */}
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-semibold font-bold text-gray-700 block mb-1">As per Sale Deed:</Label>
-                            <Input
-                                placeholder="Built-up Area = 000.00 sq.mt i.e., 000.00 sq.yd"
-                                value={formData.pdfDetails?.extentOfSiteSaleDeed || ""}
-                                onChange={(e) => handleValuationChange('extentOfSiteSaleDeed', e.target.value)}
-                                className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                disabled={!canEdit}
-                            />
-                        </div>
+                         <div className="space-y-1.5">
+                             <Label className="text-sm font-semibold font-bold text-gray-700 block mb-1">As per Sale Deed:</Label>
+                             <Input
+                                 placeholder="Built-up Area = 000.00 sq.mt i.e., 000.00 sq.yd"
+                                 value={formData.pdfDetails?.extentOfSiteSaleDeed || ""}
+                                 onChange={(e) => handleValuationChange('extentOfSiteSaleDeed', e.target.value)}
+                                 className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                 disabled={!canEdit}
+                             />
+                         </div>
 
-                        {/* As per Approved Plan */}
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-semibold font-bold text-gray-700 block mb-1">As per Approved Plan:</Label>
-                            <Input
-                                placeholder="Built-up Area = 000.00 sq.mt i.e., 000.00 sq.yd"
-                                value={formData.pdfDetails?.extentOfSiteApprovedPlan || ""}
-                                onChange={(e) => handleValuationChange('extentOfSiteApprovedPlan', e.target.value)}
-                                className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                disabled={!canEdit}
-                            />
-                        </div>
+                         {/* As per Approved Plan */}
+                         <div className="space-y-1.5">
+                             <Label className="text-sm font-semibold font-bold text-gray-700 block mb-1">As per Approved Plan:</Label>
+                             <Input
+                                 placeholder="Built-up Area = 000.00 sq.mt i.e., 000.00 sq.yd"
+                                 value={formData.pdfDetails?.extentOfSiteApprovedPlan || ""}
+                                 onChange={(e) => handleValuationChange('extentOfSiteApprovedPlan', e.target.value)}
+                                 className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                 disabled={!canEdit}
+                             />
+                         </div>
 
-                        {/* As per Tax Bill */}
-                        <div className="space-y-1.5">
-                            <Label className="text-sm font-semibold font-bold text-gray-700 block mb-1">As per Tax Bill:</Label>
-                            <Input
-                                placeholder="Built-up Area = 000.00 sq.mt i.e., 000.00 sq.yd"
-                                value={formData.pdfDetails?.extentOfSiteTaxBill || ""}
-                                onChange={(e) => handleValuationChange('extentOfSiteTaxBill', e.target.value)}
-                                className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                disabled={!canEdit}
-                            />
-                        </div>
+                         {/* As per Tax Bill */}
+                         <div className="space-y-1.5">
+                             <Label className="text-sm font-semibold font-bold text-gray-700 block mb-1">As per Tax Bill:</Label>
+                             <Input
+                                 placeholder="Built-up Area = 000.00 sq.mt i.e., 000.00 sq.yd"
+                                 value={formData.pdfDetails?.extentOfSiteTaxBill || ""}
+                                 onChange={(e) => handleValuationChange('extentOfSiteTaxBill', e.target.value)}
+                                 className="h-9 text-sm rounded-lg border border-neutral-300 py-1 px-3 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                 disabled={!canEdit}
+                             />
+                         </div>
                     </div>
                 </div>
 

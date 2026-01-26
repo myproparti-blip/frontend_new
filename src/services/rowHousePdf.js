@@ -1954,7 +1954,7 @@ export function generateValuationReportHTML(data = {}) {
           Value of Construction
         </td>
         <td style="border:1px solid #000; padding:6px; ">
-          ${formatCurrencyWithWords(safeGet(pdfData, 'valueOfConstruction', 'NA'))}
+          ${safeGet(pdfData, 'valueOfConstruction', 'NA')}
         </td>
       </tr>
 
@@ -1963,10 +1963,7 @@ export function generateValuationReportHTML(data = {}) {
           TOTAL MARKET VALUE OF THE PROPERTY
         </td>
         <td style="border:1px solid #000; padding:6px; font-weight:bold;">
-          ${formatCurrencyWithWords(
-      safeGet(pdfData, 'totalMarketValueOfProperty',
-        safeGet(pdfData, 'marketValue', 'NA'))
-    )}
+          ${formatCurrencyWithWords(safeGet(pdfData, 'marketValueOfProperty', 'NA') )}
         </td>
       </tr>
 
@@ -1975,7 +1972,7 @@ export function generateValuationReportHTML(data = {}) {
           REALISABLE VALUE (90% of MV)
         </td>
         <td style="border:1px solid #000; padding:6px; font-weight:bold;">
-          ${formatCurrencyWithWords(safeGet(pdfData, 'realisableValue', 'NA'))}
+          ${formatCurrencyWithWords(safeGet(pdfData, 'realizableValue', 'NA'))}
         </td>
       </tr>
 
@@ -1984,10 +1981,7 @@ export function generateValuationReportHTML(data = {}) {
           DISTRESS SALE VALUE (80% of MV)
         </td>
         <td style="border:1px solid #000; padding:6px; font-weight:bold;">
-          ${formatCurrencyWithWords(
-      safeGet(pdfData, 'distressSaleValue',
-        safeGet(pdfData, 'distressValue', 'NA'))
-    )}
+          ${formatCurrencyWithWords(safeGet(pdfData, 'distressValue','NA'))}
         </td>
       </tr>
 
@@ -2006,7 +2000,7 @@ export function generateValuationReportHTML(data = {}) {
         </td>
         <td style="border:1px solid #000; padding:6px; font-weight:bold;">
           ${formatCurrencyWithWords(
-      safeGet(pdfData, 'insurableValueOfProperty',
+      safeGet(pdfData, 'insurableValue ',
         safeGet(pdfData, 'insurableValue', 'NA'))
     )}
         </td>
@@ -2232,7 +2226,7 @@ export function generateValuationReportHTML(data = {}) {
         </tr>
       </table>
       </div>
-
+                         
       <div style="margin-top: 5px;">
       <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 12pt; table-layout: fixed;">
         <colgroup>
@@ -2263,7 +2257,7 @@ export function generateValuationReportHTML(data = {}) {
       </table>
       </div>
 
-      <div style="margin-top: 5px;">
+      <div style="margin-top: 20px;">
       <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 12pt; table-layout: fixed;">
         <colgroup>
           <col style="width: 5%;">
@@ -2287,7 +2281,7 @@ export function generateValuationReportHTML(data = {}) {
         </tr>
       </table>
       </div>
-
+                
       <div style="margin-top: 5px;">
       <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 12pt; table-layout: fixed;">
         <colgroup>
@@ -3145,7 +3139,7 @@ Income Tax Notification</td>
   <div style="font-size: 12pt; line-height: 1.4;">
     <table style="width: 100%; border-collapse: separate; border-spacing: 0;; margin: 0; border: 1px solid #000; page-break-inside: avoid;">
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%; font-weight: bold;">Sl. No.</td>
+        <td style="border: 1px solid #000; padding: 6px; text-align: center; width: 8%; font-weight: bold;">Sr. No.</td>
         <td style="border: 1px solid #000; padding: 6px; width: 42%; font-weight: bold;">Particulars</td>
         <td style="border: 1px solid #000; padding: 6px; width: 50%; font-weight: bold;">Valuer comment</td>
       </tr>
