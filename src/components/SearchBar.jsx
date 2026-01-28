@@ -69,7 +69,6 @@ const SearchBar = memo(({ data = [] }) => {
         setIsOpen(filtered.length > 0);
     };
 
-    // Navigate to record details
     const handleSelectSuggestion = (item) => {
         // Find the full record from data to get selectedForm or bankName
         const fullRecord = data.find(r => r._id === item.id || r.uniqueId === item.uniqueId);
@@ -84,6 +83,8 @@ const SearchBar = memo(({ data = [] }) => {
                 formRoute = '/valuationeditform';
             } else if (fullRecord.selectedForm === 'ubiApf') {
                 formRoute = '/valuationeditformubiapf';
+            } else if (fullRecord.selectedForm === 'rajeshflat') {
+                formRoute = '/valuationeditformrajeshflat';
             } else if (fullRecord.selectedForm === 'rajeshhouse') {
                 formRoute = '/valuationeditformrajeshhouse';
             } else if (fullRecord.selectedForm === 'rajeshbank') {
@@ -106,7 +107,6 @@ const SearchBar = memo(({ data = [] }) => {
         setSuggestions([]);
         setIsOpen(false);
     };
-
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
