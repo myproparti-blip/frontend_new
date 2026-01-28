@@ -380,16 +380,16 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
             invalidateCache("/rajesh-RowHouse");
 
             // Fetch from valuations first (main endpoint), then fetch other endpoints in parallel for better initial load performance
-            const valuationsResponse = await getAllValuations({ username, userRole: role, clientId }).catch(() => ({ data: [] }));
+            const valuationsResponse = await getAllValuations({ username, userRole: role, clientId, limit: 99999 }).catch(() => ({ data: [] }));
 
             // Fetch other endpoints in parallel after main data is loaded
              const [bofResponse, ubiApfResponse, rajeshHouseResponse, rajeshBankResponse, rajeshFlatResponse, rajeshRowHouseResponse] = await Promise.all([
-                 getAllBofMaharashtra({ username, userRole: role, clientId }).catch(() => ({ data: [] })),
-                 getAllUbiApfForms({ username, userRole: role, clientId }).catch(() => ({ data: [] })),
-                 getAllRajeshHouse({ username, userRole: role, clientId }).catch(() => ({ data: [] })),
-                 getAllRajeshBank({ username, userRole: role, clientId }).catch(() => ({ data: [] })),
-                 getAllRajeshFlat({ username, userRole: role, clientId }).catch(() => ({ data: [] })),
-                 getAllRajeshRowHouse({ username, userRole: role, clientId }).catch(() => ({ data: [] }))
+                 getAllBofMaharashtra({ username, userRole: role, clientId, limit: 99999 }).catch(() => ({ data: [] })),
+                 getAllUbiApfForms({ username, userRole: role, clientId, limit: 99999 }).catch(() => ({ data: [] })),
+                 getAllRajeshHouse({ username, userRole: role, clientId, limit: 99999 }).catch(() => ({ data: [] })),
+                 getAllRajeshBank({ username, userRole: role, clientId, limit: 99999 }).catch(() => ({ data: [] })),
+                 getAllRajeshFlat({ username, userRole: role, clientId, limit: 99999 }).catch(() => ({ data: [] })),
+                 getAllRajeshRowHouse({ username, userRole: role, clientId, limit: 99999 }).catch(() => ({ data: [] }))
              ]);
 
             // Combine responses with formType markers
