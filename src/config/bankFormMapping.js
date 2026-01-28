@@ -11,7 +11,9 @@ export const BANK_FORM_MAP = {
     "bomaharastra": "/valuationeditformbomaharastra",
     "bomaharastra bank": "/valuationeditformbomaharastra",
     "bom": "/valuationeditformbomaharastra",
-    "bomahara": "/valuationeditformbomaharastra"
+    "bomahara": "/valuationeditformbomaharastra",
+    "rajeshflat": "/valuationeditformrajeshflat",
+    "rajesh flat": "/valuationeditformrajeshflat"
 };
 
 // Default fallback route for unmapped banks
