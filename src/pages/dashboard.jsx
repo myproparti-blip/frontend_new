@@ -81,6 +81,7 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
     const [rajeshPdfModalOpen, setRajeshPdfModalOpen] = useState(false);
     const [rajeshPdfData, setRajeshPdfData] = useState(null);
     const [pageData, setPageData] = useState({}); // Store paginated data for each form type
+    const [totalFormCount, setTotalFormCount] = useState(0); // Total forms from all APIs
     const username = user?.username || "";
     const role = user?.role || "";
     const clientId = user?.clientId || "";
@@ -89,6 +90,7 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
     const durationIntervalRef = useRef(null);
     const isMountedRef = useRef(false);
     const filesRef = useRef(files);
+    const loadedPagesRef = useRef(new Set([1])); // Track which pages have been loaded
     const { showError } = useNotification();
     const ITEMS_PER_PAGE_API = 5; // Items to fetch per API call
 
@@ -227,10 +229,10 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
         }
     }), [filteredFiles, sortField, sortOrder, timeDurations]);
 
-    // Calculate total pages - memoized to prevent recalculation
+    // Calculate total pages based on API total count, not just loaded files
     const totalPages = useMemo(() => {
-        return Math.ceil(sortedFiles.length / itemsPerPage);
-    }, [sortedFiles.length, itemsPerPage]);
+        return Math.ceil(totalFormCount / itemsPerPage);
+    }, [totalFormCount, itemsPerPage]);
 
     // Calculate pagination - memoized to prevent recalculation
     const paginatedFiles = useMemo(() => {
@@ -305,8 +307,21 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
     // Fetch more data when user changes page (but skip initial page 1 load - already handled above)
     useEffect(() => {
         if (isLoggedIn && isMountedRef.current && currentPage > 1) {
-            // Fetch data for the current page (only when user navigates, not on initial mount)
-            fetchFiles(false, false, currentPage);
+            // Load all pages between the last loaded page and current page
+            const lastLoadedPage = Math.max(...loadedPagesRef.current);
+            const pagesToLoad = [];
+
+            for (let p = lastLoadedPage + 1; p <= currentPage; p++) {
+                if (!loadedPagesRef.current.has(p)) {
+                    pagesToLoad.push(p);
+                }
+            }
+
+            // Fetch all missing pages in sequence
+            pagesToLoad.forEach(page => {
+                loadedPagesRef.current.add(page);
+                fetchFiles(false, false, page);
+            });
         }
     }, [currentPage, isLoggedIn]);
 
@@ -399,6 +414,18 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
                 getAllRajeshRowHouse({ username, userRole: role, clientId, limit: ITEMS_PER_PAGE_API, page }).catch(() => ({ data: [] }))
             ]);
 
+            // Extract total counts from API responses
+            const valuationsTotal = valuationsResponse?.pagination?.total || valuationsResponse?.total || 0;
+            const bofTotal = bofResponse?.pagination?.total || bofResponse?.total || 0;
+            const ubiApfTotal = ubiApfResponse?.pagination?.total || ubiApfResponse?.total || 0;
+            const rajeshHouseTotal = rajeshHouseResponse?.pagination?.total || rajeshHouseResponse?.total || 0;
+            const rajeshBankTotal = rajeshBankResponse?.pagination?.total || rajeshBankResponse?.total || 0;
+            const rajeshFlatTotal = rajeshFlatResponse?.pagination?.total || rajeshFlatResponse?.total || 0;
+            const rajeshRowHouseTotal = rajeshRowHouseResponse?.pagination?.total || rajeshRowHouseResponse?.total || 0;
+
+            // Calculate cumulative total
+            const totalCount = valuationsTotal + bofTotal + ubiApfTotal + rajeshHouseTotal + rajeshBankTotal + rajeshFlatTotal + rajeshRowHouseTotal;
+
             // Combine responses with formType markers
             const valuationsData = (Array.isArray(valuationsResponse?.data) ? valuationsResponse.data : [])
                 .map(item => ({ ...item, formType: 'ubiShop', selectedForm: item.selectedForm || 'ubiShop' }));
@@ -476,7 +503,8 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
             // If it's an initial load, replace files. Otherwise, merge with existing files
             if (isInitial) {
                 setFiles(filesList);
-                dispatch(setTotalItems(filesList.length));
+                setTotalFormCount(totalCount); // Set total form count from API
+                dispatch(setTotalItems(totalCount)); // Also update Redux for backward compatibility
                 dispatch(setCurrentPage(1));
             } else {
                 // For pagination, merge new data with existing data and deduplicate
