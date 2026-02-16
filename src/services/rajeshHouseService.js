@@ -75,9 +75,9 @@ export const getRajeshHouseById = async (id, username, userRole, clientId) => {
 };
 
 /**
- * Update a Rajesh House form
+ * Update a Rajesh House form (partial update)
  * @param {String} id - Form unique ID
- * @param {Object} data - Updated form data
+ * @param {Object} data - Partial form data to update
  * @param {String} username - Current user
  * @param {String} userRole - User role
  * @param {String} clientId - Client identifier
@@ -93,7 +93,7 @@ export const updateRajeshHouse = async (id, data, username, userRole, clientId) 
       throw new Error('Missing required user information');
     }
 
-    const response = await api.put(`${API_BASE_URL}/rajesh-house/${id}`, data, {
+    const response = await api.patch(`${API_BASE_URL}/rajesh-house/${id}`, data, {
       params: { username, userRole, clientId }
     });
 

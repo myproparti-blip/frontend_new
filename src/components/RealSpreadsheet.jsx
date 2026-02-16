@@ -1643,73 +1643,68 @@ const RealSpreadsheet = ({ initialData = null, onDataChange = null }) => {
         }
     }, []);
 
+   // Add inline styles for wrap text, overflow text, and validation indicators
+useEffect(() => {
+    const wrapTextStyle = document.createElement('style');
+    if (!document.querySelector('style[data-wrap-text]')) {
+        wrapTextStyle.setAttribute('data-wrap-text', 'true');
+        wrapTextStyle.textContent = `
+            .handsontable td {
+                white-space: nowrap !important;
+                overflow: visible !important;
+                background-color: #FFFFFF !important;
+            }
+            .handsontable td.wrap-text {
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                word-break: break-word !important;
+                hyphens: auto !important;
+                vertical-align: top !important;
+                padding: 4px !important;
+                line-height: 1.4 !important;
+                overflow: visible !important;
+                background-color: #FFFFFF !important;
+            }
 
-    // Add inline styles for wrap text, overflow text, and validation indicators
-    useEffect(() => {
-        const wrapTextStyle = document.createElement('style');
-        if (!document.querySelector('style[data-wrap-text]')) {
-            wrapTextStyle.setAttribute('data-wrap-text', 'true');
-            wrapTextStyle.textContent = `
-                .handsontable td {
-                    white-space: nowrap !important;
-                    overflow: visible !important;
-                    background-color: #ffffff !important;
-                }
-                .handsontable td.wrap-text {
-                    white-space: normal !important;
-                    word-wrap: break-word !important;
-                    overflow-wrap: break-word !important;
-                    word-break: break-word !important;
-                    hyphens: auto !important;
-                    vertical-align: top !important;
-                    padding: 4px !important;
-                    line-height: 1.4 !important;
-                    overflow: visible !important;
-                    background-color: #ffffff !important;
-                }
-                
-                /* Validation tooltip styling - show tooltip without help cursor */
-                .handsontable td[title] {
-                    cursor: default;
-                }
-                
-                /* Add blue border to cells with validation to indicate they have validation rules */
-                .handsontable td.has-validation {
-                    border-right: 3px solid #4a90e2 !important;
-                }
+            .handsontable td[title] {
+                cursor: default;
+            }
 
-                /* Scrollbar Styling - Webkit Browsers (Chrome, Safari, Edge, Brave) */
-                ::-webkit-scrollbar {
-                    width: 24px;
-                    height: 24px;
-                }
+            .handsontable td.has-validation {
+                border-right: 3px solid #4A90E2 !important;
+            }
 
-                ::-webkit-scrollbar-track {
-                    background: #f1f1f1;
-                }
+            /* :white_check_mark: Hide ONLY Right Side Scrollbar (Vertical) */
+            .handsontable .wtHolder::-webkit-scrollbar:vertical {
+                width: 0px !important;
+                display: none !important;
+            }
 
-                ::-webkit-scrollbar-thumb {
-                    background: #888;
-                    border-radius: 8px;
-                    border: 3px solid #f1f1f1;
-                }
+            /* :white_check_mark: Keep Bottom Scrollbar (Horizontal) */
+            .handsontable .wtHolder::-webkit-scrollbar:horizontal {
+                height: 24px;
+            }
 
-                ::-webkit-scrollbar-thumb:hover {
-                    background: #555;
-                }
+            /* Horizontal scrollbar styling */
+            .handsontable .wtHolder::-webkit-scrollbar-thumb:horizontal {
+                background: #888;
+                border-radius: 8px;
+            }
 
-                /* Firefox Scrollbar */
-                * {
-                    scrollbar-width: auto;
-                    scrollbar-color: #888 #f1f1f1;
-                }
-            `;
-            document.head.appendChild(wrapTextStyle);
-        }
-        return () => {
-            // Cleanup: optionally remove if needed
-        };
-    }, []);
+            .handsontable .wtHolder::-webkit-scrollbar-thumb:horizontal:hover {
+                background: #555;
+            }
+
+            /* Firefox */
+            .handsontable .wtHolder {
+                scrollbar-width: thin;
+            }
+        `;
+        document.head.appendChild(wrapTextStyle);
+    }
+    return () => {};
+}, []);
 
     // Global keyboard listener for Ctrl+Z and Ctrl+Y
     useEffect(() => {
