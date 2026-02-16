@@ -694,10 +694,11 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
 
             try {
                 // Fetch fresh data based on form type
-                if (record?.selectedForm === 'rajeshhouse' || !record?.selectedForm) {
+                if (record?.selectedForm === 'rajeshhouse' || !record?.selectedForm || (record?.selectedForm && !['bomFlat', 'ubiShop', 'ubiApf'].includes(record?.selectedForm))) {
+                    // Fetch fresh data for rajeshhouse or unknown form types (chip IDs)
                     freshRecord = await getRajeshHouseById(record.uniqueId || record._id, username, userRole, clientId);
+                    console.log("✅ Fresh data fetched for PDF generation");
                 }
-                ("✅ Fresh data fetched for PDF generation");
             } catch (fetchError) {
                 console.warn("⚠️ Could not fetch fresh data, using record from table:", fetchError.message);
                 // Fall back to the record from table if fetch fails
@@ -717,9 +718,10 @@ const DashboardPage = ({ user, onLogout, onLogin }) => {
                 showError("PDF generation for UBI Shop/APF is not yet available");
                 return;
             } else {
-                // Default - no PDF service available
-                showError("PDF generation is not available for this form type");
-                return;
+                // Default - treat unknown form types (chip IDs) as Rajesh House
+                console.log("[PDF] Unknown form type detected:", freshRecord?.selectedForm, "- using Rajesh House PDF service");
+                const { generateRajeshHousePDF } = await import("../services/rajeshHousePdf.js");
+                await generateRajeshHousePDF(freshRecord);
             }
 
             showSuccess("PDF downloaded successfully!");
